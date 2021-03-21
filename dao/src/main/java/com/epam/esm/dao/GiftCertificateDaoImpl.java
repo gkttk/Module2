@@ -1,4 +1,4 @@
-package com.epam.esm;
+package com.epam.esm.dao;
 
 import com.epam.esm.mappers.GiftCertificateRowMapper;
 import com.epam.esm.model.GiftCertificate;
@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
-
 
     private final static String GET_BY_ID_QUERY = "SELECT * FROM gift_certificate WHERE id = ?"; //todo table name
     private final static String GET_ALL_QUERY = "SELECT * FROM gift_certificate"; //todo table name

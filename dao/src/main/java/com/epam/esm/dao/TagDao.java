@@ -1,4 +1,4 @@
-package com.epam.esm;
+package com.epam.esm.dao;
 
 import com.epam.esm.model.Tag;
 
@@ -12,7 +12,6 @@ public interface TagDao {
 
     void save(Tag tag);
 
-    void update(Tag tag);
 
     void delete(long id);
 

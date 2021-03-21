@@ -1,0 +1,5 @@
+rootProject.name = 'gifts'
+include 'web'
+include 'service'
+include 'dao'
+

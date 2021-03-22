@@ -1,18 +1,8 @@
 plugins {
     id 'java'
-    id 'jar'
 }
 
-group 'com.epam.esm'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation project(':dao')
-
 }

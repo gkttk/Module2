@@ -1,4 +1,4 @@
-package com.epam.esm.model;
+package com.epam.esm.entity;
 
 import java.util.Objects;
 import java.util.StringJoiner;

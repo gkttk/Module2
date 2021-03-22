@@ -1,6 +1,6 @@
 package com.epam.esm.mappers;
 
-import com.epam.esm.model.GiftCertificate;
+import com.epam.esm.entity.GiftCertificate;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.math.BigDecimal;

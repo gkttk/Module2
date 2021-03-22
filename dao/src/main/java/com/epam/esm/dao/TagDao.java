@@ -1,6 +1,6 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.model.Tag;
+import com.epam.esm.entity.Tag;
 
 import java.util.List;
 
@@ -11,7 +11,6 @@ public interface TagDao {
     List<Tag> findAll();
 
     void save(Tag tag);
-
 
     void delete(long id);
 

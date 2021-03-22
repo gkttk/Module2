@@ -1,14 +1,17 @@
-package com.epam.esm.dao;
+package com.epam.esm.dao.impl;
 
+import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.mappers.GiftCertificateRowMapper;
-import com.epam.esm.model.GiftCertificate;
+import com.epam.esm.entity.GiftCertificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     private final static String GET_BY_ID_QUERY = "SELECT * FROM gift_certificate WHERE id = ?"; //todo table name

@@ -1,20 +1,11 @@
 plugins {
-    id 'java'
     id 'war'
-}
-
-group 'com.epam.esm'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
     implementation project(':service')
-    implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.5'
+    implementation project(':dao')//todo ????
+
     compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
 
 }

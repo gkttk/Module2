@@ -1,8 +1,8 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.mappers.TagRowMapper;
 import com.epam.esm.entity.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -22,10 +22,10 @@ public class TagDaoImpl implements TagDao {
     private final JdbcTemplate template;
     private final RowMapper<Tag> rowMapper;
 
-
-    public TagDaoImpl(JdbcTemplate template) {
+    @Autowired
+    public TagDaoImpl(JdbcTemplate template, RowMapper<Tag> rowMapper) {
         this.template = template;
-        this.rowMapper = new TagRowMapper();
+        this.rowMapper = rowMapper;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.mappers.GiftCertificateRowMapper;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,21 +13,22 @@ import java.util.List;
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
-    private final static String GET_BY_ID_QUERY = "SELECT * FROM gift_certificate WHERE id = ?"; //todo table name
-    private final static String GET_ALL_QUERY = "SELECT * FROM gift_certificate"; //todo table name
-    private final static String SAVE_QUERY = "INSERT INTO gift_certificate (name, description, price, duration) " +
-            "VALUES (?,?,?,?)"; //todo table name
-    private final static String UPDATE_QUERY = "UPDATE gift_certificate SET name = ?, description = ?, " +
-            "price = ?, duration = ? WHERE id = ?"; //todo table name
-    private final static String DELETE_QUERY = "DELETE FROM gift_certificate WHERE id = ?"; //todo table name
+    private final static String TABLE_NAME = "gift_certificate";
+    private final static String GET_BY_ID_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
+    private final static String GET_ALL_QUERY = "SELECT * FROM " + TABLE_NAME;
+    private final static String SAVE_QUERY = "INSERT INTO " + TABLE_NAME + " (name, description, price, duration) " +
+            "VALUES (?,?,?,?)";
+    private final static String UPDATE_QUERY = "UPDATE " + TABLE_NAME + " SET name = ?, description = ?, " +
+            "price = ?, duration = ? WHERE id = ?";
+    private final static String DELETE_QUERY = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
 
     private final JdbcTemplate template;
-    private final RowMapper<GiftCertificate> rowMapper; //todo question, maybe through autowired? +  is it threadsafe?
+    private final RowMapper<GiftCertificate> rowMapper;
 
     @Autowired
-    public GiftCertificateDaoImpl(JdbcTemplate template) {
+    public GiftCertificateDaoImpl(JdbcTemplate template, RowMapper<GiftCertificate> rowMapper) {
         this.template = template;
-        this.rowMapper = new GiftCertificateRowMapper();
+        this.rowMapper = rowMapper;
     }
 
     @Override

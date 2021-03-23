@@ -7,23 +7,15 @@ import java.util.StringJoiner;
 
 public class GiftCertificateDto {
 
-    private final Long id;
-    private final String name;
-    private final String description;
-    private final BigDecimal price;
-    private final int duration;
-    private final Date createDate;
-    private final Date lastUpdateDate;
+    private Long id;
+    private String name;
+    private String description;
+    private BigDecimal price;
+    private int duration;
+    private Date createDate;
+    private Date lastUpdateDate;
 
-
-    public GiftCertificateDto(String name, String description, BigDecimal price, int duration, Date createDate, Date lastUpdateDate) {
-        this.id = null;//todo mb not final fields?
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.duration = duration;
-        this.createDate = createDate;
-        this.lastUpdateDate = lastUpdateDate;
+    public GiftCertificateDto() {
     }
 
     public GiftCertificateDto(Long id, String name, String description, BigDecimal price, int duration, Date createDate, Date lastUpdateDate) {
@@ -65,12 +57,41 @@ public class GiftCertificateDto {
         return lastUpdateDate;
     }
 
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o){
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         GiftCertificateDto that = (GiftCertificateDto) o;

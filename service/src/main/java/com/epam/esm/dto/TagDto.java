@@ -5,11 +5,10 @@ import java.util.StringJoiner;
 
 public class TagDto {
 
-    private Long id;
-    private String name;
+    private  Long id;
+    private  String name;
 
-    public TagDto(String name) {
-        this.name = name;
+    public TagDto() {
     }
 
     public TagDto(Long id, String name) {
@@ -25,6 +24,13 @@ public class TagDto {
         return name;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,4 +1,10 @@
+plugins {
+    id 'war'
+}
+
 allprojects {
+    apply plugin :"java"
+
     group 'com.epam.esm'
     version '1.0-SNAPSHOT'
 
@@ -9,12 +15,12 @@ allprojects {
     tasks.withType(JavaCompile) {
         sourceCompatibility = "1.8"
         targetCompatibility = "1.8"
+        options.encoding = 'UTF-8'
     }
 
 }
 
 subprojects {
-    apply plugin :"java"
 
     dependencies {
         implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.5'

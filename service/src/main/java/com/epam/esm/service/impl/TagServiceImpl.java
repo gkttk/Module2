@@ -5,8 +5,9 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.converter.Converter;
-import com.epam.esm.service.converter.impl.TagConverter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,11 +16,12 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
 
     private final TagDao tagDao;
-    private final Converter<Tag, TagDto> converter;//todo generics
+    private final Converter<Tag, TagDto> converter;
 
-    public TagServiceImpl(TagDao tagDao) {
+    @Autowired
+    public TagServiceImpl(TagDao tagDao, Converter<Tag, TagDto> converter) {
         this.tagDao = tagDao;
-        this.converter = new TagConverter();//todo explicit instance
+        this.converter = converter;
     }
 
     @Override

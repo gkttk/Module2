@@ -5,7 +5,6 @@ import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.converter.Converter;
-import com.epam.esm.service.converter.impl.GiftCertificateConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +15,13 @@ import java.util.stream.Collectors;
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private final GiftCertificateDao giftCertificateDao;
-    private final Converter<GiftCertificate, GiftCertificateDto> converter;//todo generics
+    private final Converter<GiftCertificate, GiftCertificateDto> converter;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao) {
+    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao,
+                                      Converter<GiftCertificate, GiftCertificateDto> converter) {
         this.giftCertificateDao = giftCertificateDao;
-        this.converter = new GiftCertificateConverter();//todo explicit instance
+        this.converter = converter;
     }
 
     @Override

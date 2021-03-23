@@ -1,8 +1,8 @@
 package com.epam.esm.service.converter;
 
-public interface Converter<E,T> {
+public interface Converter<E,D> {
 
-    T convertToDto(E entity);
+    D convertToDto(E entity);
 
-    E convertToEntity(T dto);
+    E convertToEntity(D dto);
 }

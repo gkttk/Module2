@@ -1,4 +1,6 @@
 
 dependencies {
     implementation project(':dao')
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.9'
+
 }

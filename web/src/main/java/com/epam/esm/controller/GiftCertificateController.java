@@ -31,8 +31,21 @@ public class GiftCertificateController {
 
     @DeleteMapping("/certificates/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable long id){
+    public void deleteById(@PathVariable long id) {
         giftCertificateService.delete(id);
+    }
+
+
+    @PostMapping("/certificates")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createCertificate(@RequestBody GiftCertificateDto certificateDto) {
+        giftCertificateService.save(certificateDto);
+    }
+
+    @PutMapping("/certificates/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateCertificate(@RequestBody GiftCertificateDto giftCertificateDto, @PathVariable long id) {
+        giftCertificateService.update(giftCertificateDto, id);
     }
 
 

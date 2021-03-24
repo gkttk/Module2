@@ -51,12 +51,12 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    public void update(GiftCertificate certificate) {
+    public void update(GiftCertificate certificate, long id) {
         String name = certificate.getName();
         String description = certificate.getDescription();
         BigDecimal price = certificate.getPrice();
         int duration = certificate.getDuration();
-        template.update(UPDATE_QUERY, name, description, price, duration);
+        template.update(UPDATE_QUERY, name, description, price, duration, id);
     }
 
     @Override

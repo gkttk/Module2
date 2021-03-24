@@ -12,7 +12,7 @@ public interface GiftCertificateService {
 
     void save(GiftCertificateDto certificate);
 
-    void update(GiftCertificateDto certificate);
+    void update(GiftCertificateDto certificate, long id);
 
     void delete(long id);
 

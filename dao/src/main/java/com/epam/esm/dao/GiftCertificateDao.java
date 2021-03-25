@@ -3,14 +3,15 @@ package com.epam.esm.dao;
 import com.epam.esm.entity.GiftCertificate;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GiftCertificateDao {
 
-    GiftCertificate getById(long id);
+   Optional<GiftCertificate> getById(long id);
 
     List<GiftCertificate> findAll();
 
-    void save(GiftCertificate certificate);
+    GiftCertificate save(GiftCertificate certificate);
 
     void update(GiftCertificate certificate, long id);
 

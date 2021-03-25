@@ -5,9 +5,14 @@ import com.epam.esm.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class TagDaoImpl implements TagDao {
@@ -18,6 +23,7 @@ public class TagDaoImpl implements TagDao {
     private final static String SAVE_QUERY = "INSERT INTO " + TABLE_NAME + " (name) " +
             "VALUES (?)";
     private final static String DELETE_QUERY = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
+    private final static String FIND_BY_NAME_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE name = ?";
 
     private final JdbcTemplate template;
     private final RowMapper<Tag> rowMapper;
@@ -39,13 +45,31 @@ public class TagDaoImpl implements TagDao {
     }
 
     @Override
-    public void save(Tag tag) {
+    public Tag save(Tag tag) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
         String name = tag.getName();
-        template.update(SAVE_QUERY, name);
+
+        template.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(SAVE_QUERY, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, name);
+            return ps;
+        }, keyHolder);
+
+       // template.update(SAVE_QUERY, name,keyHolder);
+
+        tag.setId(keyHolder.getKey().longValue());
+        return tag;
     }
 
     @Override
     public void delete(long id) {
         template.update(DELETE_QUERY, id);
+    }
+
+    @Override
+    public Optional<Tag> findByName(String tagName) {
+        Tag tag = template.queryForStream(FIND_BY_NAME_QUERY, rowMapper, tagName).findFirst().orElse(null);
+        return Optional.ofNullable(tag);
     }
 }

@@ -1,12 +1,18 @@
 package com.epam.esm.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Null;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.StringJoiner;
 
 public class TagDto {
 
-    private  Long id;
-    private  String name;
+    @Null
+    private Long id;
+    @NotBlank
+    @Size(min = 2, max = 15, message = "Tag name should contain 2-15 characters")
+    private String name;
 
     public TagDto() {
     }

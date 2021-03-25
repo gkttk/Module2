@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,5 +45,16 @@ public class TagServiceImpl implements TagService {
     @Override
     public void delete(long id) {
         tagDao.delete(id);
+    }
+
+    @Override
+    public Optional<TagDto> findByName(String tagName) {
+        Optional<Tag> tagOpt = tagDao.findByName(tagName);
+        if(tagOpt.isPresent()){
+            Tag tag = tagOpt.get();
+            TagDto tagDto = modelMapper.map(tag, TagDto.class);
+            return Optional.of(tagDto);
+        }
+        return Optional.empty();
     }
 }

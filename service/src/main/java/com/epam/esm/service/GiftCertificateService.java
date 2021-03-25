@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.GiftCertificatePatchDto;
 
 import java.util.List;
 
@@ -16,4 +17,5 @@ public interface GiftCertificateService {
 
     void delete(long id);
 
+    void patch(GiftCertificatePatchDto giftCertificatePatchDto, long id);
 }

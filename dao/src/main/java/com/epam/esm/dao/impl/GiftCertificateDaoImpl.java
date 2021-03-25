@@ -5,10 +5,16 @@ import com.epam.esm.entity.GiftCertificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
+import java.util.Optional;
+import java.util.spi.LocaleNameProvider;
 
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
@@ -32,8 +38,9 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    public GiftCertificate getById(long id) {
-        return template.queryForObject(GET_BY_ID_QUERY, rowMapper, id);
+    public Optional<GiftCertificate> getById(long id) {
+        GiftCertificate result = template.queryForObject(GET_BY_ID_QUERY, rowMapper, id);
+        return Optional.ofNullable(result);
     }
 
     @Override
@@ -42,12 +49,25 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    public void save(GiftCertificate certificate) {
+    public GiftCertificate save(GiftCertificate certificate) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
         String name = certificate.getName();
         String description = certificate.getDescription();
         BigDecimal price = certificate.getPrice();
         int duration = certificate.getDuration();
-        template.update(SAVE_QUERY, name, description, price, duration);
+
+        template.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(SAVE_QUERY, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, name);
+            ps.setString(2, description);
+            ps.setBigDecimal(3, price);
+            ps.setInt(4, duration);
+            return ps;
+        }, keyHolder);
+       // template.update(SAVE_QUERY, name, description, price, duration, keyHolder);
+
+        certificate.setId(keyHolder.getKey().longValue());
+        return certificate;
     }
 
     @Override

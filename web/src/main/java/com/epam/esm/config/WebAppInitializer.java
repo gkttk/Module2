@@ -1,5 +1,8 @@
-package com.epam.esm.config;
+package config;
 
+import com.epam.esm.config.DaoConfig;
+import com.epam.esm.config.ServiceConfig;
+import com.epam.esm.config.WebConfig;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -14,8 +17,10 @@ public class WebAppInitializer implements WebApplicationInitializer {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(DaoConfig.class, ServiceConfig.class, WebConfig.class);
         context.setServletContext(servletContext);
-        ServletRegistration.Dynamic dispatcher =
-                servletContext.addServlet("dispatcher", new DispatcherServlet(context));
+
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(context);
+        ServletRegistration.Dynamic dispatcher = servletContext.addServlet("dispatcher", dispatcherServlet);
+
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");
 

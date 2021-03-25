@@ -3,7 +3,7 @@ plugins {
 }
 
 allprojects {
-    apply plugin :"java"
+    apply plugin: "java"
 
     group 'com.epam.esm'
     version '1.0-SNAPSHOT'

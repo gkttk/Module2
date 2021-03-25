@@ -2,5 +2,10 @@
 dependencies {
     implementation project(':dao')
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.9'
+    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    compile 'org.hibernate:hibernate-validator:6.0.13.Final'  //todo why is it here?
 
 }

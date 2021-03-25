@@ -28,9 +28,9 @@ public class GiftCertificateController {
     @GetMapping
     public ResponseEntity<List<GiftCertificateDto>> getAll() {
         List<GiftCertificateDto> certificates = giftCertificateService.findAll();
-        if (certificates.isEmpty()) {
+      /*  if (certificates.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        }*/                                                         //exception in service findAll
         return ResponseEntity.ok(certificates);
     }
 
@@ -41,8 +41,14 @@ public class GiftCertificateController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(certificate);
-
     }
+
+    @GetMapping(params = "tagName")
+    public ResponseEntity<List<GiftCertificateDto>> getAllByTagName(@RequestParam String tagName) {
+        List<GiftCertificateDto> certificates = giftCertificateService.getAllByTagName(tagName);
+        return new ResponseEntity<>(certificates, HttpStatus.OK);
+    }
+
 
     @DeleteMapping("/{id}")  //todo check isDelete
     public ResponseEntity<Void> deleteById(@PathVariable long id) {

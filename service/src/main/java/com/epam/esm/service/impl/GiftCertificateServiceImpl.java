@@ -41,33 +41,40 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public List<GiftCertificateDto> findAll() {
         List<GiftCertificate> entities = giftCertificateDao.findAll();
 
+        if (entities.isEmpty()) {
+            throw new GiftCertificateNotFoundException("There are no gift certificates in DB");
+        }
+
         return entities.stream()
                 .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
-                .peek(certificateDto -> {
-                    List<Tag> tags = tagDao.getAllByCertificateId(certificateDto.getId());
-                    List<TagDto> tagsDto = tags.stream()
-                            .map(tag -> modelMapper.map(tag, TagDto.class))
-                            .collect(Collectors.toList());
-                    certificateDto.setTags(tagsDto);
-                }).collect(Collectors.toList());
-
+                .peek(this::fillCertificateDtoWithTags)
+                .collect(Collectors.toList());
     }
 
 
+    @Override
+    public List<GiftCertificateDto> getAllByTagName(String tagName) {
+        List<GiftCertificate> certificates = giftCertificateDao.findAllByTagName(tagName);
+        if (certificates.isEmpty()) {
+            throw new GiftCertificateNotFoundException(String.format("There are no gift certificates with this tag name: %s in DB", tagName));
+        }
+        return certificates.stream()
+                .map(certificate -> modelMapper.map(certificate, GiftCertificateDto.class))
+                .peek(this::fillCertificateDtoWithTags)
+                .collect(Collectors.toList());
+
+    }
 
     @Override
     public GiftCertificateDto getById(long id) {
         Optional<GiftCertificate> certificate = giftCertificateDao.getById(id);
         if (certificate.isPresent()) {
             GiftCertificateDto giftCertificateDto = modelMapper.map(certificate.get(), GiftCertificateDto.class);
-            List<Tag> tags = tagDao.getAllByCertificateId(giftCertificateDto.getId());
-            List<TagDto> tagsDto = tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
-            giftCertificateDto.setTags(tagsDto);
+            fillCertificateDtoWithTags(giftCertificateDto);
             return giftCertificateDto;
         }
         throw new GiftCertificateNotFoundException(String.format("Can't find a certificate with id: %d", id));
     }
-
 
 
     //transactional
@@ -128,4 +135,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         }
     }
+
+
+    private void fillCertificateDtoWithTags(GiftCertificateDto giftCertificateDto) {
+        List<Tag> tags = tagDao.getAllByCertificateId(giftCertificateDto.getId());
+        List<TagDto> tagsDto = tags.stream()
+                .map(tag -> modelMapper.map(tag, TagDto.class))
+                .collect(Collectors.toList());
+        giftCertificateDto.setTags(tagsDto);
+    }
+
+
 }

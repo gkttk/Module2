@@ -14,7 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
-import java.util.spi.LocaleNameProvider;
 
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
@@ -28,6 +27,11 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
             "price = ?, duration = ? WHERE id = ?";
     private final static String DELETE_QUERY = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
 
+    private final static String GET_ALL_BY_TAG_NAME = "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration," +
+            " gc.create_date, gc.last_update_date FROM " + TABLE_NAME + " gc JOIN certificates_tags ct on gc.id = ct.certificate_id" +
+            " JOIN tag t on t.id = ct.tag_id WHERE t.name = ?";
+
+
     private final JdbcTemplate template;
     private final RowMapper<GiftCertificate> rowMapper;
 
@@ -35,6 +39,11 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     public GiftCertificateDaoImpl(JdbcTemplate template, RowMapper<GiftCertificate> rowMapper) {
         this.template = template;
         this.rowMapper = rowMapper;
+    }
+
+    @Override
+    public List<GiftCertificate> findAllByTagName(String tagName) {
+       return template.query(GET_ALL_BY_TAG_NAME, rowMapper, tagName);
     }
 
     @Override
@@ -64,7 +73,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
             ps.setInt(4, duration);
             return ps;
         }, keyHolder);
-       // template.update(SAVE_QUERY, name, description, price, duration, keyHolder);
+        // template.update(SAVE_QUERY, name, description, price, duration, keyHolder);
 
         certificate.setId(keyHolder.getKey().longValue());
         return certificate;

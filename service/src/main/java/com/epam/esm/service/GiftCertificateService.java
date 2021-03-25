@@ -7,6 +7,10 @@ import java.util.List;
 
 public interface GiftCertificateService {
 
+
+    List<GiftCertificateDto> getAllByTagName(String tagName);
+
+
     GiftCertificateDto getById(long id);
 
     List<GiftCertificateDto> findAll();

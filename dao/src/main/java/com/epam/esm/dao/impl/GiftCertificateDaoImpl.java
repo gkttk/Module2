@@ -39,7 +39,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     @Override
     public Optional<GiftCertificate> getById(long id) {
-        GiftCertificate result = template.queryForObject(GET_BY_ID_QUERY, rowMapper, id);
+        GiftCertificate result = template.queryForStream(GET_BY_ID_QUERY, rowMapper, id).findFirst().orElse(null);
         return Optional.ofNullable(result);
     }
 

@@ -8,6 +8,7 @@ import com.epam.esm.dto.GiftCertificatePatchDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exceptions.GiftCertificateNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,24 +51,21 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                     certificateDto.setTags(tagsDto);
                 }).collect(Collectors.toList());
 
-      /*  return entities.stream()
-                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
-                .collect(Collectors.toList());*/
     }
 
 
 
     @Override
     public GiftCertificateDto getById(long id) {
-
         Optional<GiftCertificate> certificate = giftCertificateDao.getById(id);
-
         if (certificate.isPresent()) {
-            GiftCertificate giftCertificate = certificate.get();
-            return modelMapper.map(giftCertificate, GiftCertificateDto.class);
+            GiftCertificateDto giftCertificateDto = modelMapper.map(certificate.get(), GiftCertificateDto.class);
+            List<Tag> tags = tagDao.getAllByCertificateId(giftCertificateDto.getId());
+            List<TagDto> tagsDto = tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
+            giftCertificateDto.setTags(tagsDto);
+            return giftCertificateDto;
         }
-        return null;
-
+        throw new GiftCertificateNotFoundException(String.format("Can't find a certificate with id: %d", id));
     }
 
 

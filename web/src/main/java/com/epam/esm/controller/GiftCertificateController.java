@@ -31,7 +31,6 @@ public class GiftCertificateController {
         if (certificates.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-
         return ResponseEntity.ok(certificates);
     }
 

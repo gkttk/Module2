@@ -15,16 +15,14 @@ import java.util.List;
 
 @RestController
 @Validated
-@RequestMapping(path = "/certificates"/*, consumes = "application/json", produces = "application/json"*/)
+@RequestMapping(path = "/certificates", produces = "application/json")
 public class GiftCertificateController {
 
     private final GiftCertificateService giftCertificateService;
-    //  private final RestTemplate restTemplate;
 
     @Autowired
-    public GiftCertificateController(GiftCertificateService giftCertificateService/*, RestTemplate restTemplate*/) {
+    public GiftCertificateController(GiftCertificateService giftCertificateService) {
         this.giftCertificateService = giftCertificateService;
-        //  this.restTemplate = restTemplate;
     }
 
     @GetMapping

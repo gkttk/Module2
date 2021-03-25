@@ -1,7 +1,9 @@
 package com.epam.esm.dto;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -17,6 +19,9 @@ public class GiftCertificatePatchDto {
     @Min(1)
     @Max(100)
     private Integer duration;
+  /*  @Valid
+    private List<TagDto> tags;*/ //todo для добавления новых тэгов
+
 
     public GiftCertificatePatchDto() {
     }

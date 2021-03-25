@@ -25,6 +25,10 @@ public class TagDaoImpl implements TagDao {
     private final static String DELETE_QUERY = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
     private final static String FIND_BY_NAME_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE name = ?";
 
+    private final static String FIND_ALL_BY_CERTIFICATE_ID = "SELECT t.id, t.name FROM " + TABLE_NAME +
+            " t JOIN certificates_tags ct on t.id = ct.tag_id WHERE ct.certificate_id = ?";
+
+
     private final JdbcTemplate template;
     private final RowMapper<Tag> rowMapper;
 
@@ -34,9 +38,17 @@ public class TagDaoImpl implements TagDao {
         this.rowMapper = rowMapper;
     }
 
+
+
+
     @Override
     public Tag getById(long id) {
         return template.queryForObject(GET_BY_ID_QUERY, rowMapper, id);
+    }
+
+    @Override
+    public List<Tag> getAllByCertificateId(long certificateId) {
+        return template.query(FIND_ALL_BY_CERTIFICATE_ID, rowMapper, certificateId);
     }
 
     @Override

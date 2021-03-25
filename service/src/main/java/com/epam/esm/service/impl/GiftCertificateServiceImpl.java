@@ -21,19 +21,41 @@ import java.util.stream.Collectors;
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
-    private final GiftCertificateDao giftCertificateDao;
-    private final ModelMapper modelMapper;
 
-    private final TagDao tagDao;//todo should tag dao be in certificate service?
-    private final CertificateTagsDao certificateTagsDao;//todo should tag dao be in certificate service?
+    private final ModelMapper modelMapper;
+    private final GiftCertificateDao giftCertificateDao;
+    private final TagDao tagDao;
+    private final CertificateTagsDao certificateTagsDao;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, ModelMapper modelMapper, TagDao tagDao, CertificateTagsDao certificateTagsDao) {
+    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, ModelMapper modelMapper, TagDao tagDao,
+                                      CertificateTagsDao certificateTagsDao) {
         this.giftCertificateDao = giftCertificateDao;
         this.modelMapper = modelMapper;
         this.tagDao = tagDao;
         this.certificateTagsDao = certificateTagsDao;
     }
+
+    @Override
+    public List<GiftCertificateDto> findAll() {
+        List<GiftCertificate> entities = giftCertificateDao.findAll();
+
+        return entities.stream()
+                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
+                .peek(certificateDto -> {
+                    List<Tag> tags = tagDao.getAllByCertificateId(certificateDto.getId());
+                    List<TagDto> tagsDto = tags.stream()
+                            .map(tag -> modelMapper.map(tag, TagDto.class))
+                            .collect(Collectors.toList());
+                    certificateDto.setTags(tagsDto);
+                }).collect(Collectors.toList());
+
+      /*  return entities.stream()
+                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
+                .collect(Collectors.toList());*/
+    }
+
+
 
     @Override
     public GiftCertificateDto getById(long id) {
@@ -48,13 +70,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     }
 
-    @Override
-    public List<GiftCertificateDto> findAll() {
-        List<GiftCertificate> entities = giftCertificateDao.findAll();
-        return entities.stream()
-                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
-                .collect(Collectors.toList());
-    }
+
 
     //transactional
     @Override

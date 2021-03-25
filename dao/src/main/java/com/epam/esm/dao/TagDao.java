@@ -9,6 +9,9 @@ public interface TagDao {
 
     Tag getById(long id);
 
+
+    List<Tag> getAllByCertificateId(long certificateId);
+
     List<Tag> findAll();
 
     Tag save(Tag tag);

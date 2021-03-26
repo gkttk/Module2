@@ -25,6 +25,14 @@ public class GiftCertificateController {
         this.giftCertificateService = giftCertificateService;
     }
 
+
+    @GetMapping(params = {"sortFields", "sortOrder"})
+    public ResponseEntity<List<GiftCertificateDto>> getAllSorted(@RequestParam List<String> sortFields,
+                                                                 @RequestParam String sortOrder){
+        List<GiftCertificateDto> sortedCertificates = giftCertificateService.getAllSorted(sortFields, sortOrder);
+        return ResponseEntity.ok(sortedCertificates);
+    }
+
     @GetMapping
     public ResponseEntity<List<GiftCertificateDto>> getAll() {
         List<GiftCertificateDto> certificates = giftCertificateService.findAll();
@@ -34,9 +42,6 @@ public class GiftCertificateController {
     @GetMapping("/{id}")
     public ResponseEntity<GiftCertificateDto> getById(@PathVariable long id) {
         GiftCertificateDto certificate = giftCertificateService.getById(id);
-        if (certificate == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(certificate);
     }
 
@@ -45,6 +50,7 @@ public class GiftCertificateController {
         List<GiftCertificateDto> certificates = giftCertificateService.getAllByTagName(tagName);
         return new ResponseEntity<>(certificates, HttpStatus.OK);
     }
+
 
 
     @DeleteMapping("/{id}")  //todo check isDelete

@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
@@ -31,6 +32,9 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
             " gc.create_date, gc.last_update_date FROM " + TABLE_NAME + " gc JOIN certificates_tags ct on gc.id = ct.certificate_id" +
             " JOIN tag t on t.id = ct.tag_id WHERE t.name = ?";
 
+    private final static String SORTING_QUERY_FIRST_PART = "SELECT * FROM " + TABLE_NAME + " ORDER BY ";
+
+
 
     private final JdbcTemplate template;
     private final RowMapper<GiftCertificate> rowMapper;
@@ -42,8 +46,15 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
+    public List<GiftCertificate> getAllSorted(List<String> sortingFieldNames, String sortingOrderName) {
+        String fieldNames = String.join(",", sortingFieldNames);
+        String query = SORTING_QUERY_FIRST_PART + fieldNames + " " + sortingOrderName;//todo concatenate
+        return template.query(query, rowMapper);
+    }
+
+    @Override
     public List<GiftCertificate> findAllByTagName(String tagName) {
-       return template.query(GET_ALL_BY_TAG_NAME, rowMapper, tagName);
+        return template.query(GET_ALL_BY_TAG_NAME, rowMapper, tagName);
     }
 
     @Override

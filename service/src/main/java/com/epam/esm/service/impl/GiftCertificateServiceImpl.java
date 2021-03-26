@@ -53,6 +53,16 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
 
     @Override
+    public List<GiftCertificateDto> getAllSorted(List<String> sortingFieldNames, String sortingOrder) {
+        List<GiftCertificate> entities = giftCertificateDao.getAllSorted(sortingFieldNames, sortingOrder);
+        return entities.stream()
+                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
+                .collect(Collectors.toList());
+
+
+    }
+
+    @Override
     public List<GiftCertificateDto> getAllByTagName(String tagName) {
         List<GiftCertificate> certificates = giftCertificateDao.findAllByTagName(tagName);
         if (certificates.isEmpty()) {

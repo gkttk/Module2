@@ -8,6 +8,8 @@ import java.util.List;
 public interface GiftCertificateService {
 
 
+    List<GiftCertificateDto> getAllSorted(List<String> sortingFieldNames, String sortingOrder);
+
     List<GiftCertificateDto> getAllByTagName(String tagName);
 
 

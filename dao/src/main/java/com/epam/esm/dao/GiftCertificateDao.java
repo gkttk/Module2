@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public interface GiftCertificateDao {
 
+    List<GiftCertificate> getAllSorted(List<String> sortingFieldNames, String sortingOrder);
 
     List<GiftCertificate> findAllByTagName(String tagName);
 

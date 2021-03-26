@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/tags")
+@RequestMapping(path = "/tags", produces = "application/json")
 public class TagController {
 
     private final TagService tagService;
@@ -22,15 +22,14 @@ public class TagController {
     }
 
     @GetMapping(params = "tagName")
-    public ResponseEntity<TagDto> getByName(@RequestParam String tagName){
+    public ResponseEntity<TagDto> getByName(@RequestParam String tagName) {
         Optional<TagDto> tagByNameOpt = tagService.findByName(tagName);
-        if (tagByNameOpt.isPresent()){
+        if (tagByNameOpt.isPresent()) {
             TagDto tagDto = tagByNameOpt.get();
             return new ResponseEntity<>(tagDto, HttpStatus.FOUND);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
 
 
     @GetMapping
@@ -50,10 +49,11 @@ public class TagController {
     }
 
 
-    @PostMapping(consumes = "application/json", produces = "application/json")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createTag(@RequestBody TagDto tagDto) {
-        tagService.save(tagDto);
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<TagDto> createTag(@RequestBody TagDto tagDto) {
+        TagDto savedTag = tagService.save(tagDto);
+        return new ResponseEntity<>(savedTag, HttpStatus.CREATED);
+
     }
 
 

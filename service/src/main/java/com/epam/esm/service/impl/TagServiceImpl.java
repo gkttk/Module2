@@ -38,15 +38,18 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public void save(TagDto tag) {
-        String tagName = tag.getName();
+    public TagDto save(TagDto tagDto) {
+        String tagName = tagDto.getName();
         Optional<Tag> tagFromDb = tagDao.findByName(tagName);
         if (tagFromDb.isPresent()){
            throw new EntityWithSuchNameAlreadyExists(String.format("Tag with name: %s already exist in DB",
                    tagName));
         }else {
-            Tag entity = modelMapper.map(tag, Tag.class);
-            tagDao.save(entity);
+            Tag entity = modelMapper.map(tagDto, Tag.class);
+            Tag savedEntity = tagDao.save(entity);
+            Long tagId = savedEntity.getId();
+            tagDto.setId(tagId);
+            return tagDto;
         }
     }
 

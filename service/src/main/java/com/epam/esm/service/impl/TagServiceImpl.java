@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exceptions.EntityWithSuchNameAlreadyExists;
 import com.epam.esm.service.TagService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,15 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public void save(TagDto tag) {
-        Tag entity = modelMapper.map(tag, Tag.class);
-        tagDao.save(entity);
+        String tagName = tag.getName();
+        Optional<Tag> tagFromDb = tagDao.findByName(tagName);
+        if (tagFromDb.isPresent()){
+           throw new EntityWithSuchNameAlreadyExists(String.format("Tag with name: %s already exist in DB",
+                   tagName));
+        }else {
+            Tag entity = modelMapper.map(tag, Tag.class);
+            tagDao.save(entity);
+        }
     }
 
     @Override

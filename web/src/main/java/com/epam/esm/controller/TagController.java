@@ -52,7 +52,7 @@ public class TagController {
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createCertificate(@RequestBody TagDto tagDto) {
+    public void createTag(@RequestBody TagDto tagDto) {
         tagService.save(tagDto);
     }
 

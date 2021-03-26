@@ -87,10 +87,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         List<TagDto> tags = certificate.getTags();
         if (tags != null) {
             tags.forEach(tag -> {
-                Tag tagEntity = modelMapper.map(tag, Tag.class);
-                Tag savedTag = tagDao.save(tagEntity);
-                Long tagId = savedTag.getId();
-                certificateTagsDao.save(certificateId, tagId);
+                Optional<Tag> tagFromDbOpt = tagDao.findByName(tag.getName());
+                if(tagFromDbOpt.isPresent()){
+                    Tag tagFromDb = tagFromDbOpt.get();
+                    Long tagFromDbId = tagFromDb.getId();
+                    certificateTagsDao.save(certificateId, tagFromDbId);
+                }else {
+                    Tag tagEntity = modelMapper.map(tag, Tag.class);
+                    Tag savedTag = tagDao.save(tagEntity);
+                    Long tagId = savedTag.getId();
+                    certificateTagsDao.save(certificateId, tagId);
+                }
             });
         }
 

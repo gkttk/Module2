@@ -28,9 +28,6 @@ public class GiftCertificateController {
     @GetMapping
     public ResponseEntity<List<GiftCertificateDto>> getAll() {
         List<GiftCertificateDto> certificates = giftCertificateService.findAll();
-      /*  if (certificates.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }*/                                                         //exception in service findAll
         return ResponseEntity.ok(certificates);
     }
 

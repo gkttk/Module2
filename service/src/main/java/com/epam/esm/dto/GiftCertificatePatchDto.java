@@ -19,18 +19,27 @@ public class GiftCertificatePatchDto {
     @Min(1)
     @Max(100)
     private Integer duration;
-  /*  @Valid
-    private List<TagDto> tags;*/ //todo для добавления новых тэгов
+    @Valid
+    private List<TagDto> tags;
 
 
     public GiftCertificatePatchDto() {
     }
 
-    public GiftCertificatePatchDto(String name, String description, BigDecimal price, Integer duration) {
+   /* public GiftCertificatePatchDto(String name, String description, BigDecimal price, Integer duration) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.duration = duration;
+    }*/
+
+
+    public List<TagDto> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<TagDto> tags) {
+        this.tags = tags;
     }
 
     public String getName() {

@@ -19,6 +19,6 @@ public interface GiftCertificateDao {
 
     void update(GiftCertificate certificate, long id);
 
-    void delete(long id);
+    boolean delete(long id);
 
 }

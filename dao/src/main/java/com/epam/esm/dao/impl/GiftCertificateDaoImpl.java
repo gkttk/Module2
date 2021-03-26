@@ -48,7 +48,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     @Override
     public List<GiftCertificate> getAllSorted(List<String> sortingFieldNames, String sortingOrderName) {
         String fieldNames = String.join(",", sortingFieldNames);
-        String query = SORTING_QUERY_FIRST_PART + fieldNames + " " + sortingOrderName;//todo concatenate
+        String query = SORTING_QUERY_FIRST_PART + fieldNames + " " + sortingOrderName;
         return template.query(query, rowMapper);
     }
 
@@ -87,6 +87,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         // template.update(SAVE_QUERY, name, description, price, duration, keyHolder);
 
         certificate.setId(keyHolder.getKey().longValue());
+
         return certificate;
     }
 
@@ -100,8 +101,9 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    public void delete(long id) {
-        template.update(DELETE_QUERY, id);
+    public boolean delete(long id) {
+        int updatedRows = template.update(DELETE_QUERY, id);
+        return updatedRows >= 1;
 
     }
 }

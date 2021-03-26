@@ -55,9 +55,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public List<GiftCertificateDto> getAllSorted(List<String> sortingFieldNames, String sortingOrder) {
         List<GiftCertificate> entities = giftCertificateDao.getAllSorted(sortingFieldNames, sortingOrder);
+
         return entities.stream()
                 .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
                 .collect(Collectors.toList());
+
+
 
 
     }
@@ -122,7 +125,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public void delete(long id) {
-        giftCertificateDao.delete(id);
+        boolean isDeleted = giftCertificateDao.delete(id);
+        if (!isDeleted){
+            throw new GiftCertificateNotFoundException(String.format("GiftCertificate with id: %d doesn't exist in DB"
+                    , id));
+        }
     }
 
     @Override

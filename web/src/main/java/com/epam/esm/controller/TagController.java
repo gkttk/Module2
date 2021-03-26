@@ -33,19 +33,22 @@ public class TagController {
 
 
     @GetMapping
-    public List<TagDto> getAll() {
-        return tagService.findAll();
+    public ResponseEntity<List<TagDto>> getAll() {
+        List<TagDto> tags = tagService.findAll();
+        return ResponseEntity.ok(tags);
     }
 
     @GetMapping("/{id}")
-    public TagDto getById(@PathVariable long id) {
-        return tagService.getById(id);
+    public ResponseEntity<TagDto> getById(@PathVariable long id) {
+        TagDto tag = tagService.getById(id);
+        return ResponseEntity.ok(tag);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable long id) {
         tagService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 

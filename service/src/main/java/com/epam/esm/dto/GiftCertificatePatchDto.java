@@ -26,14 +26,6 @@ public class GiftCertificatePatchDto {
     public GiftCertificatePatchDto() {
     }
 
-   /* public GiftCertificatePatchDto(String name, String description, BigDecimal price, Integer duration) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.duration = duration;
-    }*/
-
-
     public List<TagDto> getTags() {
         return tags;
     }

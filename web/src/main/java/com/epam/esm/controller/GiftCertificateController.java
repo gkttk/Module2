@@ -25,15 +25,21 @@ public class GiftCertificateController {
         this.giftCertificateService = giftCertificateService;
     }
 
+    @GetMapping(params = "partOfDescription")
+    public ResponseEntity<List<GiftCertificateDto>> getAllByPartOfDescription(@RequestParam String partOfDescription) {
+        List<GiftCertificateDto> certificates = giftCertificateService.getAllByPartOfDescription(partOfDescription);
+        return ResponseEntity.ok(certificates);
+    }
+
     @GetMapping(params = "partOfName")
-    public ResponseEntity<List<GiftCertificateDto>> getAllByPartOfName(@RequestParam String partOfName){
+    public ResponseEntity<List<GiftCertificateDto>> getAllByPartOfName(@RequestParam String partOfName) {
         List<GiftCertificateDto> certificates = giftCertificateService.getAllByPartOfName(partOfName);
         return ResponseEntity.ok(certificates);
     }
 
     @GetMapping(params = {"sortFields", "sortOrder"})
     public ResponseEntity<List<GiftCertificateDto>> getAllSorted(@RequestParam List<String> sortFields,
-                                                                 @RequestParam String sortOrder){
+                                                                 @RequestParam String sortOrder) {
         List<GiftCertificateDto> sortedCertificates = giftCertificateService.getAllSorted(sortFields, sortOrder);
         return ResponseEntity.ok(sortedCertificates);
     }
@@ -55,7 +61,6 @@ public class GiftCertificateController {
         List<GiftCertificateDto> certificates = giftCertificateService.getAllByTagName(tagName);
         return new ResponseEntity<>(certificates, HttpStatus.OK);
     }
-
 
 
     @DeleteMapping("/{id}")  //todo check isDelete
@@ -92,21 +97,5 @@ public class GiftCertificateController {
         giftCertificateService.patch(giftCertificatePatchDto, id);
         return ResponseEntity.noContent().build();
     }
-
-
-
-
-
-
-
-   /* @PostMapping(params = "newTags") //add to dto taglist
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createCertificateAndNewTags(@RequestBody GiftCertificateDto certificateDto,
-                                            @RequestParam(name = "newTags") String[] tagNames){
-        Arrays.stream(tagNames).
-                forEach(name-> restTemplate.postForObject("http://localhost:8080/tags",name, TagDto.class));
-        createCertificate(certificateDto);
-    }*/
-
 
 }

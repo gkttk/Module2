@@ -15,5 +15,5 @@ public interface TagService {
 
     void delete(long id);
 
-    Optional<TagDto> findByName(String tagName);
+    TagDto findByName(String tagName);
 }

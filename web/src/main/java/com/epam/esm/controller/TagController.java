@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/tags", produces = "application/json")
@@ -23,12 +22,8 @@ public class TagController {
 
     @GetMapping(params = "tagName")
     public ResponseEntity<TagDto> getByName(@RequestParam String tagName) {
-        Optional<TagDto> tagByNameOpt = tagService.findByName(tagName);
-        if (tagByNameOpt.isPresent()) {
-            TagDto tagDto = tagByNameOpt.get();
-            return new ResponseEntity<>(tagDto, HttpStatus.FOUND);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        TagDto tag = tagService.findByName(tagName);
+        return ResponseEntity.ok(tag);
     }
 
 
@@ -45,7 +40,6 @@ public class TagController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteById(@PathVariable long id) {
         tagService.delete(id);
         return ResponseEntity.noContent().build();

@@ -38,7 +38,8 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     private final static String SORTING_QUERY_FIRST_PART = "SELECT * FROM " + TABLE_NAME + " ORDER BY ";
 
     private final static String FIND_BY_NAME_PART_PROCEDURE_NAME = "searchByPartOfName";
-
+    private final static String FIND_BY_DESCRIPTION_PART_PROCEDURE_NAME = "searchByPartOfDescription";
+    private final static String RESULTS_SET_KEY = "certificates";
 
 
     private final JdbcTemplate template;
@@ -51,22 +52,38 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
 
+    private Map<String, Object> executeProcedure(String procedureName, SqlParameterSource params) {
+
+        SimpleJdbcCall simpleJdbcCall = new SimpleJdbcCall(template)
+                .withProcedureName(procedureName)
+                .returningResultSet(RESULTS_SET_KEY, rowMapper);
+
+        return simpleJdbcCall.execute(params);
+    }
+
+    @Override
+    public List<GiftCertificate> getAllByPartOfDescription(String partOfDescription) {
+
+        String nameInputParam = "in_partOfDescription";
+
+        SqlParameterSource params = new MapSqlParameterSource().addValue(nameInputParam, partOfDescription);
+
+        Map<String, Object> procedureResult = executeProcedure(FIND_BY_DESCRIPTION_PART_PROCEDURE_NAME, params);
+
+        return (List<GiftCertificate>) procedureResult.get(RESULTS_SET_KEY);
+
+    }
+
     @Override
     public List<GiftCertificate> getAllByPartOfName(String partOfName) {
 
-        String resultSetsKeyName = "certificates";
         String nameInputParam = "in_partOfName";
-
-        SimpleJdbcCall simpleJdbcCall = new SimpleJdbcCall(template)
-                .withProcedureName(FIND_BY_NAME_PART_PROCEDURE_NAME)
-                .returningResultSet(resultSetsKeyName, rowMapper);
 
         SqlParameterSource params = new MapSqlParameterSource().addValue(nameInputParam, partOfName);
 
-        Map<String, Object> procedureResult = simpleJdbcCall.execute(params);
+        Map<String, Object> procedureResult = executeProcedure(FIND_BY_NAME_PART_PROCEDURE_NAME, params);
 
-        return (List<GiftCertificate>) procedureResult.get(resultSetsKeyName);
-
+        return (List<GiftCertificate>) procedureResult.get(RESULTS_SET_KEY);
 
     }
 
@@ -110,7 +127,6 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
             ps.setInt(4, duration);
             return ps;
         }, keyHolder);
-        // template.update(SAVE_QUERY, name, description, price, duration, keyHolder);
 
         certificate.setId(keyHolder.getKey().longValue());
 

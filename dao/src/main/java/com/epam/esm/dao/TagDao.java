@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface TagDao {
 
-    Tag getById(long id);
+    Optional<Tag> getById(long id);
 
 
     List<Tag> getAllByCertificateId(long certificateId);
@@ -16,7 +16,7 @@ public interface TagDao {
 
     Tag save(Tag tag);
 
-    void delete(long id);
+    boolean delete(long id);
 
     Optional<Tag> findByName(String tagName);
 }

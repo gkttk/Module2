@@ -15,6 +15,7 @@ public class CertificateTagsDaoImpl implements CertificateTagsDao {
 
     private final static String DELETE_ALL_TAGS_FOR_CERTIFICATE = "DELETE FROM " + TABLE_NAME +
             " WHERE certificate_id = ?";
+
     @Autowired
     public CertificateTagsDaoImpl(JdbcTemplate template) {
         this.template = template;

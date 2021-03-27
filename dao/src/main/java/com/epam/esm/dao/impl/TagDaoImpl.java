@@ -39,11 +39,11 @@ public class TagDaoImpl implements TagDao {
     }
 
 
-
-
     @Override
-    public Tag getById(long id) {
-        return template.queryForObject(GET_BY_ID_QUERY, rowMapper, id);
+    public Optional<Tag> getById(long id) {
+        Tag tag = template.queryForStream(GET_BY_ID_QUERY, rowMapper, id).findFirst().orElse(null);
+        return Optional.ofNullable(tag);
+
     }
 
     @Override
@@ -68,15 +68,14 @@ public class TagDaoImpl implements TagDao {
             return ps;
         }, keyHolder);
 
-       // template.update(SAVE_QUERY, name,keyHolder);
-
         tag.setId(keyHolder.getKey().longValue());
         return tag;
     }
 
     @Override
-    public void delete(long id) {
-        template.update(DELETE_QUERY, id);
+    public boolean delete(long id) {
+        int updatedRows = template.update(DELETE_QUERY, id);
+        return updatedRows >= 1;
     }
 
     @Override

@@ -25,6 +25,11 @@ public class GiftCertificateController {
         this.giftCertificateService = giftCertificateService;
     }
 
+    @GetMapping(params = "partOfName")
+    public ResponseEntity<List<GiftCertificateDto>> getAllByPartOfName(@RequestParam String partOfName){
+        List<GiftCertificateDto> certificates = giftCertificateService.getAllByPartOfName(partOfName);
+        return ResponseEntity.ok(certificates);
+    }
 
     @GetMapping(params = {"sortFields", "sortOrder"})
     public ResponseEntity<List<GiftCertificateDto>> getAllSorted(@RequestParam List<String> sortFields,
@@ -35,7 +40,7 @@ public class GiftCertificateController {
 
     @GetMapping
     public ResponseEntity<List<GiftCertificateDto>> getAll() {
-        List<GiftCertificateDto> certificates = giftCertificateService.findAll();
+        List<GiftCertificateDto> certificates = giftCertificateService.getAll();
         return ResponseEntity.ok(certificates);
     }
 

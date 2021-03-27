@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface GiftCertificateService {
 
+    List<GiftCertificateDto> getAllByPartOfName(String partOfName);
 
     List<GiftCertificateDto> getAllSorted(List<String> sortingFieldNames, String sortingOrder);
 
@@ -15,7 +16,7 @@ public interface GiftCertificateService {
 
     GiftCertificateDto getById(long id);
 
-    List<GiftCertificateDto> findAll();
+    List<GiftCertificateDto> getAll();
 
     void save(GiftCertificateDto certificate);
 

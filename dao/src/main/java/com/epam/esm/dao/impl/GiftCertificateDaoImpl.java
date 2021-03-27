@@ -5,6 +5,9 @@ import com.epam.esm.entity.GiftCertificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -13,8 +16,8 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
@@ -34,6 +37,8 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     private final static String SORTING_QUERY_FIRST_PART = "SELECT * FROM " + TABLE_NAME + " ORDER BY ";
 
+    private final static String FIND_BY_NAME_PART_PROCEDURE_NAME = "searchByPartOfName";
+
 
 
     private final JdbcTemplate template;
@@ -43,6 +48,26 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     public GiftCertificateDaoImpl(JdbcTemplate template, RowMapper<GiftCertificate> rowMapper) {
         this.template = template;
         this.rowMapper = rowMapper;
+    }
+
+
+    @Override
+    public List<GiftCertificate> getAllByPartOfName(String partOfName) {
+
+        String resultSetsKeyName = "certificates";
+        String nameInputParam = "in_partOfName";
+
+        SimpleJdbcCall simpleJdbcCall = new SimpleJdbcCall(template)
+                .withProcedureName(FIND_BY_NAME_PART_PROCEDURE_NAME)
+                .returningResultSet(resultSetsKeyName, rowMapper);
+
+        SqlParameterSource params = new MapSqlParameterSource().addValue(nameInputParam, partOfName);
+
+        Map<String, Object> procedureResult = simpleJdbcCall.execute(params);
+
+        return (List<GiftCertificate>) procedureResult.get(resultSetsKeyName);
+
+
     }
 
     @Override
@@ -67,6 +92,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     public List<GiftCertificate> findAll() {
         return template.query(GET_ALL_QUERY, rowMapper);
     }
+
 
     @Override
     public GiftCertificate save(GiftCertificate certificate) {

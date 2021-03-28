@@ -71,14 +71,14 @@ public class GiftCertificateController {
 
 
     @PostMapping
-    public ResponseEntity<Void> createCertificate(@RequestBody @Valid GiftCertificateDto certificateDto,
-                                                  BindingResult bindingResult) {
+    public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody @Valid GiftCertificateDto certificateDto,
+                                                                BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
-        giftCertificateService.save(certificateDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        GiftCertificateDto savedCertificate = giftCertificateService.save(certificateDto);
+        return new ResponseEntity<>(savedCertificate, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

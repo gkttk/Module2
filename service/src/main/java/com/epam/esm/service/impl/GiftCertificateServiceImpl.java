@@ -55,17 +55,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public List<GiftCertificateDto> getAllByPartOfDescription(String partOfDescription) {
         List<GiftCertificate> entities = giftCertificateDao.getAllByPartOfDescription(partOfDescription);
-
 
         if (entities.isEmpty()) {
             throw new EntityNotFoundException(String.format("There are no gift certificates in DB with description like: %s",
                     partOfDescription));
         }
-
         return entities.stream()
                 .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
                 .collect(Collectors.toList());
@@ -79,7 +76,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new EntityNotFoundException(String.format("There are no gift certificates in DB with names like: %s",
                     partOfName));
         }
-
         return entities.stream()
                 .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
                 .collect(Collectors.toList());
@@ -92,7 +88,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (entities.isEmpty()) {
             throw new EntityNotFoundException("There are no gift certificates in DB");
         }
-
         return entities.stream()
                 .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
                 .collect(Collectors.toList());
@@ -106,12 +101,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new EntityNotFoundException(String.format("There are no gift certificates with this tag name: %s in DB",
                     tagName));
         }
-
         return certificates.stream()
                 .map(certificate -> modelMapper.map(certificate, GiftCertificateDto.class))
                 .peek(this::fillCertificateDtoWithTags)
                 .collect(Collectors.toList());
-
     }
 
     @Override
@@ -127,9 +120,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     }
 
+
+
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void save(GiftCertificateDto certificate) {
+    public GiftCertificateDto save(GiftCertificateDto certificate) {
         GiftCertificate giftCertificate = modelMapper.map(certificate, GiftCertificate.class);
         GiftCertificate savedCertificate = giftCertificateDao.save(giftCertificate);
         Long certificateId = savedCertificate.getId();
@@ -140,7 +135,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 addTagToCertificate(tagDto, certificateId);
             });
         }
-
+        GiftCertificateDto certificateDto = modelMapper.map(savedCertificate, GiftCertificateDto.class);
+        fillCertificateDtoWithTags(certificateDto);
+       return certificateDto;
     }
 
 
@@ -164,6 +161,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (tags != null) {
             tags.forEach(tagDto -> addTagToCertificate(tagDto, certificateId));
         }
+
+
 
     }
 

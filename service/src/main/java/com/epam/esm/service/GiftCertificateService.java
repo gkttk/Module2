@@ -21,7 +21,7 @@ public interface GiftCertificateService {
 
     List<GiftCertificateDto> getAll();
 
-    void save(GiftCertificateDto certificate);
+    GiftCertificateDto save(GiftCertificateDto certificate);
 
     void update(GiftCertificateDto certificate, long id);
 

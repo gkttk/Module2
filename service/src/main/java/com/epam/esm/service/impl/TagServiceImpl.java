@@ -69,7 +69,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public void delete(long id) {
         boolean isDeleted = tagDao.delete(id);
-        if (isDeleted) {
+        if (!isDeleted) {
             throw new EntityNotFoundException(String.format("Tag with id: %d already exist in DB",
                     id));
         }

@@ -9,12 +9,16 @@ import com.epam.esm.service.TagService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, readOnly = true)
 public class TagServiceImpl implements TagService {
 
     private final TagDao tagDao;
@@ -38,13 +42,14 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagDto> findAll() {
         List<Tag> entities = tagDao.findAll();
-        if (entities.isEmpty()){
+        if (entities.isEmpty()) {
             throw new EntityNotFoundException("There are no tags in DB");
         }
         return entities.stream().map(entity -> modelMapper.map(entity, TagDto.class)).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public TagDto save(TagDto tagDto) {
         String tagName = tagDto.getName();
         Optional<Tag> tagFromDbOpt = tagDao.findByName(tagName);
@@ -64,7 +69,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public void delete(long id) {
         boolean isDeleted = tagDao.delete(id);
-        if (isDeleted){
+        if (isDeleted) {
             throw new EntityNotFoundException(String.format("Tag with id: %d already exist in DB",
                     id));
         }

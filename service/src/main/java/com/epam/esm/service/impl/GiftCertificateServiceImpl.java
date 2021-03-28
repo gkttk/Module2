@@ -13,6 +13,9 @@ import com.epam.esm.service.GiftCertificateService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,6 +23,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED,
+        readOnly = true)
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
 
@@ -40,7 +45,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public List<GiftCertificateDto> getAll() {
         List<GiftCertificate> entities = giftCertificateDao.findAll();
-
         if (entities.isEmpty()) {
             throw new EntityNotFoundException("There are no gift certificates in DB");
         }
@@ -55,6 +59,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public List<GiftCertificateDto> getAllByPartOfDescription(String partOfDescription) {
         List<GiftCertificate> entities = giftCertificateDao.getAllByPartOfDescription(partOfDescription);
+
 
         if (entities.isEmpty()) {
             throw new EntityNotFoundException(String.format("There are no gift certificates in DB with description like: %s",
@@ -122,8 +127,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     }
 
-    //transactional
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void save(GiftCertificateDto certificate) {
         GiftCertificate giftCertificate = modelMapper.map(certificate, GiftCertificate.class);
         GiftCertificate savedCertificate = giftCertificateDao.save(giftCertificate);
@@ -140,6 +145,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
 
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void update(GiftCertificateDto certificateDto, long certificateId) {
 
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.getById(certificateId);
@@ -171,6 +177,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void patch(GiftCertificatePatchDto giftCertificatePatchDto, long certificateId) {
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.getById(certificateId);
 

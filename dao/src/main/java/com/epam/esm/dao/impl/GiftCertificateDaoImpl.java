@@ -18,6 +18,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
@@ -35,7 +36,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
             " gc.create_date, gc.last_update_date FROM " + TABLE_NAME + " gc JOIN certificates_tags ct on gc.id = ct.certificate_id" +
             " JOIN tag t on t.id = ct.tag_id WHERE t.name = ?";
 
-    private final static String SORTING_QUERY_FIRST_PART = "SELECT * FROM " + TABLE_NAME + " ORDER BY ";
+    private final static String SORTING_QUERY_FIRST_PART = "SELECT * FROM " + TABLE_NAME + " ORDER BY";
 
     private final static String FIND_BY_NAME_PART_PROCEDURE_NAME = "searchByPartOfName";
     private final static String FIND_BY_DESCRIPTION_PART_PROCEDURE_NAME = "searchByPartOfDescription";
@@ -90,7 +91,12 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     @Override
     public List<GiftCertificate> getAllSorted(List<String> sortingFieldNames, String sortingOrderName) {
         String fieldNames = String.join(",", sortingFieldNames);
-        String query = SORTING_QUERY_FIRST_PART + fieldNames + " " + sortingOrderName;
+
+        String query = new StringJoiner(" ")
+                .add(SORTING_QUERY_FIRST_PART)
+                .add(fieldNames)
+                .add(sortingOrderName).toString();
+
         return template.query(query, rowMapper);
     }
 

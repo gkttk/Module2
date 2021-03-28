@@ -8,4 +8,5 @@ dependencies {
 
     compile 'org.hibernate:hibernate-validator:6.0.13.Final'
 
+    implementation group: 'org.springframework', name: 'spring-jdbc', version: '5.3.5'//todo dont see this dep from dao module
 }

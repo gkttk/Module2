@@ -21,7 +21,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"com.epam.esm.controller"})
+@ComponentScan(basePackages = {"com.epam.esm.controller", "com.epam.esm.advice" })
 public class WebConfig implements WebMvcConfigurer {
 
 

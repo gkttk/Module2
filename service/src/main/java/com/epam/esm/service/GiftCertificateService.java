@@ -23,9 +23,9 @@ public interface GiftCertificateService {
 
     GiftCertificateDto save(GiftCertificateDto certificate);
 
-    void update(GiftCertificateDto certificate, long id);
+    GiftCertificateDto update(GiftCertificateDto certificate, long id);
 
     void delete(long id);
 
-    void patch(GiftCertificatePatchDto giftCertificatePatchDto, long id);
+    GiftCertificateDto patch(GiftCertificatePatchDto giftCertificatePatchDto, long id);
 }

@@ -26,10 +26,10 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     private final static String TABLE_NAME = "gift_certificate";
     private final static String GET_BY_ID_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
     private final static String GET_ALL_QUERY = "SELECT * FROM " + TABLE_NAME;
-    private final static String SAVE_QUERY = "INSERT INTO " + TABLE_NAME + " (name, description, price, duration) " +
-            "VALUES (?,?,?,?)";
+    private final static String SAVE_QUERY = "INSERT INTO " + TABLE_NAME + " (name, description, price, duration," +
+            " create_date, last_update_date) " + "VALUES (?,?,?,?,?,?)";
     private final static String UPDATE_QUERY = "UPDATE " + TABLE_NAME + " SET name = ?, description = ?, " +
-            "price = ?, duration = ? WHERE id = ?";
+            "price = ?, duration = ?, last_update_date = ? WHERE id = ?";
     private final static String DELETE_QUERY = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
 
     private final static String GET_ALL_BY_TAG_NAME = "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration," +
@@ -124,6 +124,9 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         String description = certificate.getDescription();
         BigDecimal price = certificate.getPrice();
         int duration = certificate.getDuration();
+        String createDate = certificate.getCreateDate();
+        String lastUpdateDate = certificate.getLastUpdateDate();
+
 
         template.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(SAVE_QUERY, Statement.RETURN_GENERATED_KEYS);
@@ -131,6 +134,8 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
             ps.setString(2, description);
             ps.setBigDecimal(3, price);
             ps.setInt(4, duration);
+            ps.setString(5, createDate);
+            ps.setString(6, lastUpdateDate);
             return ps;
         }, keyHolder);
 
@@ -145,7 +150,8 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         String description = certificate.getDescription();
         BigDecimal price = certificate.getPrice();
         int duration = certificate.getDuration();
-        template.update(UPDATE_QUERY, name, description, price, duration, id);
+        String lastUpdateTime = certificate.getLastUpdateDate();
+        template.update(UPDATE_QUERY, name, description, price, duration,lastUpdateTime, id);
     }
 
     @Override

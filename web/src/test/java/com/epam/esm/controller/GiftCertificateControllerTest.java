@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,12 +40,12 @@ public class GiftCertificateControllerTest {
     @BeforeAll
     static void init() {
         defaultCertDto = new GiftCertificateDto(100L, "testCertificate", "description",
-                new BigDecimal("1.5"), 10, new Date(), new Date(),
+                new BigDecimal("1.5"), 10, "Date", "Date",
                 Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
         defaultTagDto = new TagDto(100L, "testTag");
 
         updatedDto = new GiftCertificateDto(null, "testCertificate", "description",
-                new BigDecimal("1.5"), 10, new Date(), new Date(),
+                new BigDecimal("1.5"), 10, "Date", "Date",
                 Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
 
         patchedDto = new GiftCertificatePatchDto("testCertificate", "description",

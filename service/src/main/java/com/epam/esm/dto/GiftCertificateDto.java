@@ -27,9 +27,9 @@ public class GiftCertificateDto {
     @Max(100)
     private int duration;
     @Null
-    private Date createDate;
+    private String createDate;
     @Null
-    private Date lastUpdateDate;
+    private String lastUpdateDate;
 
     @Valid
     private List<TagDto> tags;
@@ -39,7 +39,7 @@ public class GiftCertificateDto {
     }
 
     public GiftCertificateDto(Long id, String name, String description, BigDecimal price,
-                              int duration, Date createDate, Date lastUpdateDate, List<TagDto> tags) {
+                              int duration, String createDate, String lastUpdateDate, List<TagDto> tags) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -78,11 +78,11 @@ public class GiftCertificateDto {
         return duration;
     }
 
-    public Date getCreateDate() {
+    public String getCreateDate() {
         return createDate;
     }
 
-    public Date getLastUpdateDate() {
+    public String getLastUpdateDate() {
         return lastUpdateDate;
     }
 
@@ -107,20 +107,20 @@ public class GiftCertificateDto {
         this.duration = duration;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
 
-    public void setLastUpdateDate(Date lastUpdateDate) {
+    public void setLastUpdateDate(String lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (this == o){
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass()){
             return false;
         }
         GiftCertificateDto that = (GiftCertificateDto) o;
@@ -147,8 +147,8 @@ public class GiftCertificateDto {
                 .add("description='" + description + "'")
                 .add("price=" + price)
                 .add("duration=" + duration)
-                .add("createDate=" + createDate)
-                .add("lastUpdateDate=" + lastUpdateDate)
+                .add("createDate='" + createDate + "'")
+                .add("lastUpdateDate='" + lastUpdateDate + "'")
                 .add("tags=" + tags)
                 .toString();
     }

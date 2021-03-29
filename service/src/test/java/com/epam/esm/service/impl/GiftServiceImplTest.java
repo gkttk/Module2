@@ -18,13 +18,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+
 public class GiftServiceImplTest {
 
     @Mock
@@ -52,9 +56,9 @@ public class GiftServiceImplTest {
         tag = new Tag(100L, "testTag");
         tagDto = new TagDto(100L, "testTag");
         testDto = new GiftCertificateDto(100L, "testCertificate", "description", new BigDecimal("1.5"),
-                10, new Date(), new Date(), Arrays.asList(tagDto, tagDto, tagDto));
+                10, "Date", "Date", Arrays.asList(tagDto, tagDto, tagDto));
         testEntity = new GiftCertificate(100L, "testCertificate", "description", new BigDecimal("1.5"),
-                10, new Date(), new Date());
+                10, "Date", "Date");
 
     }
 
@@ -258,10 +262,10 @@ public class GiftServiceImplTest {
         //given
 
         GiftCertificateDto certDtoArg = new GiftCertificateDto(null, "testCertificate", "description",
-                new BigDecimal("1.5"), 10, new Date(), new Date(), Arrays.asList(tagDto, tagDto, tagDto));
+                new BigDecimal("1.5"), 10, "Date", "Date", Arrays.asList(tagDto, tagDto, tagDto));
 
         GiftCertificate entityWithoutId = new GiftCertificate(null, "testCertificate", "description",
-                new BigDecimal("1.5"), 10, new Date(), new Date());
+                new BigDecimal("1.5"), 10, "Date", "Date");
         when(modelMapper.map(certDtoArg, GiftCertificate.class)).thenReturn(entityWithoutId);
         when(certDao.save(entityWithoutId)).thenReturn(testEntity);
         Long tagId = tag.getId();
@@ -288,10 +292,10 @@ public class GiftServiceImplTest {
     public void testSaveShouldSaveEntityWithGivenTagsIfTheyAreGivenAndNotPresentInDbAndReturnDtoWithId() {
         //given
         GiftCertificateDto certDtoArg = new GiftCertificateDto(null, "testCertificate", "description",
-                new BigDecimal("1.5"), 10, new Date(), new Date(), Arrays.asList(tagDto, tagDto, tagDto));
+                new BigDecimal("1.5"), 10, "Date", "Date", Arrays.asList(tagDto, tagDto, tagDto));
 
         GiftCertificate entityWithoutId = new GiftCertificate(null, "testCertificate", "description",
-                new BigDecimal("1.5"), 10, new Date(), new Date());
+                new BigDecimal("1.5"), 10, "Date", "Date");
         when(modelMapper.map(certDtoArg, GiftCertificate.class)).thenReturn(entityWithoutId);
         when(certDao.save(entityWithoutId)).thenReturn(testEntity);
         String tagName = tag.getName();
@@ -403,7 +407,7 @@ public class GiftServiceImplTest {
         //when
         service.patch(dtoForPatch, certificateId);
         //then
-        verify(certDao).getById(certificateId);
+        verify(certDao,times(2)).getById(certificateId);
         verify(certDao).update(testEntity, certificateId);
         verify(tagDao).getAllByCertificateId(certificateId);
         verify(tagDao).findByName(tag.getName());

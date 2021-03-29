@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dateprovider.DateProvider;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.GiftCertificatePatchDto;
 import com.epam.esm.dto.TagDto;
@@ -121,11 +122,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
 
-
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public GiftCertificateDto save(GiftCertificateDto certificate) {
         GiftCertificate giftCertificate = modelMapper.map(certificate, GiftCertificate.class);
+        String currentTime = DateProvider.getNowAsString();
+        giftCertificate.setCreateDate(currentTime);
+        giftCertificate.setLastUpdateDate(currentTime);
         GiftCertificate savedCertificate = giftCertificateDao.save(giftCertificate);
         Long certificateId = savedCertificate.getId();
 
@@ -138,14 +141,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         GiftCertificateDto certificateDto = modelMapper.map(savedCertificate, GiftCertificateDto.class);
         fillCertificateDtoWithTags(certificateDto);
 
-        //todo +1 query
-       return certificateDto;
+        return certificateDto;
     }
 
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void update(GiftCertificateDto certificateDto, long certificateId) {
+    public GiftCertificateDto update(GiftCertificateDto certificateDto, long certificateId) {
 
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.getById(certificateId);
 
@@ -154,6 +156,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                     certificateId));
         }
 
+        String currentTime = DateProvider.getNowAsString();
+        certificateDto.setLastUpdateDate(currentTime);
+
         GiftCertificate giftCertificate = modelMapper.map(certificateDto, GiftCertificate.class);
         giftCertificateDao.update(giftCertificate, certificateId);
 
@@ -161,10 +166,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         List<TagDto> tags = certificateDto.getTags();
         if (tags != null) {
-            tags.forEach(tagDto -> addTagToCertificate(tagDto, certificateId));
+            tags.forEach(tagDto -> {
+                Tag tag = addTagToCertificate(tagDto, certificateId);
+                tagDto.setId(tag.getId());
+            });
         }
 
-
+        return certificateDto;
 
     }
 
@@ -172,15 +180,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public void delete(long id) {
         boolean isDeleted = giftCertificateDao.delete(id);
         if (!isDeleted) {
-            throw new EntityNotFoundException(String.format("GiftCertificate with id: %d doesn't exist in DB"
-                    , id));
+            throw new EntityNotFoundException(String.format("GiftCertificate with id: %d doesn't exist in DB", id));
         }
     }
 
     //todo return dto
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void patch(GiftCertificatePatchDto giftCertificatePatchDto, long certificateId) {
+    public GiftCertificateDto patch(GiftCertificatePatchDto giftCertificatePatchDto, long certificateId) {
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.getById(certificateId);
 
         GiftCertificate certificate = certificateOpt.orElseThrow(() ->
@@ -203,6 +210,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (duration != null) {
             certificate.setDuration(duration);
         }
+
+        String currentTime = DateProvider.getNowAsString();
+        certificate.setLastUpdateDate(currentTime);
 
         giftCertificateDao.update(certificate, certificateId);
 
@@ -230,21 +240,27 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 }
             });
         }
+
+        Optional<GiftCertificate> patchedEntityOpt = giftCertificateDao.getById(certificateId);
+        GiftCertificate patchedEntity = patchedEntityOpt.get();
+        return modelMapper.map(patchedEntity, GiftCertificateDto.class);
+
     }
 
 
-    private void addTagToCertificate(TagDto tagDto, long certificateId) {
+    private Tag addTagToCertificate(TagDto tagDto, long certificateId) {
         Optional<Tag> tagFromDbOpt = tagDao.findByName(tagDto.getName());
         Long tagId;
+        Tag tag;
         if (tagFromDbOpt.isPresent()) {
-            Tag tagFromDb = tagFromDbOpt.get();
-            tagId = tagFromDb.getId();
+            tag = tagFromDbOpt.get();
         } else {
             Tag tagEntity = modelMapper.map(tagDto, Tag.class);
-            Tag savedTag = tagDao.save(tagEntity);
-            tagId = savedTag.getId();
+            tag = tagDao.save(tagEntity);
         }
+        tagId = tag.getId();
         certificateTagsDao.save(certificateId, tagId);
+        return tag;
     }
 
 

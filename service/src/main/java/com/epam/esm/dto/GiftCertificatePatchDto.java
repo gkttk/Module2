@@ -76,22 +76,23 @@ public class GiftCertificatePatchDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (this == o){
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass()){
             return false;
         }
         GiftCertificatePatchDto that = (GiftCertificatePatchDto) o;
         return Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(price, that.price) &&
-                Objects.equals(duration, that.duration);
+                Objects.equals(duration, that.duration) &&
+                Objects.equals(tags, that.tags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, price, duration);
+        return Objects.hash(name, description, price, duration, tags);
     }
 
     @Override
@@ -101,6 +102,7 @@ public class GiftCertificatePatchDto {
                 .add("description='" + description + "'")
                 .add("price=" + price)
                 .add("duration=" + duration)
+                .add("tags=" + tags)
                 .toString();
     }
 }

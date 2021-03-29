@@ -12,14 +12,14 @@ public class GiftCertificate {
     private String description;
     private BigDecimal price;
     private int duration;
-    private Date createDate;
-    private Date lastUpdateDate;
+    private String createDate;
+    private String lastUpdateDate;
 
 
     public GiftCertificate() {
     }
 
-    public GiftCertificate(Long id, String name, String description, BigDecimal price, int duration, Date createDate, Date lastUpdateDate) {
+    public GiftCertificate(Long id, String name, String description, BigDecimal price, int duration, String createDate, String lastUpdateDate) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -50,11 +50,11 @@ public class GiftCertificate {
         return duration;
     }
 
-    public Date getCreateDate() {
+    public String getCreateDate() {
         return createDate;
     }
 
-    public Date getLastUpdateDate() {
+    public String getLastUpdateDate() {
         return lastUpdateDate;
     }
 
@@ -78,20 +78,20 @@ public class GiftCertificate {
         this.duration = duration;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
 
-    public void setLastUpdateDate(Date lastUpdateDate) {
+    public void setLastUpdateDate(String lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (this == o){
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass()){
             return false;
         }
         GiftCertificate that = (GiftCertificate) o;
@@ -109,7 +109,6 @@ public class GiftCertificate {
         return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate);
     }
 
-
     @Override
     public String toString() {
         return new StringJoiner(", ", GiftCertificate.class.getSimpleName() + "[", "]")
@@ -118,8 +117,8 @@ public class GiftCertificate {
                 .add("description='" + description + "'")
                 .add("price=" + price)
                 .add("duration=" + duration)
-                .add("createDate=" + createDate)
-                .add("lastUpdateDate=" + lastUpdateDate)
+                .add("createDate='" + createDate + "'")
+                .add("lastUpdateDate='" + lastUpdateDate + "'")
                 .toString();
     }
 }

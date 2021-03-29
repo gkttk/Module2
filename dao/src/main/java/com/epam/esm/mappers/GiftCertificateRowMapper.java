@@ -25,8 +25,8 @@ public class GiftCertificateRowMapper implements RowMapper<GiftCertificate> {
         String description = rs.getString(DESCRIPTION);
         BigDecimal price = rs.getBigDecimal(PRICE);
         int duration = rs.getInt(DURATION);
-        Date createDate = rs.getDate(CREATE_DATE);
-        Date lastUpdateDate = rs.getDate(LAST_UPDATE_DATE);
+        String createDate = rs.getString(CREATE_DATE);
+        String lastUpdateDate = rs.getString(LAST_UPDATE_DATE);
         return new GiftCertificate(id, name, description, price, duration, createDate, lastUpdateDate);
     }
 }

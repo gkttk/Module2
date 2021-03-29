@@ -1,16 +1,17 @@
 package com.epam.esm.advice.error;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-//todo enum error
-public class ResponseError {
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+public enum ResponseError {
+    ENTITY_NOT_FOUNT("Entity is not found",40401),
+    ENTITY_ALREADY_EXISTS("Entity already exists", 42000),
+    INCORRECT_VALIDATION("Incorrect validation", 43501);
 
     private String message;
     private int code;
 
-    public ResponseError() {
-    }
-
-    public ResponseError(String message, int code) {
+    ResponseError(String message, int code) {
         this.message = message;
         this.code = code;
     }
@@ -19,15 +20,8 @@ public class ResponseError {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public int getCode() {
         return code;
     }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
 }

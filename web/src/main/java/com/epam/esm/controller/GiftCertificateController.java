@@ -59,11 +59,11 @@ public class GiftCertificateController {
     @GetMapping(params = "tagName")
     public ResponseEntity<List<GiftCertificateDto>> getAllByTagName(@RequestParam String tagName) {
         List<GiftCertificateDto> certificates = giftCertificateService.getAllByTagName(tagName);
-        return new ResponseEntity<>(certificates, HttpStatus.OK);
+        return ResponseEntity.ok(certificates);
     }
 
 
-    @DeleteMapping("/{id}")  //todo check isDelete
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable long id) {
         giftCertificateService.delete(id);
         return ResponseEntity.noContent().build();
@@ -83,7 +83,10 @@ public class GiftCertificateController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateCertificate(@RequestBody @Valid GiftCertificateDto giftCertificateDto,
-                                                  @PathVariable long id) {
+                                                  @PathVariable long id, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
         giftCertificateService.update(giftCertificateDto, id);
         return ResponseEntity.noContent().build();
     }

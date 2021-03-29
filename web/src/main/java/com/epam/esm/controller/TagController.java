@@ -5,13 +5,14 @@ import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping(path = "/tags", produces = "application/json")
 public class TagController {
 
@@ -27,7 +28,6 @@ public class TagController {
         TagDto tag = tagService.findByName(tagName);
         return ResponseEntity.ok(tag);
     }
-
 
     @GetMapping
     public ResponseEntity<List<TagDto>> getAll() {
@@ -47,13 +47,8 @@ public class TagController {
         return ResponseEntity.noContent().build();
     }
 
-
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<TagDto> createTag(@RequestBody @Valid TagDto tagDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            return ResponseEntity.badRequest().build();
-        }
-
+    public ResponseEntity<TagDto> createTag(@RequestBody @Valid TagDto tagDto) {
         TagDto savedTag = tagService.save(tagDto);
         return new ResponseEntity<>(savedTag, HttpStatus.CREATED);
 

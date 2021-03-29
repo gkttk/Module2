@@ -41,11 +41,11 @@ public class TagServiceImplTest {
     private static TagDto testDto;
     private static Tag testEntity;
 
-@BeforeAll
-static void init() {
-    testDto = new TagDto(100L, "test");
-    testEntity = new Tag(100L, "test");
-}
+    @BeforeAll
+    static void init() {
+        testDto = new TagDto(100L, "test");
+        testEntity = new Tag(100L, "test");
+    }
 
     @Test
     public void testGetByIdShouldReturnDtoWhenEntityWithGivenIdIsPresentInDb() {

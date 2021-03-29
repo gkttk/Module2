@@ -137,6 +137,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         GiftCertificateDto certificateDto = modelMapper.map(savedCertificate, GiftCertificateDto.class);
         fillCertificateDtoWithTags(certificateDto);
+
+        //todo +1 query
        return certificateDto;
     }
 
@@ -175,6 +177,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
     }
 
+    //todo return dto
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void patch(GiftCertificatePatchDto giftCertificatePatchDto, long certificateId) {

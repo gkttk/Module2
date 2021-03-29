@@ -1,10 +1,13 @@
 package com.epam.esm.dto;
 
+import org.springframework.validation.annotation.Validated;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.StringJoiner;
+
 
 public class TagDto {
 

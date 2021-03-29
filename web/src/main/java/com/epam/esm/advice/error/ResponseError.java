@@ -1,5 +1,7 @@
 package com.epam.esm.advice.error;
 
+
+//todo enum error
 public class ResponseError {
 
     private String message;

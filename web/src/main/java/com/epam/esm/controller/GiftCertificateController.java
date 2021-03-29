@@ -6,7 +6,6 @@ import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +24,7 @@ public class GiftCertificateController {
         this.giftCertificateService = giftCertificateService;
     }
 
+    //todo one endpoint for params query
     @GetMapping(params = "partOfDescription")
     public ResponseEntity<List<GiftCertificateDto>> getAllByPartOfDescription(@RequestParam String partOfDescription) {
         List<GiftCertificateDto> certificates = giftCertificateService.getAllByPartOfDescription(partOfDescription);
@@ -71,32 +71,22 @@ public class GiftCertificateController {
 
 
     @PostMapping
-    public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody @Valid GiftCertificateDto certificateDto,
-                                                                BindingResult bindingResult) {
+    public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody @Valid GiftCertificateDto certificateDto) {
 
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
-        }
         GiftCertificateDto savedCertificate = giftCertificateService.save(certificateDto);
         return new ResponseEntity<>(savedCertificate, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateCertificate(@RequestBody @Valid GiftCertificateDto giftCertificateDto,
-                                                  @PathVariable long id, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
-        }
+                                                  @PathVariable long id) {
         giftCertificateService.update(giftCertificateDto, id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<Void> patchCertificate(@RequestBody @Valid GiftCertificatePatchDto giftCertificatePatchDto,
-                                                 @PathVariable long id, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
-        }
+                                                 @PathVariable long id) {
         giftCertificateService.patch(giftCertificatePatchDto, id);
         return ResponseEntity.noContent().build();
     }

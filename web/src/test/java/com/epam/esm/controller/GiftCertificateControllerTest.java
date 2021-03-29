@@ -14,10 +14,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.WebRequest;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -28,6 +31,8 @@ public class GiftCertificateControllerTest {
 
     @Mock
     private GiftCertificateService serviceMock;
+    @Mock
+    private WebRequest webRequestMock;
 
     @InjectMocks
     private GiftCertificateController giftCertificateController;
@@ -54,67 +59,21 @@ public class GiftCertificateControllerTest {
 
 
     @Test
-    public void testGetAllByPartOfDescriptionShouldReturnHttpStatusOk() {
+    public void testGetAllForQueryShouldReturnHttpStatusOkWithDtoList() {
         //given
+
+        Map<String, String[]> paramMap = new HashMap<>();
         List<GiftCertificateDto> listDto = Arrays.asList(defaultCertDto, defaultCertDto);
-        String partOfDescription = "desc";
-        when(serviceMock.getAllByPartOfDescription(partOfDescription)).thenReturn(listDto);
+        when(webRequestMock.getParameterMap()).thenReturn(paramMap);
+        when(serviceMock.getAllForQuery(paramMap)).thenReturn(listDto);
 
         ResponseEntity<List<GiftCertificateDto>> expected = ResponseEntity.ok(listDto);
         //when
-        ResponseEntity<List<GiftCertificateDto>> result =
-                giftCertificateController.getAllByPartOfDescription(partOfDescription);
+        ResponseEntity<List<GiftCertificateDto>> result = giftCertificateController.getAllForQuery(webRequestMock);
         //then
         assertEquals(result, expected);
-        verify(serviceMock).getAllByPartOfDescription(partOfDescription);
-    }
-
-    @Test
-    public void testGetAllByPartOfNameShouldReturnHttpStatusOkWithDtoList() {
-        //given
-        List<GiftCertificateDto> listDto = Arrays.asList(defaultCertDto, defaultCertDto);
-        String partOfName = "test";
-        when(serviceMock.getAllByPartOfName(partOfName)).thenReturn(listDto);
-
-        ResponseEntity<List<GiftCertificateDto>> expected = ResponseEntity.ok(listDto);
-        //when
-        ResponseEntity<List<GiftCertificateDto>> result =
-                giftCertificateController.getAllByPartOfName(partOfName);
-        //then
-        assertEquals(result, expected);
-        verify(serviceMock).getAllByPartOfName(partOfName);
-    }
-
-    @Test
-    public void testGetAllSortedShouldReturnHttpStatusOkWithDtoList() {
-        //given
-        List<GiftCertificateDto> listDto = Arrays.asList(defaultCertDto, defaultCertDto);
-        List<String> sortFields = Arrays.asList("id", "name");
-        String sortOrder = "DESC";
-        when(serviceMock.getAllSorted(sortFields, sortOrder)).thenReturn(listDto);
-
-        ResponseEntity<List<GiftCertificateDto>> expected = ResponseEntity.ok(listDto);
-        //when
-        ResponseEntity<List<GiftCertificateDto>> result =
-                giftCertificateController.getAllSorted(sortFields, sortOrder);
-        //then
-        assertEquals(result, expected);
-        verify(serviceMock).getAllSorted(sortFields, sortOrder);
-    }
-
-    @Test
-    public void testGetAllShouldReturnHttpStatusOkWithDtoList() {
-        //given
-        List<GiftCertificateDto> listDto = Arrays.asList(defaultCertDto, defaultCertDto);
-        when(serviceMock.getAll()).thenReturn(listDto);
-
-        ResponseEntity<List<GiftCertificateDto>> expected = ResponseEntity.ok(listDto);
-        //when
-        ResponseEntity<List<GiftCertificateDto>> result =
-                giftCertificateController.getAll();
-        //then
-        assertEquals(result, expected);
-        verify(serviceMock).getAll();
+        verify(webRequestMock).getParameterMap();
+        verify(serviceMock).getAllForQuery(paramMap);
     }
 
     @Test
@@ -128,20 +87,6 @@ public class GiftCertificateControllerTest {
         //then
         assertEquals(result, expected);
         verify(serviceMock).getById(certId);
-    }
-
-    @Test
-    public void testGetAllByTagNameShouldReturnHttpStatusOkWithDtoList() {
-        //given
-        List<GiftCertificateDto> dtoList = Arrays.asList(defaultCertDto, defaultCertDto);
-        String tagName = defaultTagDto.getName();
-        when(serviceMock.getAllByTagName(tagName)).thenReturn(dtoList);
-        ResponseEntity<List<GiftCertificateDto>> expected = ResponseEntity.ok(dtoList);
-        //when
-        ResponseEntity<List<GiftCertificateDto>> result = giftCertificateController.getAllByTagName(tagName);
-        //then
-        assertEquals(result, expected);
-        verify(serviceMock).getAllByTagName(tagName);
     }
 
     @Test
@@ -169,14 +114,15 @@ public class GiftCertificateControllerTest {
     }
 
     @Test
-    @Disabled
-    public void testCreateCertificateShouldReturnHttpStatusBadRequestWhenThereAreErrorsInBindingResult() {
+    public void testPatchCertificateShouldReturnHttpStatusNoContentWhenThereAreNotErrorsInBindingResult() {
         //given
-        ResponseEntity<GiftCertificateDto> expected = ResponseEntity.badRequest().build();
+        Long certId = defaultCertDto.getId();
+        ResponseEntity<Void> expected = ResponseEntity.noContent().build();
         //when
-        ResponseEntity<GiftCertificateDto> result = giftCertificateController.createCertificate(updatedDto);
+        ResponseEntity<Void> result = giftCertificateController.patchCertificate(patchedDto, certId);
         //then
         assertEquals(result, expected);
+        verify(serviceMock).patch(patchedDto, certId);
     }
 
     @Test
@@ -193,6 +139,17 @@ public class GiftCertificateControllerTest {
 
     @Test
     @Disabled
+    public void testCreateCertificateShouldReturnHttpStatusBadRequestWhenThereAreErrorsInBindingResult() {
+        //given
+        ResponseEntity<GiftCertificateDto> expected = ResponseEntity.badRequest().build();
+        //when
+        ResponseEntity<GiftCertificateDto> result = giftCertificateController.createCertificate(updatedDto);
+        //then
+        assertEquals(result, expected);
+    }
+
+    @Test
+    @Disabled
     public void testUpdateCertificateShouldReturnHttpStatusBadRequestWhenThereAreErrorsInBindingResult() {
         //given
         Long certId = defaultCertDto.getId();
@@ -201,19 +158,6 @@ public class GiftCertificateControllerTest {
         ResponseEntity<Void> result = giftCertificateController.updateCertificate(updatedDto, certId);
         //then
         assertEquals(result, expected);
-    }
-
-
-    @Test
-    public void testPatchCertificateShouldReturnHttpStatusNoContentWhenThereAreNotErrorsInBindingResult() {
-        //given
-        Long certId = defaultCertDto.getId();
-        ResponseEntity<Void> expected = ResponseEntity.noContent().build();
-        //when
-        ResponseEntity<Void> result = giftCertificateController.patchCertificate(patchedDto, certId);
-        //then
-        assertEquals(result, expected);
-        verify(serviceMock).patch(patchedDto, certId);
     }
 
 

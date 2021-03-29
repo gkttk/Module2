@@ -3,6 +3,7 @@ package com.epam.esm.advice;
 import com.epam.esm.advice.error.ResponseError;
 import com.epam.esm.exceptions.EntityNotFoundException;
 import com.epam.esm.exceptions.EntityWithSuchNameAlreadyExists;
+import com.epam.esm.exceptions.IllegalRequestParameterException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,11 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityWithSuchNameAlreadyExists.class)
     public ResponseEntity<ResponseError> handleEntityWithSuchNameAlreadyExists() {
         return new ResponseEntity<>(ResponseError.ENTITY_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalRequestParameterException.class)
+    public ResponseEntity<ResponseError> handleIllegalRequestParameterException() {
+        return new ResponseEntity<>(ResponseError.ILLEGAL_REQUEST_PARAMETER, HttpStatus.BAD_REQUEST);
     }
 
     @Override

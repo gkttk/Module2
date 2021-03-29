@@ -4,22 +4,13 @@ import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.GiftCertificatePatchDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GiftCertificateService {
 
-    List<GiftCertificateDto> getAllByPartOfDescription(String partOfDescription);
-
-
-    List<GiftCertificateDto> getAllByPartOfName(String partOfName);
-
-    List<GiftCertificateDto> getAllSorted(List<String> sortingFieldNames, String sortingOrder);
-
-    List<GiftCertificateDto> getAllByTagName(String tagName);
-
+    List<GiftCertificateDto> getAllForQuery(Map<String, String[]> reqParams);
 
     GiftCertificateDto getById(long id);
-
-    List<GiftCertificateDto> getAll();
 
     GiftCertificateDto save(GiftCertificateDto certificate);
 

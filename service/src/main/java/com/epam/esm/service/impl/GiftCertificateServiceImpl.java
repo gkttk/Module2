@@ -10,6 +10,7 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.EntityNotFoundException;
+import com.epam.esm.exceptions.IllegalRequestParameterException;
 import com.epam.esm.service.GiftCertificateService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED,
@@ -43,69 +44,36 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         this.certificateTagsDao = certificateTagsDao;
     }
 
-    @Override
-    public List<GiftCertificateDto> getAll() {
-        List<GiftCertificate> entities = giftCertificateDao.findAll();
-        if (entities.isEmpty()) {
-            throw new EntityNotFoundException("There are no gift certificates in DB");
-        }
-
-        return entities.stream()
-                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
-                .peek(this::fillCertificateDtoWithTags)
-                .collect(Collectors.toList());
-    }
 
     @Override
-    public List<GiftCertificateDto> getAllByPartOfDescription(String partOfDescription) {
-        List<GiftCertificate> entities = giftCertificateDao.getAllByPartOfDescription(partOfDescription);
-
-        if (entities.isEmpty()) {
-            throw new EntityNotFoundException(String.format("There are no gift certificates in DB with description like: %s",
-                    partOfDescription));
+    public List<GiftCertificateDto> getAllForQuery(Map<String, String[]> reqParams) {
+        for (Map.Entry<String, String[]> entry : reqParams.entrySet()) {
+            String key = entry.getKey();
+            switch (key) {
+                case "namesPart": {
+                    String[] namesPart = entry.getValue();
+                    return getAllByPartOfNames(namesPart);
+                }
+                case "descriptionsPart": {
+                    String[] descriptionsPart = entry.getValue();
+                    return getAllByPartOfDescriptions(descriptionsPart);
+                }
+                case "tagNames": {
+                    String[] tagNames = entry.getValue();
+                    return getAllByTagNames(tagNames);
+                }
+                case "sortFields": {
+                    String[] sortFields = entry.getValue();
+                    String[] orders = reqParams.get("order");
+                    if (orders == null) {
+                        throw new IllegalRequestParameterException("There is no order parameter in request");
+                    }
+                    return getAllSorted(sortFields, orders[0]);
+                }
+            }
         }
-        return entities.stream()
-                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
-                .collect(Collectors.toList());
-    }
 
-    @Override
-    public List<GiftCertificateDto> getAllByPartOfName(String partOfName) {
-        List<GiftCertificate> entities = giftCertificateDao.getAllByPartOfName(partOfName);
-
-        if (entities.isEmpty()) {
-            throw new EntityNotFoundException(String.format("There are no gift certificates in DB with names like: %s",
-                    partOfName));
-        }
-        return entities.stream()
-                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<GiftCertificateDto> getAllSorted(List<String> sortingFieldNames, String sortingOrder) {
-        List<GiftCertificate> entities = giftCertificateDao.getAllSorted(sortingFieldNames, sortingOrder);
-
-        if (entities.isEmpty()) {
-            throw new EntityNotFoundException("There are no gift certificates in DB");
-        }
-        return entities.stream()
-                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<GiftCertificateDto> getAllByTagName(String tagName) {
-        List<GiftCertificate> certificates = giftCertificateDao.findAllByTagName(tagName);
-
-        if (certificates.isEmpty()) {
-            throw new EntityNotFoundException(String.format("There are no gift certificates with this tag name: %s in DB",
-                    tagName));
-        }
-        return certificates.stream()
-                .map(certificate -> modelMapper.map(certificate, GiftCertificateDto.class))
-                .peek(this::fillCertificateDtoWithTags)
-                .collect(Collectors.toList());
+        return getAll();
     }
 
     @Override
@@ -118,9 +86,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         GiftCertificateDto giftCertificateDto = modelMapper.map(giftCertificate, GiftCertificateDto.class);
         fillCertificateDtoWithTags(giftCertificateDto);
         return giftCertificateDto;
-
     }
-
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -184,7 +150,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
     }
 
-    //todo return dto
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public GiftCertificateDto patch(GiftCertificatePatchDto giftCertificatePatchDto, long certificateId) {
@@ -244,7 +209,88 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Optional<GiftCertificate> patchedEntityOpt = giftCertificateDao.getById(certificateId);
         GiftCertificate patchedEntity = patchedEntityOpt.get();
         return modelMapper.map(patchedEntity, GiftCertificateDto.class);
+    }
 
+
+    private List<GiftCertificateDto> getAll() {
+        List<GiftCertificate> entities = giftCertificateDao.findAll();
+        if (entities.isEmpty()) {
+            throw new EntityNotFoundException("There are no gift certificates in DB");
+        }
+
+        return entities.stream()
+                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
+                .peek(this::fillCertificateDtoWithTags)
+                .collect(Collectors.toList());
+    }
+
+    private List<GiftCertificateDto> getAllByTagNames(String[] tagNames) {
+
+        Set<GiftCertificate> allEntities = new LinkedHashSet<>();
+
+        Stream.of(tagNames).forEach(tagName -> {
+            List<GiftCertificate> entities = giftCertificateDao.findAllByTagName(tagName);
+            allEntities.addAll(entities);
+        });
+
+        if (allEntities.isEmpty()) {
+            throw new EntityNotFoundException(String.format("There are no gift certificates with this tag name: %s in DB",
+                    String.join(",", tagNames)));
+        }
+        return allEntities.stream()
+                .map(certificate -> modelMapper.map(certificate, GiftCertificateDto.class))
+                .peek(this::fillCertificateDtoWithTags)
+                .collect(Collectors.toList());
+    }
+
+
+    private List<GiftCertificateDto> getAllByPartOfDescriptions(String[] descriptionsPart) {
+        Set<GiftCertificate> allEntities = new LinkedHashSet<>();
+
+        Stream.of(descriptionsPart).forEach(descriptionPart -> {
+            List<GiftCertificate> entities = giftCertificateDao.getAllByPartOfDescription(descriptionPart);
+            allEntities.addAll(entities);
+        });
+
+
+        if (allEntities.isEmpty()) {
+            throw new EntityNotFoundException(String.format("There are no gift certificates in DB with description like: %s",
+                    String.join(",", descriptionsPart)));
+        }
+        return allEntities.stream()
+                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
+                .peek(this::fillCertificateDtoWithTags)
+                .collect(Collectors.toList());
+    }
+
+    private List<GiftCertificateDto> getAllByPartOfNames(String[] namesPart) {
+        Set<GiftCertificate> allEntities = new LinkedHashSet<>();
+
+        Stream.of(namesPart).forEach(namePart -> {
+            List<GiftCertificate> entities = giftCertificateDao.getAllByPartOfName(namePart);
+            allEntities.addAll(entities);
+        });
+
+        if (allEntities.isEmpty()) {
+            throw new EntityNotFoundException(String.format("There are no gift certificates in DB with names like: %s",
+                    String.join(",", namesPart)));
+        }
+        return allEntities.stream()
+                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
+                .peek(this::fillCertificateDtoWithTags)
+                .collect(Collectors.toList());
+    }
+
+    private List<GiftCertificateDto> getAllSorted(String[] sortingFieldNames, String sortingOrder) {
+        List<GiftCertificate> entities = giftCertificateDao.getAllSorted(sortingFieldNames, sortingOrder);
+
+        if (entities.isEmpty()) {
+            throw new EntityNotFoundException("There are no gift certificates in DB");
+        }
+        return entities.stream()
+                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
+                .peek(this::fillCertificateDtoWithTags)
+                .collect(Collectors.toList());
     }
 
 

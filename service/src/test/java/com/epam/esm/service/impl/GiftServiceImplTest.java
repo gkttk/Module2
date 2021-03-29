@@ -9,6 +9,7 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.EntityNotFoundException;
+import com.epam.esm.exceptions.IllegalRequestParameterException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,17 +19,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-
 public class GiftServiceImplTest {
 
     @Mock
@@ -43,11 +40,15 @@ public class GiftServiceImplTest {
     @Mock
     private ModelMapper modelMapper;
 
+
     @InjectMocks
     private GiftCertificateServiceImpl service;
 
     private static GiftCertificateDto testDto;
+    private static GiftCertificateDto secondTestDto;
+
     private static GiftCertificate testEntity;
+    private static GiftCertificate secondTestEntity;
     private static Tag tag;
     private static TagDto tagDto;
 
@@ -57,178 +58,285 @@ public class GiftServiceImplTest {
         tagDto = new TagDto(100L, "testTag");
         testDto = new GiftCertificateDto(100L, "testCertificate", "description", new BigDecimal("1.5"),
                 10, "Date", "Date", Arrays.asList(tagDto, tagDto, tagDto));
+        secondTestDto = new GiftCertificateDto(200L, "testCertificate2", "description2", new BigDecimal("2.5"),
+                20, "Date2", "Date2", Arrays.asList(tagDto, tagDto, tagDto));
         testEntity = new GiftCertificate(100L, "testCertificate", "description", new BigDecimal("1.5"),
                 10, "Date", "Date");
+        secondTestEntity = new GiftCertificate(200L, "testCertificate2", "description2", new BigDecimal("2.5"),
+                20, "Date2", "Date2");
 
     }
 
+
     @Test
-    public void testGetAllShouldReturnListOfDtoWhenThereAreEntitiesInDb() {
+    public void testGetAllForQueryShouldReturnListOfDtoWhenThereAreNoRequestParamsAndThereAreEntitiesInDb() {
         //given
+        Map<String, String[]> params = new HashMap<>();
         List<GiftCertificate> expectedEntityList = Arrays.asList(testEntity, testEntity, testEntity);
         when(certDao.findAll()).thenReturn(expectedEntityList);
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
-
         Long tagId = testDto.getId();
         List<Tag> tagsForEachDto = Arrays.asList(tag, tag, tag);
         when(tagDao.getAllByCertificateId(tagId)).thenReturn(tagsForEachDto);
         when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
-
         List<GiftCertificateDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
         //when
-        List<GiftCertificateDto> result = service.getAll();
+        List<GiftCertificateDto> result = service.getAllForQuery(params);
         //then
+        assertEquals(result, expectedResult);
         verify(certDao).findAll();
         verify(modelMapper, times(3)).map(testEntity, GiftCertificateDto.class);
         verify(tagDao, times(3)).getAllByCertificateId(tagId);
         verify(modelMapper, times(9)).map(tag, TagDto.class);
-        assertEquals(result, expectedResult);
     }
 
+
     @Test
-    public void testGetAllShouldThrowExceptionWhenThereAreNoEntitiesInDb() {
+    public void testGetAllForQueryShouldThrowExceptionWhenThereAreNoRequestParamsAndThereAreEntitiesInDb() {
         //given
+        Map<String, String[]> params = new HashMap<>();
         List<GiftCertificate> expectedEntityList = Collections.emptyList();
         when(certDao.findAll()).thenReturn(expectedEntityList);
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> service.getAll());
+        assertThrows(EntityNotFoundException.class, () -> service.getAllForQuery(params));
         verify(certDao).findAll();
     }
 
+
     @Test
-    public void testGetAllByPartOfDescriptionShouldReturnListOfDtoWhenThereAreEntitiesInDbWithGivenDescriptionPart() {
+    public void testGetAllForQueryShouldReturnDtoListWhenThereAreRequestParamsDescriptionsPartAndThereAreEntitiesInDb() {
         //given
-        List<GiftCertificate> expectedEntityList = Arrays.asList(testEntity, testEntity, testEntity);
-        String partOfDescription = "desc";
-        when(certDao.getAllByPartOfDescription(partOfDescription)).thenReturn(expectedEntityList);
+        Map<String, String[]> params = new HashMap<>();
+        String firstPartOfDescription = "testPart1";
+        String secondPartOfDescription = "testPart2";
+        params.put("descriptionsPart", new String[]{firstPartOfDescription, secondPartOfDescription});
+        List<GiftCertificate> firstEntityList = Collections.singletonList(testEntity);
+        List<GiftCertificate> secondEntityList = Collections.singletonList(secondTestEntity);
+
+        when(certDao.getAllByPartOfDescription(firstPartOfDescription)).thenReturn(firstEntityList);
+        when(certDao.getAllByPartOfDescription(secondPartOfDescription)).thenReturn(secondEntityList);
+
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
+        when(modelMapper.map(secondTestEntity, GiftCertificateDto.class)).thenReturn(secondTestDto);
 
-        List<GiftCertificateDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
-        //when
-        List<GiftCertificateDto> result = service.getAllByPartOfDescription(partOfDescription);
-        //then
-        assertEquals(result, expectedResult);
-        verify(certDao).getAllByPartOfDescription(partOfDescription);
-        verify(modelMapper, times(3)).map(testEntity, GiftCertificateDto.class);
-    }
-
-    @Test
-    public void testGetAllByPartOfDescriptionShouldThrowExceptionWhenThereAreNoEntitiesInDbWithGivenDescriptionPart() {
-        //given
-        List<GiftCertificate> expectedEntityList = Collections.emptyList();
-        String partOfDescription = "desc";
-        when(certDao.getAllByPartOfDescription(partOfDescription)).thenReturn(expectedEntityList);
-        //when
-        //then
-        assertThrows(EntityNotFoundException.class, () -> service.getAllByPartOfDescription(partOfDescription));
-        verify(certDao).getAllByPartOfDescription(partOfDescription);
-    }
-
-    @Test
-    public void testGetAllByPartOfNameShouldReturnListOfDtoWhenThereAreEntitiesInDbWithGivenNamePart() {
-        //given
-        List<GiftCertificate> expectedEntityList = Arrays.asList(testEntity, testEntity, testEntity);
-        String partOfName = "test";
-        when(certDao.getAllByPartOfName(partOfName)).thenReturn(expectedEntityList);
-        when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
-
-        List<GiftCertificateDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
-        //when
-        List<GiftCertificateDto> result = service.getAllByPartOfName(partOfName);
-        //then
-        assertEquals(result, expectedResult);
-        verify(certDao).getAllByPartOfName(partOfName);
-        verify(modelMapper, times(3)).map(testEntity, GiftCertificateDto.class);
-    }
-
-    @Test
-    public void testGetAllByPartOfNameShouldThrowExceptionWhenThereAreNoEntitiesInDbWithGivenNamePart() {
-        //given
-        List<GiftCertificate> expectedEntityList = Collections.emptyList();
-        String partOfName = "test";
-        when(certDao.getAllByPartOfName(partOfName)).thenReturn(expectedEntityList);
-        //when
-        //then
-        assertThrows(EntityNotFoundException.class, () -> service.getAllByPartOfName(partOfName));
-        verify(certDao).getAllByPartOfName(partOfName);
-    }
-
-    @Test
-    public void testGetAllSortedShouldReturnListOfDtoWhenThereAreEntitiesInDb() {
-        //given
-        List<GiftCertificate> expectedEntityList = Arrays.asList(testEntity, testEntity, testEntity);
-
-        List<String> sortingFieldsName = Arrays.asList("name", "id");
-        String sortingOrder = "DESC";
-
-        when(certDao.getAllSorted(sortingFieldsName, sortingOrder)).thenReturn(expectedEntityList);
-        when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
-
-        List<GiftCertificateDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
-        //when
-        List<GiftCertificateDto> result = service.getAllSorted(sortingFieldsName, sortingOrder);
-        //then
-        assertEquals(result, expectedResult);
-        verify(certDao).getAllSorted(sortingFieldsName, sortingOrder);
-        verify(modelMapper, times(3)).map(testEntity, GiftCertificateDto.class);
-    }
-
-    @Test
-    public void testGetAllSortedShouldThrowExceptionWhenThereAreNoEntitiesInDb() {
-        //given
-        List<GiftCertificate> expectedEntityList = Collections.emptyList();
-
-        List<String> sortingFieldsName = Arrays.asList("name", "id");
-        String sortingOrder = "DESC";
-
-        when(certDao.getAllSorted(sortingFieldsName, sortingOrder)).thenReturn(expectedEntityList);
-        //when
-        //then
-        assertThrows(EntityNotFoundException.class, () -> service.getAllSorted(sortingFieldsName, sortingOrder));
-        verify(certDao).getAllSorted(sortingFieldsName, sortingOrder);
-    }
-
-    @Test
-    public void testGetAllByTagNameShouldReturnListOfDtoWhenThereAreEntitiesInDbWithGivenTagName() {
-        //given
-        List<GiftCertificate> expectedEntityList = Arrays.asList(testEntity, testEntity, testEntity);
-
-        String tagName = "testTag";
-
-        when(certDao.findAllByTagName(tagName)).thenReturn(expectedEntityList);
-        when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
-
-        List<Tag> tagsForEachDto = Arrays.asList(tag, tag, tag);
-
-        Long tagId = tagDto.getId();
-
-        when(tagDao.getAllByCertificateId(tagId)).thenReturn(tagsForEachDto);
+        Long firstDtoId = testDto.getId();
+        when(tagDao.getAllByCertificateId(firstDtoId)).thenReturn(Arrays.asList(tag, tag));
         when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
 
-        List<GiftCertificateDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
+        Long secondTestDtoId = secondTestDto.getId();
+        when(tagDao.getAllByCertificateId(secondTestDtoId)).thenReturn(Arrays.asList(tag, tag));
+        when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
+
+        List<GiftCertificateDto> expectedResult = Arrays.asList(testDto, secondTestDto);
         //when
-        List<GiftCertificateDto> result = service.getAllByTagName(tagName);
+        List<GiftCertificateDto> result = service.getAllForQuery(params);
         //then
         assertEquals(result, expectedResult);
-        verify(certDao).findAllByTagName(tagName);
-        verify(modelMapper, times(3)).map(testEntity, GiftCertificateDto.class);
-        verify(tagDao, times(3)).getAllByCertificateId(tagId);
-        verify(modelMapper, times(9)).map(tag, TagDto.class);
+        verify(certDao).getAllByPartOfDescription(firstPartOfDescription);
+        verify(certDao).getAllByPartOfDescription(secondPartOfDescription);
+        verify(modelMapper).map(testEntity, GiftCertificateDto.class);
+        verify(modelMapper).map(secondTestEntity, GiftCertificateDto.class);
+        verify(tagDao).getAllByCertificateId(firstDtoId);
+        verify(tagDao).getAllByCertificateId(secondTestDtoId);
+        verify(modelMapper, times(4)).map(tag, TagDto.class);
+    }
+
+
+    @Test
+    public void testGetAllForQueryShouldThrowExceptionWhenThereAreRequestParamsDescriptionsPartAndThereAreNoEntitiesInDb() {
+        //given
+        Map<String, String[]> params = new HashMap<>();
+        String firstPartOfDescription = "testPart1";
+        String secondPartOfDescription = "testPart2";
+        params.put("descriptionsPart", new String[]{firstPartOfDescription, secondPartOfDescription});
+        List<GiftCertificate> expectedEntityList = Collections.emptyList();
+        when(certDao.getAllByPartOfDescription(firstPartOfDescription)).thenReturn(expectedEntityList);
+        when(certDao.getAllByPartOfDescription(secondPartOfDescription)).thenReturn(expectedEntityList);
+        //when
+        //then
+        assertThrows(EntityNotFoundException.class, () -> service.getAllForQuery(params));
+        verify(certDao).getAllByPartOfDescription(firstPartOfDescription);
+        verify(certDao).getAllByPartOfDescription(secondPartOfDescription);
     }
 
     @Test
-    public void testGetAllByTagNameShouldThrowExceptionWhenThereAreNoEntitiesInDbe() {
+    public void testGetAllForQueryShouldReturnDtoListWhenThereAreRequestParamsNamesPartAndThereAreEntitiesInDb() {
         //given
+        Map<String, String[]> params = new HashMap<>();
+        String firstNamePart = "testName1";
+        String secondNamePart = "testName2";
+        params.put("namesPart", new String[]{firstNamePart, secondNamePart});
+
+        List<GiftCertificate> entityList = Collections.singletonList(testEntity);
+        when(certDao.getAllByPartOfName(firstNamePart)).thenReturn(entityList);
+
+        List<GiftCertificate> secondEntityList = Collections.singletonList(secondTestEntity);
+        when(certDao.getAllByPartOfName(secondNamePart)).thenReturn(secondEntityList);
+
+        when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
+        when(modelMapper.map(secondTestEntity, GiftCertificateDto.class)).thenReturn(secondTestDto);
+
+        Long firstDtoId = testDto.getId();
+        when(tagDao.getAllByCertificateId(firstDtoId)).thenReturn(Arrays.asList(tag, tag));
+        when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
+
+        Long secondTestDtoId = secondTestDto.getId();
+        when(tagDao.getAllByCertificateId(secondTestDtoId)).thenReturn(Arrays.asList(tag, tag));
+        when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
+
+        List<GiftCertificateDto> expectedResult = Arrays.asList(testDto, secondTestDto);
+        //when
+        List<GiftCertificateDto> result = service.getAllForQuery(params);
+        //then
+        assertEquals(result, expectedResult);
+        verify(certDao).getAllByPartOfName(firstNamePart);
+        verify(certDao).getAllByPartOfName(secondNamePart);
+        verify(modelMapper).map(testEntity, GiftCertificateDto.class);
+        verify(modelMapper).map(secondTestEntity, GiftCertificateDto.class);
+        verify(tagDao).getAllByCertificateId(firstDtoId);
+        verify(tagDao).getAllByCertificateId(secondTestDtoId);
+        verify(modelMapper, times(4)).map(tag, TagDto.class);
+    }
+
+
+    @Test
+    public void testGetAllForQueryShouldThrowExceptionWhenThereAreRequestParamsNamesPartAndThereAreNoEntitiesInDb() {
+        //given
+        Map<String, String[]> params = new HashMap<>();
+        String firstNamePart = "testName1";
+        String secondNamePart = "testName2";
+        params.put("namesPart", new String[]{firstNamePart, secondNamePart});
         List<GiftCertificate> expectedEntityList = Collections.emptyList();
 
-        String tagName = "testTag";
-
-        when(certDao.findAllByTagName(tagName)).thenReturn(expectedEntityList);
+        when(certDao.getAllByPartOfName(firstNamePart)).thenReturn(expectedEntityList);
+        when(certDao.getAllByPartOfName(secondNamePart)).thenReturn(expectedEntityList);
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> service.getAllByTagName(tagName));
-        verify(certDao).findAllByTagName(tagName);
+        assertThrows(EntityNotFoundException.class, () -> service.getAllForQuery(params));
+        verify(certDao).getAllByPartOfName(firstNamePart);
+        verify(certDao).getAllByPartOfName(secondNamePart);
+    }
+
+    @Test
+
+    public void testGetAllForQueryShouldReturnDtoListWhenThereAreRequestParamsSortFieldsAndOrderAndThereAreEntitiesInDb() {
+        //given
+        Map<String, String[]> params = new HashMap<>();
+        String sortField = "testField";
+        String[] sortFields = new String[]{sortField};
+        String order = "desc";
+        params.put("sortFields", sortFields);
+        params.put("order", new String[]{order});
+
+        List<GiftCertificate> entityList = Collections.singletonList(testEntity);
+        when(certDao.getAllSorted(sortFields, order)).thenReturn(entityList);
+        when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
+
+        Long tagId = tagDto.getId();
+        when(tagDao.getAllByCertificateId(tagId)).thenReturn(Collections.singletonList(tag));
+        when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
+
+        List<GiftCertificateDto> expectedResult = Collections.singletonList(testDto);
+        //when
+        List<GiftCertificateDto> result = service.getAllForQuery(params);
+        //then
+        assertEquals(result, expectedResult);
+        verify(certDao).getAllSorted(sortFields, order);
+        verify(modelMapper).map(testEntity, GiftCertificateDto.class);
+        verify(tagDao).getAllByCertificateId(tagId);
+        verify(modelMapper).map(tag, TagDto.class);
+    }
+
+
+    @Test
+    public void testGetAllForQueryShouldThrowExceptionWhenThereAreRequestParamsRequestParamsSortFieldsAndOrderAndThereAreNoEntitiesInDb() {
+        //given
+        Map<String, String[]> params = new HashMap<>();
+        String sortField = "testField";
+        String[] sortFields = new String[]{sortField};
+        String order = "desc";
+        params.put("sortFields", sortFields);
+        params.put("order", new String[]{order});
+
+        List<GiftCertificate> expectedEntityList = Collections.emptyList();
+        when(certDao.getAllSorted(sortFields, order)).thenReturn(expectedEntityList);
+        //when
+        //then
+        assertThrows(EntityNotFoundException.class, () -> service.getAllForQuery(params));
+        verify(certDao).getAllSorted(sortFields, order);
+    }
+
+    @Test
+    public void testGetAllForQueryShouldThrowExceptionWhenThereAreRequestParamsRequestParamsSortFieldsAndNoOrderParam() {
+        //given
+        Map<String, String[]> params = new HashMap<>();
+        String sortField = "testField";
+        String[] sortFields = new String[]{sortField};
+        params.put("sortFields", sortFields);
+        //when
+        //then
+        assertThrows(IllegalRequestParameterException.class, () -> service.getAllForQuery(params));
+    }
+
+
+    @Test
+    public void testGetAllForQueryShouldReturnDtoListWhenThereAreRequestParamsTagNamesAndThereAreEntitiesInDb() {
+        //given
+        Map<String, String[]> params = new HashMap<>();
+        String firstTagName = "tagName1";
+        String secondTagName = "tagName2";
+        params.put("tagNames", new String[]{firstTagName, secondTagName});
+
+        List<GiftCertificate> entityList = Collections.singletonList(testEntity);
+        when(certDao.findAllByTagName(firstTagName)).thenReturn(entityList);
+
+        List<GiftCertificate> secondEntityList = Collections.singletonList(secondTestEntity);
+        when(certDao.findAllByTagName(secondTagName)).thenReturn(secondEntityList);
+
+        when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
+        when(modelMapper.map(secondTestEntity, GiftCertificateDto.class)).thenReturn(secondTestDto);
+
+        Long firstDtoId = testDto.getId();
+        when(tagDao.getAllByCertificateId(firstDtoId)).thenReturn(Arrays.asList(tag, tag));
+        when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
+
+        Long secondTestDtoId = secondTestDto.getId();
+        when(tagDao.getAllByCertificateId(secondTestDtoId)).thenReturn(Arrays.asList(tag, tag));
+        when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
+
+        List<GiftCertificateDto> expectedResult = Arrays.asList(testDto, secondTestDto);
+        //when
+        List<GiftCertificateDto> result = service.getAllForQuery(params);
+        //then
+        assertEquals(result, expectedResult);
+        verify(certDao).findAllByTagName(firstTagName);
+        verify(certDao).findAllByTagName(secondTagName);
+        verify(modelMapper).map(testEntity, GiftCertificateDto.class);
+        verify(modelMapper).map(secondTestEntity, GiftCertificateDto.class);
+        verify(tagDao).getAllByCertificateId(firstDtoId);
+        verify(tagDao).getAllByCertificateId(secondTestDtoId);
+        verify(modelMapper, times(4)).map(tag, TagDto.class);
+    }
+
+
+    @Test
+    public void testGetAllForQueryShouldThrowExceptionWhenThereAreRequestParamsTagNamesAndThereAreNoEntitiesInDb() {
+        //given
+        Map<String, String[]> params = new HashMap<>();
+        String firstTagName = "tagName1";
+        String secondTagName = "tagName2";
+        params.put("tagNames", new String[]{firstTagName, secondTagName});
+
+        List<GiftCertificate> expectedEntityList = Collections.emptyList();
+
+        when(certDao.findAllByTagName(firstTagName)).thenReturn(expectedEntityList);
+        when(certDao.findAllByTagName(secondTagName)).thenReturn(expectedEntityList);
+        //when
+        //then
+        assertThrows(EntityNotFoundException.class, () -> service.getAllForQuery(params));
+        verify(certDao).findAllByTagName(firstTagName);
+        verify(certDao).findAllByTagName(secondTagName);
     }
 
     @Test
@@ -346,8 +454,8 @@ public class GiftServiceImplTest {
         verify(modelMapper).map(testDto, GiftCertificate.class);
         verify(certDao).update(testEntity, certId);
         verify(certificateTagsDao).deleteAllTagsForCertificate(certId);
-        verify(tagDao, times(3)).findByName(tagName);
-        verify(certificateTagsDao, times(3)).save(certId, tagId);
+        verify(tagDao, atLeast(1)).findByName(tagName);
+        verify(certificateTagsDao, atLeast(1)).save(certId, tagId);
     }
 
     @Test
@@ -407,7 +515,7 @@ public class GiftServiceImplTest {
         //when
         service.patch(dtoForPatch, certificateId);
         //then
-        verify(certDao,times(2)).getById(certificateId);
+        verify(certDao, times(2)).getById(certificateId);
         verify(certDao).update(testEntity, certificateId);
         verify(tagDao).getAllByCertificateId(certificateId);
         verify(tagDao).findByName(tag.getName());

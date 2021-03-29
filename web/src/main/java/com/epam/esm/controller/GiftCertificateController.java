@@ -8,9 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Validated
@@ -24,29 +26,10 @@ public class GiftCertificateController {
         this.giftCertificateService = giftCertificateService;
     }
 
-    //todo one endpoint for params query
-    @GetMapping(params = "partOfDescription")
-    public ResponseEntity<List<GiftCertificateDto>> getAllByPartOfDescription(@RequestParam String partOfDescription) {
-        List<GiftCertificateDto> certificates = giftCertificateService.getAllByPartOfDescription(partOfDescription);
-        return ResponseEntity.ok(certificates);
-    }
-
-    @GetMapping(params = "partOfName")
-    public ResponseEntity<List<GiftCertificateDto>> getAllByPartOfName(@RequestParam String partOfName) {
-        List<GiftCertificateDto> certificates = giftCertificateService.getAllByPartOfName(partOfName);
-        return ResponseEntity.ok(certificates);
-    }
-
-    @GetMapping(params = {"sortFields", "sortOrder"})
-    public ResponseEntity<List<GiftCertificateDto>> getAllSorted(@RequestParam List<String> sortFields,
-                                                                 @RequestParam String sortOrder) {
-        List<GiftCertificateDto> sortedCertificates = giftCertificateService.getAllSorted(sortFields, sortOrder);
-        return ResponseEntity.ok(sortedCertificates);
-    }
-
     @GetMapping
-    public ResponseEntity<List<GiftCertificateDto>> getAll() {
-        List<GiftCertificateDto> certificates = giftCertificateService.getAll();
+    public ResponseEntity<List<GiftCertificateDto>> getAllForQuery(WebRequest webRequest) {
+        Map<String, String[]> parameterMap = webRequest.getParameterMap();
+        List<GiftCertificateDto> certificates = giftCertificateService.getAllForQuery(parameterMap);
         return ResponseEntity.ok(certificates);
     }
 
@@ -55,13 +38,6 @@ public class GiftCertificateController {
         GiftCertificateDto certificate = giftCertificateService.getById(id);
         return ResponseEntity.ok(certificate);
     }
-
-    @GetMapping(params = "tagName")
-    public ResponseEntity<List<GiftCertificateDto>> getAllByTagName(@RequestParam String tagName) {
-        List<GiftCertificateDto> certificates = giftCertificateService.getAllByTagName(tagName);
-        return ResponseEntity.ok(certificates);
-    }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable long id) {

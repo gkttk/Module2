@@ -12,7 +12,7 @@ public interface GiftCertificateDao {
 
     List<GiftCertificate> getAllByPartOfName(String partOfName);
 
-    List<GiftCertificate> getAllSorted(List<String> sortingFieldNames, String sortingOrder);
+    List<GiftCertificate> getAllSorted(String[] sortingFieldNames, String sortingOrder);
 
     List<GiftCertificate> findAllByTagName(String tagName);
 

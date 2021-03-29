@@ -89,7 +89,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    public List<GiftCertificate> getAllSorted(List<String> sortingFieldNames, String sortingOrderName) {
+    public List<GiftCertificate> getAllSorted(String[] sortingFieldNames, String sortingOrderName) {
         String fieldNames = String.join(",", sortingFieldNames);
 
         String query = new StringJoiner(" ")
@@ -151,7 +151,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         BigDecimal price = certificate.getPrice();
         int duration = certificate.getDuration();
         String lastUpdateTime = certificate.getLastUpdateDate();
-        template.update(UPDATE_QUERY, name, description, price, duration,lastUpdateTime, id);
+        template.update(UPDATE_QUERY, name, description, price, duration, lastUpdateTime, id);
     }
 
     @Override

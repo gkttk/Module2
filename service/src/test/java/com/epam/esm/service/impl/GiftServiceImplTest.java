@@ -509,15 +509,19 @@ public class GiftServiceImplTest {
         Tag newTag = new Tag(newTagDto.getName());
         Tag newTagWithId = new Tag(130L, newTag.getName());
         when(tagDao.findByName(newTagDto.getName())).thenReturn(Optional.empty());
-
         when(modelMapper.map(newTagDto, Tag.class)).thenReturn(newTag);
         when(tagDao.save(newTag)).thenReturn(newTagWithId);
+        when(certDao.getById(certificateId)).thenReturn(Optional.of(testEntity));
+        when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
+        when(tagDao.getAllByCertificateId(certificateId)).thenReturn(entityTagsFromDb);
+        when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
         //when
-        service.patch(dtoForPatch, certificateId);
+        GiftCertificateDto result = service.patch(dtoForPatch, certificateId);
         //then
+        assertEquals(result, testDto);
         verify(certDao, times(2)).getById(certificateId);
         verify(certDao).update(testEntity, certificateId);
-        verify(tagDao).getAllByCertificateId(certificateId);
+        verify(tagDao, times(2)).getAllByCertificateId(certificateId);
         verify(tagDao).findByName(tag.getName());
         verify(tagDao).findByName(newTagDto.getName());
         verify(modelMapper).map(newTagDto, Tag.class);

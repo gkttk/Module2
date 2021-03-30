@@ -138,6 +138,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             });
         }
 
+        certificateDto.setId(certificateId);
+        certificateDto.setCreateDate(certificateOpt.get().getCreateDate());
         return certificateDto;
 
     }
@@ -208,7 +210,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         Optional<GiftCertificate> patchedEntityOpt = giftCertificateDao.getById(certificateId);
         GiftCertificate patchedEntity = patchedEntityOpt.get();
-        return modelMapper.map(patchedEntity, GiftCertificateDto.class);
+        GiftCertificateDto dto = modelMapper.map(patchedEntity, GiftCertificateDto.class);
+        fillCertificateDtoWithTags(dto);
+        return dto;
     }
 
 

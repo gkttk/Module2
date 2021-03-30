@@ -54,17 +54,17 @@ public class GiftCertificateController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateCertificate(@RequestBody @Valid GiftCertificateDto giftCertificateDto,
+    public ResponseEntity<GiftCertificateDto> updateCertificate(@RequestBody @Valid GiftCertificateDto giftCertificateDto,
                                                   @PathVariable long id) {
-        giftCertificateService.update(giftCertificateDto, id);
-        return ResponseEntity.noContent().build();
+        GiftCertificateDto updatedDto = giftCertificateService.update(giftCertificateDto, id);
+        return ResponseEntity.ok(updatedDto);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> patchCertificate(@RequestBody @Valid GiftCertificatePatchDto giftCertificatePatchDto,
+    public ResponseEntity<GiftCertificateDto> patchCertificate(@RequestBody @Valid GiftCertificatePatchDto giftCertificatePatchDto,
                                                  @PathVariable long id) {
-        giftCertificateService.patch(giftCertificatePatchDto, id);
-        return ResponseEntity.noContent().build();
+        GiftCertificateDto patchedDto = giftCertificateService.patch(giftCertificatePatchDto, id);
+        return ResponseEntity.ok(patchedDto);
     }
 
 }

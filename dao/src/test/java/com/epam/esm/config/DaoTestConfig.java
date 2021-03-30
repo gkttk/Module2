@@ -20,11 +20,12 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableTransactionManagement
-@PropertySource("classpath:hikari.properties")
+@PropertySource("classpath:hikari-test.properties")
 @ComponentScan(basePackages = {"com.epam.esm.dao"})
-public class DaoConfig {
+public class DaoTestConfig {
 
-    private final static String HIKARI_PROPERTIES_PATH = "/hikari.properties";
+    private final static String HIKARI_PROPERTIES_PATH = "/hikari-test.properties";
+
 
     @Bean(name = "transactionManager")
     public PlatformTransactionManager getTransactionManager() {
@@ -46,12 +47,12 @@ public class DaoConfig {
     public DataSource getDataSource() {
         HikariConfig config = new HikariConfig(HIKARI_PROPERTIES_PATH);
         return new HikariDataSource(config);
+
     }
 
     @Bean
     public JdbcTemplate getJdbcTemplate() {
         return new JdbcTemplate(getDataSource());
     }
-
 
 }

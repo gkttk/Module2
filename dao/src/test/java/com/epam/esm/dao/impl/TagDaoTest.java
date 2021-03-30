@@ -7,8 +7,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DaoTestConfig.class})
+@ActiveProfiles("test")
 public class TagDaoTest {
 
     @Autowired
@@ -33,7 +34,7 @@ public class TagDaoTest {
 
 
     @BeforeAll
-    static void init(){
+    static void init() {
         tag1 = new Tag(1L, "tag1");
         tag2 = new Tag(2L, "tag2");
         tag3 = new Tag(3L, "tag3");
@@ -85,7 +86,6 @@ public class TagDaoTest {
     }
 
 
-
     @Test
     public void testFindAllShouldReturnEntityListWhenThereAreEntitiesInDb() {
         //given
@@ -99,7 +99,7 @@ public class TagDaoTest {
     @Test
     @Transactional
     @Rollback
-    public void testSaveShouldReturnSavedEntityWithNewId(){
+    public void testSaveShouldReturnSavedEntityWithNewId() {
         //given
         Tag savedEntity = new Tag(null, "newTag");
         //when
@@ -112,19 +112,19 @@ public class TagDaoTest {
     @Test
     @Transactional
     @Rollback
-    public void testDeleteShouldReturnTrueWhenEntityWithGivenIdIsPresentInDb(){
+    public void testDeleteShouldReturnTrueWhenEntityWithGivenIdIsPresentInDb() {
         //given
         Long tagId = tag1.getId();
         //when
         boolean result = tagDao.delete(tagId);
         //then
-       assertTrue(result);
+        assertTrue(result);
     }
 
     @Test
     @Transactional
     @Rollback
-    public void testDeleteShouldReturnFalseWhenEntityWithGivenIdIsNotPresentInDb(){
+    public void testDeleteShouldReturnFalseWhenEntityWithGivenIdIsNotPresentInDb() {
         //given
         long tagId = 100L;
         //when
@@ -134,7 +134,7 @@ public class TagDaoTest {
     }
 
     @Test
-    public void testFindByNameShouldReturnOptionalEntityWhenEntityWithGivenNameIsPresentInDb(){
+    public void testFindByNameShouldReturnOptionalEntityWhenEntityWithGivenNameIsPresentInDb() {
         //given
         String tagName = tag1.getName();
         Optional<Tag> expected = Optional.of(TagDaoTest.tag1);
@@ -145,7 +145,7 @@ public class TagDaoTest {
     }
 
     @Test
-    public void testFindByNameShouldReturnEmptyOptionalWhenEntityWithGivenNameIsNotPresentInDb(){
+    public void testFindByNameShouldReturnEmptyOptionalWhenEntityWithGivenNameIsNotPresentInDb() {
         //given
         String tagName = "incorrectName";
         Optional<Tag> expected = Optional.empty();
@@ -154,17 +154,6 @@ public class TagDaoTest {
         //then
         assertEquals(result, expected);
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

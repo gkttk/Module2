@@ -10,7 +10,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.EntityNotFoundException;
 import com.epam.esm.exceptions.IllegalRequestParameterException;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,13 +47,13 @@ public class GiftServiceImplTest {
     private static GiftCertificateDto testDto;
     private static GiftCertificateDto secondTestDto;
 
-    private static GiftCertificate testEntity;
-    private static GiftCertificate secondTestEntity;
-    private static Tag tag;
-    private static TagDto tagDto;
+    private GiftCertificate testEntity;
+    private GiftCertificate secondTestEntity;
+    private Tag tag;
+    private TagDto tagDto;
 
-    @BeforeAll
-    static void init() {
+    @BeforeEach
+    void init() {
         tag = new Tag(100L, "testTag");
         tagDto = new TagDto(100L, "testTag");
         testDto = new GiftCertificateDto(100L, "testCertificate", "description", new BigDecimal("1.5"),
@@ -493,6 +493,7 @@ public class GiftServiceImplTest {
     }
 
     @Test
+
     public void testPatchShouldPatchEntityFieldsAndAddNewTagsWhenEntityWithGivenIdIsPresentInDb() {
         //given
         TagDto newTagDto = new TagDto(null, "newTag");
@@ -511,22 +512,25 @@ public class GiftServiceImplTest {
         when(tagDao.findByName(newTagDto.getName())).thenReturn(Optional.empty());
         when(modelMapper.map(newTagDto, Tag.class)).thenReturn(newTag);
         when(tagDao.save(newTag)).thenReturn(newTagWithId);
-        when(certDao.getById(certificateId)).thenReturn(Optional.of(testEntity));
-        when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
-        when(tagDao.getAllByCertificateId(certificateId)).thenReturn(entityTagsFromDb);
+        TagDto newTagDtoWithId = new TagDto(newTagWithId.getId(), newTagWithId.getName());
         when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
+        when(modelMapper.map(newTagWithId, TagDto.class)).thenReturn(newTagDtoWithId);
+        when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
         //when
         GiftCertificateDto result = service.patch(dtoForPatch, certificateId);
         //then
         assertEquals(result, testDto);
-        verify(certDao, times(2)).getById(certificateId);
+        verify(certDao).getById(certificateId);
         verify(certDao).update(testEntity, certificateId);
-        verify(tagDao, times(2)).getAllByCertificateId(certificateId);
+        verify(tagDao).getAllByCertificateId(certificateId);
         verify(tagDao).findByName(tag.getName());
         verify(tagDao).findByName(newTagDto.getName());
         verify(modelMapper).map(newTagDto, Tag.class);
         verify(tagDao).save(newTag);
         verify(certificateTagsDao).save(certificateId, newTagWithId.getId());
+        verify(modelMapper, times(3)).map(tag, TagDto.class);
+        verify(modelMapper).map(newTagWithId, TagDto.class);
+        verify(modelMapper).map(testEntity, GiftCertificateDto.class);
     }
 
     @Test

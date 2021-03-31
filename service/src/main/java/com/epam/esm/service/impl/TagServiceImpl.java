@@ -70,8 +70,7 @@ public class TagServiceImpl implements TagService {
     public void delete(long id) {
         boolean isDeleted = tagDao.delete(id);
         if (!isDeleted) {
-            throw new EntityNotFoundException(String.format("Tag with id: %d is not found in DB",
-                    id));
+            throw new EntityNotFoundException(String.format("Tag with id: %d is not found in DB", id));
         }
     }
 

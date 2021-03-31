@@ -3,7 +3,6 @@ package com.epam.esm.dto;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -115,12 +114,14 @@ public class GiftCertificateDto {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+
+
     @Override
     public boolean equals(Object o) {
-        if (this == o){
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         GiftCertificateDto that = (GiftCertificateDto) o;

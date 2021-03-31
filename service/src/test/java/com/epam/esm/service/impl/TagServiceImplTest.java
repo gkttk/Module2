@@ -5,7 +5,7 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.EntityNotFoundException;
 import com.epam.esm.exceptions.EntityWithSuchNameAlreadyExists;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,11 +38,11 @@ public class TagServiceImplTest {
     @InjectMocks
     private TagServiceImpl tagService;
 
-    private static TagDto testDto;
-    private static Tag testEntity;
+    private TagDto testDto;
+    private Tag testEntity;
 
-    @BeforeAll
-    static void init() {
+    @BeforeEach
+    void init() {
         testDto = new TagDto(100L, "test");
         testEntity = new Tag(100L, "test");
     }

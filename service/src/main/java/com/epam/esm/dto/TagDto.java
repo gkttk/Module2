@@ -1,7 +1,5 @@
 package com.epam.esm.dto;
 
-import org.springframework.validation.annotation.Validated;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
@@ -20,7 +18,7 @@ public class TagDto {
     public TagDto() {
     }
 
-    public TagDto(Long id, String name){
+    public TagDto(Long id, String name) {
         this.id = id;
         this.name = name;
     }

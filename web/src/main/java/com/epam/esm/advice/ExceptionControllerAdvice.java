@@ -1,9 +1,10 @@
 package com.epam.esm.advice;
 
 import com.epam.esm.advice.error.ResponseError;
-import com.epam.esm.exceptions.EntityNotFoundException;
-import com.epam.esm.exceptions.EntityWithSuchNameAlreadyExists;
+import com.epam.esm.exceptions.GiftCertificateNotFoundException;
+import com.epam.esm.exceptions.TagWithSuchNameAlreadyExists;
 import com.epam.esm.exceptions.IllegalRequestParameterException;
+import com.epam.esm.exceptions.TagNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +17,19 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ResponseError> handleEntityNotFoundException() {
-        return new ResponseEntity<>(ResponseError.ENTITY_NOT_FOUNT, HttpStatus.NOT_FOUND);
+    @ExceptionHandler(GiftCertificateNotFoundException.class)
+    public ResponseEntity<ResponseError> handleGiftCertificateNotFoundException() {
+        return new ResponseEntity<>(ResponseError.GIFT_CERTIFICATE_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(EntityWithSuchNameAlreadyExists.class)
+    @ExceptionHandler(TagNotFoundException.class)
+    public ResponseEntity<ResponseError> handleTagNotFoundException() {
+        return new ResponseEntity<>(ResponseError.TAG_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(TagWithSuchNameAlreadyExists.class)
     public ResponseEntity<ResponseError> handleEntityWithSuchNameAlreadyExists() {
-        return new ResponseEntity<>(ResponseError.ENTITY_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ResponseError.TAG_WITH_SUCH_NAME_EXISTS, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IllegalRequestParameterException.class)

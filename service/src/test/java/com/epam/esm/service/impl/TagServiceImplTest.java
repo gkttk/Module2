@@ -3,8 +3,9 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exceptions.EntityNotFoundException;
-import com.epam.esm.exceptions.EntityWithSuchNameAlreadyExists;
+import com.epam.esm.exceptions.GiftCertificateNotFoundException;
+import com.epam.esm.exceptions.TagNotFoundException;
+import com.epam.esm.exceptions.TagWithSuchNameAlreadyExists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,7 +68,7 @@ public class TagServiceImplTest {
         when(tagDaoMock.getById(tagId)).thenReturn(Optional.empty());
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> tagService.getById(tagId));
+        assertThrows(TagNotFoundException.class, () -> tagService.getById(tagId));
         verify(tagDaoMock).getById(tagId);
     }
 
@@ -93,7 +94,7 @@ public class TagServiceImplTest {
         when(tagDaoMock.findAll()).thenReturn(expectedEntitiesList);
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> tagService.findAll());
+        assertThrows(TagNotFoundException.class, () -> tagService.findAll());
         verify(tagDaoMock).findAll();
     }
 
@@ -120,7 +121,7 @@ public class TagServiceImplTest {
         when(tagDaoMock.findByName(tagName)).thenReturn(Optional.of(testEntity));
         //when
         //then
-        assertThrows(EntityWithSuchNameAlreadyExists.class, () -> tagService.save(testDto));
+        assertThrows(TagWithSuchNameAlreadyExists.class, () -> tagService.save(testDto));
         verify(tagDaoMock).findByName(tagName);
     }
 
@@ -142,7 +143,7 @@ public class TagServiceImplTest {
         when(tagDaoMock.delete(tagId)).thenReturn(false);
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> tagService.delete(tagId));
+        assertThrows(TagNotFoundException.class, () -> tagService.delete(tagId));
         verify(tagDaoMock).delete(tagId);
     }
 
@@ -167,7 +168,7 @@ public class TagServiceImplTest {
         when(tagDaoMock.findByName(name)).thenReturn(Optional.empty());
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> tagService.findByName(name));
+        assertThrows(TagNotFoundException.class, () -> tagService.findByName(name));
         verify(tagDaoMock).findByName(name);
     }
 

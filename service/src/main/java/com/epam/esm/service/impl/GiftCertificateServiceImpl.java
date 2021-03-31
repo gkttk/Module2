@@ -9,7 +9,7 @@ import com.epam.esm.dto.GiftCertificatePatchDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exceptions.EntityNotFoundException;
+import com.epam.esm.exceptions.GiftCertificateNotFoundException;
 import com.epam.esm.exceptions.IllegalRequestParameterException;
 import com.epam.esm.service.GiftCertificateService;
 import org.modelmapper.ModelMapper;
@@ -86,7 +86,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.getById(id);
 
         GiftCertificate giftCertificate = certificateOpt.orElseThrow(() ->
-                new EntityNotFoundException(String.format("Can't find a certificate with id: %d", id)));
+                new GiftCertificateNotFoundException(String.format("Can't find a certificate with id: %d", id)));
 
         GiftCertificateDto giftCertificateDto = modelMapper.map(giftCertificate, GiftCertificateDto.class);
         fillCertificateDtoWithTags(giftCertificateDto);
@@ -126,7 +126,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.getById(certificateId);
 
         certificateOpt.orElseThrow(() ->
-                new EntityNotFoundException(String.format("GiftCertificate with id: %d doesn't exist in DB", certificateId)));
+                new GiftCertificateNotFoundException(String.format("GiftCertificate with id: %d doesn't exist in DB", certificateId)));
 
         String currentTime = DateProvider.getNowAsString();
         certificateDto.setLastUpdateDate(currentTime);
@@ -154,7 +154,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public void delete(long id) {
         boolean isDeleted = giftCertificateDao.delete(id);
         if (!isDeleted) {
-            throw new EntityNotFoundException(String.format("GiftCertificate with id: %d doesn't exist in DB", id));
+            throw new GiftCertificateNotFoundException(String.format("GiftCertificate with id: %d doesn't exist in DB", id));
         }
     }
 
@@ -164,7 +164,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.getById(certificateId);
 
         GiftCertificate certFromDb = certificateOpt.orElseThrow(() ->
-                new EntityNotFoundException(String.format("GiftCertificate with id: %d doesn't exist in DB", certificateId)));
+                new GiftCertificateNotFoundException(String.format("GiftCertificate with id: %d doesn't exist in DB", certificateId)));
 
         String name = giftCertificatePatchDto.getName();
         if (name != null) {
@@ -228,7 +228,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private List<GiftCertificateDto> getAll() {
         List<GiftCertificate> entities = giftCertificateDao.findAll();
         if (entities.isEmpty()) {
-            throw new EntityNotFoundException("There are no gift certificates in DB");
+            throw new GiftCertificateNotFoundException("There are no gift certificates in DB");
         }
 
         return entities.stream()
@@ -247,7 +247,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         });
 
         if (allEntities.isEmpty()) {
-            throw new EntityNotFoundException(String.format("There are no gift certificates with this tag name: %s in DB",
+            throw new GiftCertificateNotFoundException(String.format("There are no gift certificates with this tag name: %s in DB",
                     String.join(",", tagNames)));
         }
         return allEntities.stream()
@@ -267,7 +267,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
 
         if (allEntities.isEmpty()) {
-            throw new EntityNotFoundException(String.format("There are no gift certificates in DB with description like: %s",
+            throw new GiftCertificateNotFoundException(String.format("There are no gift certificates in DB with description like: %s",
                     String.join(",", descriptionsPart)));
         }
         return allEntities.stream()
@@ -285,7 +285,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         });
 
         if (allEntities.isEmpty()) {
-            throw new EntityNotFoundException(String.format("There are no gift certificates in DB with names like: %s",
+            throw new GiftCertificateNotFoundException(String.format("There are no gift certificates in DB with names like: %s",
                     String.join(",", namesPart)));
         }
         return allEntities.stream()
@@ -298,7 +298,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         List<GiftCertificate> entities = giftCertificateDao.getAllSorted(sortingFieldNames, sortingOrder);
 
         if (entities.isEmpty()) {
-            throw new EntityNotFoundException("There are no gift certificates in DB");
+            throw new GiftCertificateNotFoundException("There are no gift certificates in DB");
         }
         return entities.stream()
                 .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))

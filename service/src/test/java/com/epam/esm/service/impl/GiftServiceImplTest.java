@@ -8,7 +8,7 @@ import com.epam.esm.dto.GiftCertificatePatchDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exceptions.EntityNotFoundException;
+import com.epam.esm.exceptions.GiftCertificateNotFoundException;
 import com.epam.esm.exceptions.IllegalRequestParameterException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -99,7 +99,7 @@ public class GiftServiceImplTest {
         when(certDao.findAll()).thenReturn(expectedEntityList);
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> service.getAllForQuery(params));
+        assertThrows(GiftCertificateNotFoundException.class, () -> service.getAllForQuery(params));
         verify(certDao).findAll();
     }
 
@@ -155,7 +155,7 @@ public class GiftServiceImplTest {
         when(certDao.getAllByPartOfDescription(secondPartOfDescription)).thenReturn(expectedEntityList);
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> service.getAllForQuery(params));
+        assertThrows(GiftCertificateNotFoundException.class, () -> service.getAllForQuery(params));
         verify(certDao).getAllByPartOfDescription(firstPartOfDescription);
         verify(certDao).getAllByPartOfDescription(secondPartOfDescription);
     }
@@ -213,7 +213,7 @@ public class GiftServiceImplTest {
         when(certDao.getAllByPartOfName(secondNamePart)).thenReturn(expectedEntityList);
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> service.getAllForQuery(params));
+        assertThrows(GiftCertificateNotFoundException.class, () -> service.getAllForQuery(params));
         verify(certDao).getAllByPartOfName(firstNamePart);
         verify(certDao).getAllByPartOfName(secondNamePart);
     }
@@ -263,7 +263,7 @@ public class GiftServiceImplTest {
         when(certDao.getAllSorted(sortFields, order)).thenReturn(expectedEntityList);
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> service.getAllForQuery(params));
+        assertThrows(GiftCertificateNotFoundException.class, () -> service.getAllForQuery(params));
         verify(certDao).getAllSorted(sortFields, order);
     }
 
@@ -334,7 +334,7 @@ public class GiftServiceImplTest {
         when(certDao.findAllByTagName(secondTagName)).thenReturn(expectedEntityList);
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> service.getAllForQuery(params));
+        assertThrows(GiftCertificateNotFoundException.class, () -> service.getAllForQuery(params));
         verify(certDao).findAllByTagName(firstTagName);
         verify(certDao).findAllByTagName(secondTagName);
     }
@@ -360,7 +360,7 @@ public class GiftServiceImplTest {
         when(certDao.getById(id)).thenReturn(Optional.empty());
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> service.getById(id));
+        assertThrows(GiftCertificateNotFoundException.class, () -> service.getById(id));
         verify(certDao).getById(id);
     }
 
@@ -466,7 +466,7 @@ public class GiftServiceImplTest {
         when(certDao.getById(incorrectId)).thenReturn(Optional.empty());
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> service.update(testDto, incorrectId));
+        assertThrows(GiftCertificateNotFoundException.class, () -> service.update(testDto, incorrectId));
         verify(certDao).getById(incorrectId);
     }
 
@@ -488,7 +488,7 @@ public class GiftServiceImplTest {
         when(certDao.delete(incorrectId)).thenReturn(false);
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> service.delete(incorrectId));
+        assertThrows(GiftCertificateNotFoundException.class, () -> service.delete(incorrectId));
         verify(certDao).delete(incorrectId);
     }
 
@@ -542,7 +542,7 @@ public class GiftServiceImplTest {
         when(certDao.getById(incorrectId)).thenReturn(Optional.empty());
         //when
         //then
-        assertThrows(EntityNotFoundException.class, () -> service.patch(dtoForPatch, incorrectId));
+        assertThrows(GiftCertificateNotFoundException.class, () -> service.patch(dtoForPatch, incorrectId));
         verify(certDao).getById(incorrectId);
     }
 

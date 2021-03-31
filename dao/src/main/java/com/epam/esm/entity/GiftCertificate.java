@@ -1,10 +1,14 @@
 package com.epam.esm.entity;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+/**
+ * GiftCertificate entity.
+ *
+ * @since 1.0
+ */
 public class GiftCertificate {
 
     private Long id;
@@ -88,10 +92,10 @@ public class GiftCertificate {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o){
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         GiftCertificate that = (GiftCertificate) o;

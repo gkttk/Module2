@@ -24,6 +24,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Default implementation of {@link com.epam.esm.service.GiftCertificateService} interface.
+ *
+ * @since 1.0
+ */
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED,
         readOnly = true)
@@ -49,7 +54,19 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         this.certificateTagsDao = certificateTagsDao;
     }
 
-
+    /**
+     * This method do request to dao layer which depends on argument of the method.
+     * If the argument of the method contains @see {@link #NAMES_PART_KEY} than will be called {@link #getAllByPartOfNames(String[]) method}.
+     * If the argument of the method contains @see {@link #DESCRIPTION_PART_KEY} than will be called {@link #getAllByPartOfDescriptions(String[]) method}.
+     * If the argument of the method contains @see {@link #TAG_NAMES_KEY} than will be called {@link #getAllByTagNames(String[]) method}.
+     * If the argument of the method contains @see {@link #SORT_FIELDS_KEY} than will be called {@link #getAllSorted(String[], String)} method}.
+     *
+     * @param reqParams parameters of a request.
+     * @return List of GiftCertificateDao.
+     * @throws IllegalRequestParameterException if argument of the method contains {@link #SORT_FIELDS_KEY} key and
+     *                                          doesn't contain {@link #ORDER_KEY} key at the same time.
+     * @since 1.0
+     */
     @Override
     public List<GiftCertificateDto> getAllForQuery(Map<String, String[]> reqParams) {
         for (Map.Entry<String, String[]> entry : reqParams.entrySet()) {
@@ -81,6 +98,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return getAll();
     }
 
+
+    /**
+     * This method gets GiftCertificate entity from dao layer with given id and converts it to GiftCertificateDto.
+     * The method also calls {@link #fillCertificateDtoWithTags(GiftCertificateDto)} for filling gotten GiftCertificateDto
+     * with list of TagDto.
+     *
+     * @param id id of necessary entity.
+     * @return GiftCertificateDto with id and tags.
+     * @throws GiftCertificateNotFoundException if there is no entity with given id in database.
+     * @since 1.0
+     */
     @Override
     public GiftCertificateDto getById(long id) {
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.getById(id);
@@ -93,6 +121,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDto;
     }
 
+    /**
+     * This method set date fields for GiftCertificate entity and saves it in database. Also the method link passed tags with the GiftCertificate
+     * entity and, if the tag doesn't exist in db, creates it.
+     *
+     * @param certificate GiftCertificate entity without date fields and id for saving.
+     * @return GiftCertificateDto with id and tags.
+     * @since 1.0
+     */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public GiftCertificateDto save(GiftCertificateDto certificate) {
@@ -119,6 +155,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
 
+    /**
+     * This method does full update for GiftCertificate entity with given id.
+     *
+     * @param certificateDto DTO contains field for updating GiftCertificate entity.
+     * @param certificateId  id of updatable GiftCertificate entity.
+     * @return GiftCertificateDto with id and tags.
+     * @throws GiftCertificateNotFoundException if GiftCertificate entity with given id doesn't exist in db.
+     * @since 1.0
+     */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public GiftCertificateDto update(GiftCertificateDto certificateDto, long certificateId) {
@@ -150,6 +195,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     }
 
+
+    /**
+     * This method deletes GiftCertificate entity with given id from db.
+     *
+     * @param id id of deletable GiftCertificate entity.
+     * @throws GiftCertificateNotFoundException if GiftCertificate entity with given id doesn't exist in db.
+     * @since 1.0
+     */
     @Override
     public void delete(long id) {
         boolean isDeleted = giftCertificateDao.delete(id);
@@ -158,6 +211,16 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
     }
 
+    /**
+     * This method partly updates GiftCertificate entity.Also the method link passed tags with the GiftCertificate
+     * entity and, if the tag doesn't exist in db, creates it.
+     *
+     * @param giftCertificatePatchDto DTO contains field for partial updating GiftCertificate entity.
+     * @param certificateId           id of updatable GiftCertificate entity.
+     * @return updated GiftCertificateDto with id and tags.
+     * @throws GiftCertificateNotFoundException if GiftCertificate entity with given id doesn't exist in db.
+     * @since 1.0
+     */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public GiftCertificateDto patch(GiftCertificatePatchDto giftCertificatePatchDto, long certificateId) {
@@ -224,7 +287,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return dto;
     }
 
-
+    /**
+     * This method get all GiftCertificate entities from database and converts them to GiftCertificateDto.
+     *
+     * @return list of all GiftCertificateDto.
+     * @throws GiftCertificateNotFoundException if there are no GiftCertificate entities in db.
+     * @since 1.0
+     */
     private List<GiftCertificateDto> getAll() {
         List<GiftCertificate> entities = giftCertificateDao.findAll();
         if (entities.isEmpty()) {
@@ -237,6 +306,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * This method get all GiftCertificate entities by their tag names, convert them to DTO and fills
+     * them with tags.
+     *
+     * @param tagNames array of tag names for search
+     * @return list of GiftCertificateDto with given tag names for search.
+     * @throws GiftCertificateNotFoundException if there are not GiftCertificate entities with such tag names in db.
+     * @since 1.0
+     */
     private List<GiftCertificateDto> getAllByTagNames(String[] tagNames) {
 
         Set<GiftCertificate> allEntities = new LinkedHashSet<>();
@@ -257,6 +335,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
 
+    /**
+     * This method get all GiftCertificate entities by parts of their descriptions, convert them to DTO and fills
+     * them with tags.
+     *
+     * @param descriptionsPart array of description parts for search
+     * @return list of GiftCertificateDto with given description parts for search.
+     * @throws GiftCertificateNotFoundException if there are not GiftCertificate entities with such description parts in db.
+     * @since 1.0
+     */
     private List<GiftCertificateDto> getAllByPartOfDescriptions(String[] descriptionsPart) {
         Set<GiftCertificate> allEntities = new LinkedHashSet<>();
 
@@ -276,6 +363,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * This method get all GiftCertificate entities by parts of their names, convert them to DTO and fills
+     * them with tags.
+     *
+     * @param namesPart array of names part for search
+     * @return list of GiftCertificateDto with given names part for search.
+     * @throws GiftCertificateNotFoundException if there are not GiftCertificate entities with such names part in db.
+     * @since 1.0
+     */
     private List<GiftCertificateDto> getAllByPartOfNames(String[] namesPart) {
         Set<GiftCertificate> allEntities = new LinkedHashSet<>();
 
@@ -294,6 +390,16 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .collect(Collectors.toList());
     }
 
+
+    /**
+     * This method get all GiftCertificate entities from db sorted.
+     *
+     * @param sortingFieldNames field names for a sorting.
+     * @param sortingOrder      order of the sorting.
+     * @return list of all GiftCertificateDto sorted.
+     * @throws GiftCertificateNotFoundException if there are not GiftCertificate entities in db.
+     * @since 1.0
+     */
     private List<GiftCertificateDto> getAllSorted(String[] sortingFieldNames, String sortingOrder) {
         List<GiftCertificate> entities = giftCertificateDao.getAllSorted(sortingFieldNames, sortingOrder);
 
@@ -307,6 +413,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
 
+    /**
+     * This method link a tag with a GiftCertificate entity and, if given tag is not present in db, creates it.
+     *
+     * @param tagDto        tag for linking with GiftCertificate entity.
+     * @param certificateId id of GiftCertificate entity.
+     * @return Tag entity from db with id.
+     * @since 1.0
+     */
     private Tag addTagToCertificate(TagDto tagDto, long certificateId) {
         Optional<Tag> tagFromDbOpt = tagDao.findByName(tagDto.getName());
         Tag tag;
@@ -321,7 +435,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return tag;
     }
 
-
+    /**
+     * This method fills GiftCertificateDto with tags.
+     *
+     * @param giftCertificateDto GiftCertificateDto for filling.
+     * @since 1.0
+     */
     private void fillCertificateDtoWithTags(GiftCertificateDto giftCertificateDto) {
         List<Tag> tags = tagDao.getAllByCertificateId(giftCertificateDto.getId());
         List<TagDto> tagsDto = tags.stream()

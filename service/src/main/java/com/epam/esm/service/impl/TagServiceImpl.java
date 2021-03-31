@@ -17,6 +17,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Default implementation of {@link com.epam.esm.service.TagService} interface.
+ *
+ * @since 1.0
+ */
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, readOnly = true)
 public class TagServiceImpl implements TagService {
@@ -30,6 +35,15 @@ public class TagServiceImpl implements TagService {
         this.modelMapper = modelMapper;
     }
 
+
+    /**
+     * This method get TagDto by Tag entity id.
+     *
+     * @param id Tag entity id.
+     * @return TagDto with id.
+     * @throws TagNotFoundException if there is no Tag entity with given id in db.
+     * @since 1.0
+     */
     @Override
     public TagDto getById(long id) {
         Optional<Tag> tagOpt = tagDao.getById(id);
@@ -39,6 +53,14 @@ public class TagServiceImpl implements TagService {
         return modelMapper.map(tag, TagDto.class);
     }
 
+
+    /**
+     * This method get list of all TagDto from db.
+     *
+     * @return list of all TagDto from db.
+     * @throws TagNotFoundException if there are no Tag entities in db.
+     * @since 1.0
+     */
     @Override
     public List<TagDto> findAll() {
         List<Tag> entities = tagDao.findAll();
@@ -48,6 +70,14 @@ public class TagServiceImpl implements TagService {
         return entities.stream().map(entity -> modelMapper.map(entity, TagDto.class)).collect(Collectors.toList());
     }
 
+    /**
+     * This method saves a TagDto into db.
+     *
+     * @param tagDto DTO for saving without id.
+     * @return saved DTO with id.
+     * @throws TagWithSuchNameAlreadyExists if Tag entity with a name like DTO already exists in db.
+     * @since 1.0
+     */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public TagDto save(TagDto tagDto) {
@@ -66,6 +96,13 @@ public class TagServiceImpl implements TagService {
         }
     }
 
+    /**
+     * This method deletes a Tag entity from db.
+     *
+     * @param id Tag entity's id for deleting.
+     * @throws TagNotFoundException if there is no Tag entity with given id in db.
+     * @since 1.0
+     */
     @Override
     public void delete(long id) {
         boolean isDeleted = tagDao.delete(id);
@@ -74,6 +111,14 @@ public class TagServiceImpl implements TagService {
         }
     }
 
+    /**
+     * This method gets DTO with given name.
+     *
+     * @param tagName name of Tag entity.
+     * @return DTO with id with given name.
+     * @throws TagNotFoundException is there is no Tag entity with given name in db.
+     * @since 1.0
+     */
     @Override
     public TagDto findByName(String tagName) {
         Optional<Tag> tagOpt = tagDao.findByName(tagName);

@@ -8,6 +8,9 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * This class maps ResultSet from db to GiftCertificate entity.
+ */
 public class GiftCertificateRowMapper implements RowMapper<GiftCertificate> {
 
     private final static String ID = "id";

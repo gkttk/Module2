@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+/**
+ * This DTO is validated to partially update a GiftCertificate entity.
+ *
+ * @since 1.0
+ */
 public class GiftCertificatePatchDto {
 
     @Size(min = 2, max = 35, message = "name should contain 2-35 characters")

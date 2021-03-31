@@ -3,6 +3,11 @@ package com.epam.esm.entity;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+/**
+ * Tag entity.
+ *
+ * @since 1.0
+ */
 public class Tag {
 
     private Long id;
@@ -39,10 +44,10 @@ public class Tag {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o){
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         Tag tag = (Tag) o;

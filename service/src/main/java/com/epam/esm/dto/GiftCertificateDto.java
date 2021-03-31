@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+/**
+ * This DTO is validated to fully update a GiftCertificate entity.
+ *
+ * @since 1.0
+ */
 public class GiftCertificateDto {
 
     @Null
@@ -113,7 +118,6 @@ public class GiftCertificateDto {
     public void setLastUpdateDate(String lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
-
 
 
     @Override

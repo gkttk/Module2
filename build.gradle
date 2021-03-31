@@ -12,6 +12,11 @@ allprojects {
         mavenCentral()
     }
 
+    javadoc{
+        source = sourceSets.main.allJava
+        classpath = configurations.compile
+    }
+
     tasks.withType(JavaCompile) {
         sourceCompatibility = "1.8"
         targetCompatibility = "1.8"

@@ -6,6 +6,9 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * This class maps ResultSet from db to Tag entity.
+ */
 public class TagRowMapper implements RowMapper<Tag> {
 
     private final static String ID = "id";

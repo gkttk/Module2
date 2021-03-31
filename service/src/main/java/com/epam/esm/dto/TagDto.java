@@ -6,7 +6,11 @@ import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-
+/**
+ * This DTO is validated to fully update a Tag entity.
+ *
+ * @since 1.0
+ */
 public class TagDto {
 
     @Null

@@ -1,14 +1,9 @@
 package com.epam.esm.config;
 
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.mappers.GiftCertificateRowMapper;
-import com.epam.esm.mappers.TagRowMapper;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -19,7 +14,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @PropertySource("classpath:hikari.properties")
-@ComponentScan(basePackages = {"com.epam.esm.dao"})
+@ComponentScan(basePackages = {"com.epam.esm.dao", "com.epam.esm.mappers"})
 public class DaoConfig {
 
     private final static String HIKARI_PROPERTIES_PATH = "/hikari.properties";
@@ -28,17 +23,6 @@ public class DaoConfig {
     public PlatformTransactionManager getTransactionManager() {
         return new DataSourceTransactionManager(getDataSource());
     }
-
-    @Bean
-    public RowMapper<GiftCertificate> getGiftCertificateRowMapper() {
-        return new GiftCertificateRowMapper();
-    }
-
-    @Bean
-    public RowMapper<Tag> getTagRowMapper() {
-        return new TagRowMapper();
-    }
-
 
     @Bean
     public DataSource getDataSource() {

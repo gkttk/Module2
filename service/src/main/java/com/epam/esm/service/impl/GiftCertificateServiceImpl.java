@@ -87,8 +87,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 case SORT_FIELDS_KEY: {
                     String[] sortFields = entry.getValue();
                     String[] orders = reqParams.get(ORDER_KEY);
-                    if (orders == null) {
-                        throw new IllegalRequestParameterException("There is no order parameter in request");
+                    if (orders == null ||
+                            (!orders[0].equalsIgnoreCase("desc") && !orders[0].equalsIgnoreCase("asc"))) {
+                        throw new IllegalRequestParameterException("There is no correct order-parameter in request");
                     }
                     return getAllSorted(sortFields, orders[0]);
                 }

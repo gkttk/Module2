@@ -12,7 +12,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
@@ -72,22 +71,15 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     @Override
     public GiftCertificate save(GiftCertificate certificate) {
 
-        String name = certificate.getName();
-        String description = certificate.getDescription();
-        BigDecimal price = certificate.getPrice();
-        int duration = certificate.getDuration();
-        String createDate = certificate.getCreateDate();
-        String lastUpdateDate = certificate.getLastUpdateDate();
-
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(SAVE_QUERY, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, name);
-            ps.setString(2, description);
-            ps.setBigDecimal(3, price);
-            ps.setInt(4, duration);
-            ps.setString(5, createDate);
-            ps.setString(6, lastUpdateDate);
+            ps.setString(1, certificate.getName());
+            ps.setString(2, certificate.getDescription());
+            ps.setBigDecimal(3, certificate.getPrice());
+            ps.setInt(4, certificate.getDuration());
+            ps.setString(5, certificate.getCreateDate());
+            ps.setString(6, certificate.getLastUpdateDate());
             return ps;
         }, keyHolder);
 
@@ -196,12 +188,8 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public void update(GiftCertificate certificate, long id) {
-        String name = certificate.getName();
-        String description = certificate.getDescription();
-        BigDecimal price = certificate.getPrice();
-        int duration = certificate.getDuration();
-        String lastUpdateTime = certificate.getLastUpdateDate();
-        template.update(UPDATE_QUERY, name, description, price, duration, lastUpdateTime, id);
+        template.update(UPDATE_QUERY, certificate.getName(), certificate.getDescription(),
+                certificate.getPrice(), certificate.getDuration(), certificate.getLastUpdateDate(), id);
     }
 
     /**

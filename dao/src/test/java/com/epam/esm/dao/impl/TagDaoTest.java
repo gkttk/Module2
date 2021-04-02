@@ -1,6 +1,6 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.config.DaoTestConfig;
+import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.BeforeAll;

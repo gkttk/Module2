@@ -3,7 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.dateprovider.DateProvider;
+import com.epam.esm.datehelper.DateHelper;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.GiftCertificatePatchDto;
 import com.epam.esm.dto.TagDto;
@@ -134,7 +134,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public GiftCertificateDto save(GiftCertificateDto certificate) {
         GiftCertificate giftCertificate = modelMapper.map(certificate, GiftCertificate.class);
-        String currentTime = DateProvider.getNowAsString();
+        String currentTime = DateHelper.getNowAsString();
         giftCertificate.setCreateDate(currentTime);
         giftCertificate.setLastUpdateDate(currentTime); //init dto
 
@@ -174,7 +174,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         certificateOpt.orElseThrow(() ->
                 new GiftCertificateNotFoundException(String.format("GiftCertificate with id: %d doesn't exist in DB", certificateId)));
 
-        String currentTime = DateProvider.getNowAsString();
+        String currentTime = DateHelper.getNowAsString();
         certificateDto.setLastUpdateDate(currentTime);
 
         GiftCertificate giftCertificate = modelMapper.map(certificateDto, GiftCertificate.class);
@@ -247,7 +247,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             certFromDb.setDuration(duration);
         }
 
-        String currentTime = DateProvider.getNowAsString();
+        String currentTime = DateHelper.getNowAsString();
         certFromDb.setLastUpdateDate(currentTime);                  //init dto
 
         giftCertificateDao.update(certFromDb, certificateId);

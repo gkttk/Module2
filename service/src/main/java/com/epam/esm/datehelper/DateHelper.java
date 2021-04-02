@@ -1,4 +1,4 @@
-package com.epam.esm.dateprovider;
+package com.epam.esm.datehelper;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @since 1.0
  */
-public class DateProvider {
+public class DateHelper {
 
     public static String getNowAsString() {
         return ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);

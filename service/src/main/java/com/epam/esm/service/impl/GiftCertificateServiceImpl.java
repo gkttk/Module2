@@ -68,7 +68,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @since 1.0
      */
     @Override
-    public List<GiftCertificateDto> getAllForQuery(Map<String, String[]> reqParams) {
+    public List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams) {
         for (Map.Entry<String, String[]> entry : reqParams.entrySet()) {
             String key = entry.getKey();
             switch (key) {
@@ -111,7 +111,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @since 1.0
      */
     @Override
-    public GiftCertificateDto getById(long id) {
+    public GiftCertificateDto findById(long id) {
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.getById(id);
 
         GiftCertificate giftCertificate = certificateOpt.orElseThrow(() ->
@@ -258,7 +258,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (passedTags != null) {
             passedTags.forEach(tagDto -> {
                 String tagDtoName = tagDto.getName();
-                Optional<Tag> tagFromDbOpt = tagDao.findByName(tagDtoName); //check if the tag with such name in db
+                Optional<Tag> tagFromDbOpt = tagDao.getByName(tagDtoName); //check if the tag with such name in db
 
                 if (tagFromDbOpt.isPresent()) {
                     Tag tagFromDb = tagFromDbOpt.get();
@@ -296,7 +296,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @since 1.0
      */
     private List<GiftCertificateDto> getAll() {
-        List<GiftCertificate> entities = giftCertificateDao.findAll();
+        List<GiftCertificate> entities = giftCertificateDao.getAll();
         if (entities.isEmpty()) {
             throw new GiftCertificateNotFoundException("There are no gift certificates in DB");
         }
@@ -321,7 +321,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Set<GiftCertificate> allEntities = new LinkedHashSet<>();
 
         Stream.of(tagNames).forEach(tagName -> {
-            List<GiftCertificate> entities = giftCertificateDao.findAllByTagName(tagName);
+            List<GiftCertificate> entities = giftCertificateDao.getAllByTagName(tagName);
             allEntities.addAll(entities);
         });
 
@@ -423,7 +423,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @since 1.0
      */
     private Tag addTagToCertificate(TagDto tagDto, long certificateId) {
-        Optional<Tag> tagFromDbOpt = tagDao.findByName(tagDto.getName());
+        Optional<Tag> tagFromDbOpt = tagDao.getByName(tagDto.getName());
         Tag tag;
         if (tagFromDbOpt.isPresent()) {
             tag = tagFromDbOpt.get();

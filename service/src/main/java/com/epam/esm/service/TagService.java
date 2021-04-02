@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface TagService {
 
-    TagDto getById(long id);
+    TagDto findById(long id);
 
     List<TagDto> findAll();
 

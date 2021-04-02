@@ -45,7 +45,7 @@ public class TagServiceImpl implements TagService {
      * @since 1.0
      */
     @Override
-    public TagDto getById(long id) {
+    public TagDto findById(long id) {
         Optional<Tag> tagOpt = tagDao.getById(id);
 
         Tag tag = tagOpt.orElseThrow(() -> new TagNotFoundException(String.format("Can't find a tag with id: %d", id)));
@@ -63,7 +63,7 @@ public class TagServiceImpl implements TagService {
      */
     @Override
     public List<TagDto> findAll() {
-        List<Tag> entities = tagDao.findAll();
+        List<Tag> entities = tagDao.getAll();
         if (entities.isEmpty()) {
             throw new TagNotFoundException("There are no tags in DB");
         }
@@ -82,7 +82,7 @@ public class TagServiceImpl implements TagService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public TagDto save(TagDto tagDto) {
         String tagName = tagDto.getName();
-        Optional<Tag> tagFromDbOpt = tagDao.findByName(tagName);
+        Optional<Tag> tagFromDbOpt = tagDao.getByName(tagName);
 
         if (tagFromDbOpt.isPresent()) {
             throw new TagWithSuchNameAlreadyExists(String.format("Tag with name: %s already exist in DB",
@@ -121,7 +121,7 @@ public class TagServiceImpl implements TagService {
      */
     @Override
     public TagDto findByName(String tagName) {
-        Optional<Tag> tagOpt = tagDao.findByName(tagName);
+        Optional<Tag> tagOpt = tagDao.getByName(tagName);
         Tag tag = tagOpt.orElseThrow(() -> new TagNotFoundException(String.format("Tag with name: %s is not found in DB",
                 tagName)));
         return modelMapper.map(tag, TagDto.class);

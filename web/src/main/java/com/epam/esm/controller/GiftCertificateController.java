@@ -29,13 +29,13 @@ public class GiftCertificateController {
     @GetMapping
     public ResponseEntity<List<GiftCertificateDto>> getAllForQuery(WebRequest webRequest) {
         Map<String, String[]> parameterMap = webRequest.getParameterMap();
-        List<GiftCertificateDto> certificates = giftCertificateService.getAllForQuery(parameterMap);
+        List<GiftCertificateDto> certificates = giftCertificateService.findAllForQuery(parameterMap);
         return ResponseEntity.ok(certificates);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<GiftCertificateDto> getById(@PathVariable long id) {
-        GiftCertificateDto certificate = giftCertificateService.getById(id);
+        GiftCertificateDto certificate = giftCertificateService.findById(id);
         return ResponseEntity.ok(certificate);
     }
 

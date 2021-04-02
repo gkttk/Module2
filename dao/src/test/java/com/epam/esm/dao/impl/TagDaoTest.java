@@ -87,11 +87,11 @@ public class TagDaoTest {
 
 
     @Test
-    public void testFindAllShouldReturnEntityListWhenThereAreEntitiesInDb() {
+    public void testGetAllShouldReturnEntityListWhenThereAreEntitiesInDb() {
         //given
         List<Tag> expected = Arrays.asList(tag1, tag2, tag3);
         //when
-        List<Tag> result = tagDao.findAll();
+        List<Tag> result = tagDao.getAll();
         //then
         assertEquals(result, expected);
     }
@@ -134,23 +134,23 @@ public class TagDaoTest {
     }
 
     @Test
-    public void testFindByNameShouldReturnOptionalEntityWhenEntityWithGivenNameIsPresentInDb() {
+    public void testGetByNameShouldReturnOptionalEntityWhenEntityWithGivenNameIsPresentInDb() {
         //given
         String tagName = tag1.getName();
         Optional<Tag> expected = Optional.of(TagDaoTest.tag1);
         //when
-        Optional<Tag> result = tagDao.findByName(tagName);
+        Optional<Tag> result = tagDao.getByName(tagName);
         //then
         assertEquals(result, expected);
     }
 
     @Test
-    public void testFindByNameShouldReturnEmptyOptionalWhenEntityWithGivenNameIsNotPresentInDb() {
+    public void testGetByNameShouldReturnEmptyOptionalWhenEntityWithGivenNameIsNotPresentInDb() {
         //given
         String tagName = "incorrectName";
         Optional<Tag> expected = Optional.empty();
         //when
-        Optional<Tag> result = tagDao.findByName(tagName);
+        Optional<Tag> result = tagDao.getByName(tagName);
         //then
         assertEquals(result, expected);
     }

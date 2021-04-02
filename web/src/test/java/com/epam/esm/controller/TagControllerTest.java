@@ -66,13 +66,13 @@ public class TagControllerTest {
     public void testGetByIdShouldReturnHttpStatusOkWithDto() {
         //given
         Long tagId = defaultTagDto.getId();
-        when(serviceMock.getById(tagId)).thenReturn(defaultTagDto);
+        when(serviceMock.findById(tagId)).thenReturn(defaultTagDto);
         ResponseEntity<TagDto> expected = ResponseEntity.ok(defaultTagDto);
         //when
         ResponseEntity<TagDto> result = tagController.getById(tagId);
         //then
         assertEquals(result, expected);
-        verify(serviceMock).getById(tagId);
+        verify(serviceMock).findById(tagId);
     }
 
     @Test

@@ -65,7 +65,7 @@ public class GiftCertificateControllerTest {
         Map<String, String[]> paramMap = new HashMap<>();
         List<GiftCertificateDto> listDto = Arrays.asList(defaultCertDto, defaultCertDto);
         when(webRequestMock.getParameterMap()).thenReturn(paramMap);
-        when(serviceMock.getAllForQuery(paramMap)).thenReturn(listDto);
+        when(serviceMock.findAllForQuery(paramMap)).thenReturn(listDto);
 
         ResponseEntity<List<GiftCertificateDto>> expected = ResponseEntity.ok(listDto);
         //when
@@ -73,20 +73,20 @@ public class GiftCertificateControllerTest {
         //then
         assertEquals(result, expected);
         verify(webRequestMock).getParameterMap();
-        verify(serviceMock).getAllForQuery(paramMap);
+        verify(serviceMock).findAllForQuery(paramMap);
     }
 
     @Test
     public void testGetByIdShouldReturnHttpStatusOkWithDto() {
         //given
         Long certId = defaultCertDto.getId();
-        when(serviceMock.getById(certId)).thenReturn(defaultCertDto);
+        when(serviceMock.findById(certId)).thenReturn(defaultCertDto);
         ResponseEntity<GiftCertificateDto> expected = ResponseEntity.ok(defaultCertDto);
         //when
         ResponseEntity<GiftCertificateDto> result = giftCertificateController.getById(certId);
         //then
         assertEquals(result, expected);
-        verify(serviceMock).getById(certId);
+        verify(serviceMock).findById(certId);
     }
 
     @Test

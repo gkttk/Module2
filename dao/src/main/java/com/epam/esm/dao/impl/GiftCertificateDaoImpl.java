@@ -44,8 +44,8 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     private final static String SORTING_QUERY_FIRST_PART = "SELECT * FROM " + TABLE_NAME + " ORDER BY";
 
-    private final static String FIND_BY_NAME_PART_PROCEDURE_NAME = "searchByPartOfName";
-    private final static String FIND_BY_DESCRIPTION_PART_PROCEDURE_NAME = "searchByPartOfDescription";
+    private final static String GET_BY_NAME_PART_PROCEDURE_NAME = "searchByPartOfName";
+    private final static String GET_BY_DESCRIPTION_PART_PROCEDURE_NAME = "searchByPartOfDescription";
     private final static String RESULTS_SET_KEY = "certificates";
 
     private final static String NAME_IN_PARAM_FOR_PART_OF_DESCRIPTION = "in_partOfDescription";
@@ -116,7 +116,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @since 1.0
      */
     @Override
-    public List<GiftCertificate> findAll() {
+    public List<GiftCertificate> getAll() {
         return template.query(GET_ALL_QUERY, rowMapper);
     }
 
@@ -132,7 +132,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     public List<GiftCertificate> getAllByPartOfDescription(String partOfDescription) {
 
         SqlParameterSource params = new MapSqlParameterSource().addValue(NAME_IN_PARAM_FOR_PART_OF_DESCRIPTION, partOfDescription);
-        Map<String, Object> procedureResult = executeProcedure(FIND_BY_DESCRIPTION_PART_PROCEDURE_NAME, params);
+        Map<String, Object> procedureResult = executeProcedure(GET_BY_DESCRIPTION_PART_PROCEDURE_NAME, params);
         return (List<GiftCertificate>) procedureResult.get(RESULTS_SET_KEY);
 
     }
@@ -148,7 +148,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     public List<GiftCertificate> getAllByPartOfName(String partOfName) {
 
         SqlParameterSource params = new MapSqlParameterSource().addValue(NAME_IN_PARAM_FOR_PART_OF_NAME, partOfName);
-        Map<String, Object> procedureResult = executeProcedure(FIND_BY_NAME_PART_PROCEDURE_NAME, params);
+        Map<String, Object> procedureResult = executeProcedure(GET_BY_NAME_PART_PROCEDURE_NAME, params);
         return (List<GiftCertificate>) procedureResult.get(RESULTS_SET_KEY);
 
     }
@@ -183,7 +183,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @since 1.0
      */
     @Override
-    public List<GiftCertificate> findAllByTagName(String tagName) {
+    public List<GiftCertificate> getAllByTagName(String tagName) {
         return template.query(GET_ALL_BY_TAG_NAME, rowMapper, tagName);
     }
 

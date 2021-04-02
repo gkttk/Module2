@@ -38,7 +38,7 @@ public interface TagDao {
      * @return Optional of Tag entity.
      * @since 1.0
      */
-    Optional<Tag> findByName(String tagName);
+    Optional<Tag> getByName(String tagName);
 
     /**
      * This method get all Tag entities.
@@ -46,7 +46,7 @@ public interface TagDao {
      * @return List of all Tag entities.
      * @since 1.0
      */
-    List<Tag> findAll();
+    List<Tag> getAll();
 
     /**
      * This method get all Tag entities which is bound with a specific GiftCertificate entity.

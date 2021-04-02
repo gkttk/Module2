@@ -38,7 +38,7 @@ public interface GiftCertificateDao {
      * @return List of all GiftCertificate entities.
      * @since 1.0
      */
-    List<GiftCertificate> findAll();
+    List<GiftCertificate> getAll();
 
 
     /**
@@ -77,7 +77,7 @@ public interface GiftCertificateDao {
      * @return List of all GiftCertificate entities which is bound with tag that has name like tagName param.
      * @since 1.0
      */
-    List<GiftCertificate> findAllByTagName(String tagName);
+    List<GiftCertificate> getAllByTagName(String tagName);
 
 
     /**

@@ -3,7 +3,6 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exceptions.GiftCertificateNotFoundException;
 import com.epam.esm.exceptions.TagNotFoundException;
 import com.epam.esm.exceptions.TagWithSuchNameAlreadyExists;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,12 +48,12 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testGetByIdShouldReturnDtoWhenEntityWithGivenIdIsPresentInDb() {
+    public void testFindByIdShouldReturnDtoWhenEntityWithGivenIdIsPresentInDb() {
         //given
         when(tagDaoMock.getById(anyLong())).thenReturn(Optional.of(new Tag()));
         when(modelMapperMock.map(any(), any())).thenReturn(testDto);
         //when
-        TagDto result = tagService.getById(100);
+        TagDto result = tagService.findById(100);
         //then
         verify(tagDaoMock).getById(anyLong());
         verify(modelMapperMock).map(any(), any());
@@ -62,13 +61,13 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testGetByIdShouldThrowExceptionWhenEntityWithGivenIdIsNotPresentInDb() {
+    public void testFindByIdShouldThrowExceptionWhenEntityWithGivenIdIsNotPresentInDb() {
         //given
         long tagId = testDto.getId();
         when(tagDaoMock.getById(tagId)).thenReturn(Optional.empty());
         //when
         //then
-        assertThrows(TagNotFoundException.class, () -> tagService.getById(tagId));
+        assertThrows(TagNotFoundException.class, () -> tagService.findById(tagId));
         verify(tagDaoMock).getById(tagId);
     }
 
@@ -77,12 +76,12 @@ public class TagServiceImplTest {
         //given
         List<Tag> expectedEntitiesList = Stream.generate(Tag::new).limit(3).collect(Collectors.toList());
         List<TagDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
-        when(tagDaoMock.findAll()).thenReturn(expectedEntitiesList);
+        when(tagDaoMock.getAll()).thenReturn(expectedEntitiesList);
         when(modelMapperMock.map(any(), any())).thenReturn(testDto);
         //when
         List<TagDto> result = tagService.findAll();
         //then
-        verify(tagDaoMock).findAll();
+        verify(tagDaoMock).getAll();
         verify(modelMapperMock, times(expectedEntitiesList.size())).map(any(), any());
         assertEquals(result, expectedResult);
     }
@@ -91,24 +90,24 @@ public class TagServiceImplTest {
     public void testFindAllShouldThrowExceptionWhenThereIsNoEntitiesInDb() {
         //given
         List<Tag> expectedEntitiesList = Collections.emptyList();
-        when(tagDaoMock.findAll()).thenReturn(expectedEntitiesList);
+        when(tagDaoMock.getAll()).thenReturn(expectedEntitiesList);
         //when
         //then
         assertThrows(TagNotFoundException.class, () -> tagService.findAll());
-        verify(tagDaoMock).findAll();
+        verify(tagDaoMock).getAll();
     }
 
     @Test
     public void testSaveShouldSaveEntityAndReturnDtoWhenGivenEntityIsNotPresentInDb() {
         //given
         String tagName = testDto.getName();
-        when(tagDaoMock.findByName(tagName)).thenReturn(Optional.empty());
+        when(tagDaoMock.getByName(tagName)).thenReturn(Optional.empty());
         when(modelMapperMock.map(testDto, Tag.class)).thenReturn(testEntity);
         when(tagDaoMock.save(testEntity)).thenReturn(testEntity);
         //when
         TagDto result = tagService.save(testDto);
         //then
-        verify(tagDaoMock).findByName(tagName);
+        verify(tagDaoMock).getByName(tagName);
         verify(modelMapperMock).map(testDto, Tag.class);
         verify(tagDaoMock).save(testEntity);
         assertEquals(result, testDto);
@@ -118,11 +117,11 @@ public class TagServiceImplTest {
     public void testSaveShouldThrowExceptionWhenGivenEntityIsPresentInDb() {
         //given
         String tagName = testDto.getName();
-        when(tagDaoMock.findByName(tagName)).thenReturn(Optional.of(testEntity));
+        when(tagDaoMock.getByName(tagName)).thenReturn(Optional.of(testEntity));
         //when
         //then
         assertThrows(TagWithSuchNameAlreadyExists.class, () -> tagService.save(testDto));
-        verify(tagDaoMock).findByName(tagName);
+        verify(tagDaoMock).getByName(tagName);
     }
 
     @Test
@@ -151,12 +150,12 @@ public class TagServiceImplTest {
     public void testFindByNameShouldReturnDtoWhenEntityWithSuchNameIsPresentInDb() {
         //given
         String name = testDto.getName();
-        when(tagDaoMock.findByName(name)).thenReturn(Optional.of(testEntity));
+        when(tagDaoMock.getByName(name)).thenReturn(Optional.of(testEntity));
         when(modelMapperMock.map(testEntity, TagDto.class)).thenReturn(testDto);
         //when
         TagDto result = tagService.findByName(name);
         //then
-        verify(tagDaoMock).findByName(name);
+        verify(tagDaoMock).getByName(name);
         verify(modelMapperMock).map(testEntity, TagDto.class);
         assertEquals(result, testDto);
     }
@@ -165,11 +164,11 @@ public class TagServiceImplTest {
     public void testFindByNameShouldThrowExceptionWhenEntityWithSuchNameIsNotPresentInDb() {
         //given
         String name = testDto.getName();
-        when(tagDaoMock.findByName(name)).thenReturn(Optional.empty());
+        when(tagDaoMock.getByName(name)).thenReturn(Optional.empty());
         //when
         //then
         assertThrows(TagNotFoundException.class, () -> tagService.findByName(name));
-        verify(tagDaoMock).findByName(name);
+        verify(tagDaoMock).getByName(name);
     }
 
 

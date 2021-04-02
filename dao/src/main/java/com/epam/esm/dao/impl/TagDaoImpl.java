@@ -29,9 +29,9 @@ public class TagDaoImpl implements TagDao {
     private final static String SAVE_QUERY = "INSERT INTO " + TABLE_NAME + " (name) " +
             "VALUES (?)";
     private final static String DELETE_QUERY = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
-    private final static String FIND_BY_NAME_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE name = ?";
+    private final static String GET_BY_NAME_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE name = ?";
 
-    private final static String FIND_ALL_BY_CERTIFICATE_ID = "SELECT t.id, t.name FROM " + TABLE_NAME +
+    private final static String GET_ALL_BY_CERTIFICATE_ID = "SELECT t.id, t.name FROM " + TABLE_NAME +
             " t JOIN certificates_tags ct on t.id = ct.tag_id WHERE ct.certificate_id = ?";
 
 
@@ -90,8 +90,8 @@ public class TagDaoImpl implements TagDao {
      * @since 1.0
      */
     @Override
-    public Optional<Tag> findByName(String tagName) {
-        Tag tag = template.queryForStream(FIND_BY_NAME_QUERY, rowMapper, tagName).findFirst().orElse(null);
+    public Optional<Tag> getByName(String tagName) {
+        Tag tag = template.queryForStream(GET_BY_NAME_QUERY, rowMapper, tagName).findFirst().orElse(null);
         return Optional.ofNullable(tag);
     }
 
@@ -102,7 +102,7 @@ public class TagDaoImpl implements TagDao {
      * @since 1.0
      */
     @Override
-    public List<Tag> findAll() {
+    public List<Tag> getAll() {
         return template.query(GET_ALL_QUERY, rowMapper);
     }
 
@@ -115,7 +115,7 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public List<Tag> getAllByCertificateId(long certificateId) {
-        return template.query(FIND_ALL_BY_CERTIFICATE_ID, rowMapper, certificateId);
+        return template.query(GET_ALL_BY_CERTIFICATE_ID, rowMapper, certificateId);
     }
 
     /**

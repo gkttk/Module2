@@ -17,9 +17,9 @@ public interface GiftCertificateService {
 
     GiftCertificateDto save(GiftCertificateDto certificate);
 
-    GiftCertificateDto getById(long id);
+    GiftCertificateDto findById(long id);
 
-    List<GiftCertificateDto> getAllForQuery(Map<String, String[]> reqParams);
+    List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams);
 
     GiftCertificateDto update(GiftCertificateDto certificate, long id);
 

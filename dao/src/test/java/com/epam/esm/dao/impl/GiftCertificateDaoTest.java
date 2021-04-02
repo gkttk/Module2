@@ -56,23 +56,23 @@ public class GiftCertificateDaoTest {
     }
 
     @Test
-    public void testFindAllByTagNameShouldReturnEntityListWhenEntitiesWithGivenTagNameArePresentInDb() {
+    public void testGetAllByTagNameShouldReturnEntityListWhenEntitiesWithGivenTagNameArePresentInDb() {
         //given
         String tagName = "tag2";
         List<GiftCertificate> expected = Arrays.asList(certificate1, certificate2);
         //when
-        List<GiftCertificate> result = giftCertificateDao.findAllByTagName(tagName);
+        List<GiftCertificate> result = giftCertificateDao.getAllByTagName(tagName);
         //then
         assertEquals(result, expected);
     }
 
     @Test
-    public void testFindAllByTagNameShouldReturnEmptyListWhenEntitiesWithGivenTagNameAreNotPresentInDb() {
+    public void testGetAllByTagNameShouldReturnEmptyListWhenEntitiesWithGivenTagNameAreNotPresentInDb() {
         //given
         String tagName = "incorrectTagName";
         List<GiftCertificate> expected = Collections.emptyList();
         //when
-        List<GiftCertificate> result = giftCertificateDao.findAllByTagName(tagName);
+        List<GiftCertificate> result = giftCertificateDao.getAllByTagName(tagName);
         //then
         assertEquals(result, expected);
     }
@@ -100,11 +100,11 @@ public class GiftCertificateDaoTest {
     }
 
     @Test
-    public void testFindAllShouldReturnEntityListWhenEntityArePresentInDb() {
+    public void testGetAllShouldReturnEntityListWhenEntityArePresentInDb() {
         //given
         List<GiftCertificate> expected = Arrays.asList(certificate1, certificate2, certificate3);
         //when
-        List<GiftCertificate> result = giftCertificateDao.findAll();
+        List<GiftCertificate> result = giftCertificateDao.getAll();
         //then
         assertEquals(result, expected);
     }

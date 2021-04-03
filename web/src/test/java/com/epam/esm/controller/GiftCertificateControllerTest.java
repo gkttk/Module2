@@ -157,41 +157,4 @@ public class GiftCertificateControllerTest {
         verify(serviceMock).update(updatedDto, certId);
     }
 
-    @Test
-    @Disabled
-    public void testCreateCertificateShouldReturnHttpStatusBadRequestWhenThereAreErrorsInBindingResult() {
-        //given
-        ResponseEntity<GiftCertificateDto> expected = ResponseEntity.badRequest().build();
-        //when
-        ResponseEntity<GiftCertificateDto> result = giftCertificateController.createCertificate(updatedDto);
-        //then
-        assertEquals(result, expected);
-    }
-
-    @Test
-    @Disabled
-    public void testUpdateCertificateShouldReturnHttpStatusBadRequestWhenThereAreErrorsInBindingResult() {
-        //given
-        Long certId = defaultCertDto.getId();
-        ResponseEntity<GiftCertificateDto> expected = ResponseEntity.badRequest().build();
-        //when
-        ResponseEntity<GiftCertificateDto> result = giftCertificateController.updateCertificate(updatedDto, certId);
-        //then
-        assertEquals(result, expected);
-    }
-
-
-    @Test
-    @Disabled
-    public void testPatchCertificateShouldReturnHttpStatusBadRequestWhenThereAreErrorsInBindingResult() {
-        //given
-        Long certId = defaultCertDto.getId();
-        ResponseEntity<GiftCertificateDto> expected = ResponseEntity.badRequest().build();
-        //when
-        ResponseEntity<GiftCertificateDto> result = giftCertificateController.patchCertificate(patchedDto, certId);
-        //then
-        assertEquals(result, expected);
-    }
-
-
 }

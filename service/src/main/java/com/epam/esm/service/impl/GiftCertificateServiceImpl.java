@@ -119,6 +119,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDto;
     }
 
+
     /**
      * This method set date fields for GiftCertificate entity and saves it in database. Also the method link passed tags with the GiftCertificate
      * entity and, if the tag doesn't exist in db, creates it.
@@ -132,11 +133,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public GiftCertificateDto save(GiftCertificateDto certificate) {
 
         String certificateName = certificate.getName();
-        Optional<GiftCertificate> foundCertificate = giftCertificateDao.getByName(certificateName);
+        Optional<GiftCertificate> foundCertOpt = giftCertificateDao.getByName(certificateName);
 
-        if (foundCertificate.isPresent()) {
+        if (foundCertOpt.isPresent()) {
             throw new GiftCertificateWithSuchNameAlreadyExists(String.format("Gift certificate with name: %s already exits.",
-                    certificateName));
+                    certificate.getName()));
         }
 
         GiftCertificate giftCertificate = modelMapper.map(certificate, GiftCertificate.class);
@@ -179,6 +180,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         foundCertificateOpt.orElseThrow(() ->
                 new GiftCertificateNotFoundException(String.format("GiftCertificate with id: %d doesn't exist in DB", certificateId)));
+
+        String certificateName = certificateDto.getName();
+        exceptionWhenAnotherCertificateWithGivenNameExistsInDb(certificateName, certificateId);
+
 
         String currentTime = DateHelper.getNowAsString();
         certificateDto.setLastUpdateDate(currentTime);
@@ -238,6 +243,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         String name = giftCertificatePatchDto.getName();
         if (name != null) {
+            exceptionWhenAnotherCertificateWithGivenNameExistsInDb(name, certificateId);
             foundCertificate.setName(name);
         }
         String description = giftCertificatePatchDto.getDescription();
@@ -454,6 +460,24 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .map(tag -> modelMapper.map(tag, TagDto.class))
                 .collect(Collectors.toList());
         giftCertificateDto.setTags(tagsDto);
+    }
+
+    /**
+     * This method throws an exception when GiftCertificate entity with given name and another id is present in db.
+     *
+     * @param name          name of GiftCertificate entity
+     * @param certificateId id of GiftCertificate entity
+     * @throws GiftCertificateWithSuchNameAlreadyExists when there is another GiftCertificate entity in db with given name.
+     */
+    private void exceptionWhenAnotherCertificateWithGivenNameExistsInDb(String name, long certificateId) {
+        Optional<GiftCertificate> foundCertOpt = giftCertificateDao.getByName(name);
+
+        foundCertOpt.ifPresent(certificate -> {
+            if (!certificate.getId().equals(certificateId)) {
+                throw new GiftCertificateWithSuchNameAlreadyExists(String.format("Gift certificate with name: %s already exits.",
+                        certificate.getName()));
+            }
+        });
     }
 
 

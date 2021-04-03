@@ -10,6 +10,7 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.GiftCertificateNotFoundException;
+import com.epam.esm.exceptions.GiftCertificateWithSuchNameAlreadyExists;
 import com.epam.esm.exceptions.IllegalRequestParameterException;
 import com.epam.esm.service.GiftCertificateService;
 import org.modelmapper.ModelMapper;
@@ -130,6 +131,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     public GiftCertificateDto save(GiftCertificateDto certificate) {
 
+        String certificateName = certificate.getName();
+        Optional<GiftCertificate> foundCertificate = giftCertificateDao.getByName(certificateName);
+
+        if (foundCertificate.isPresent()) {
+            throw new GiftCertificateWithSuchNameAlreadyExists(String.format("Gift certificate with name: %s already exits.",
+                    certificateName));
+        }
 
         GiftCertificate giftCertificate = modelMapper.map(certificate, GiftCertificate.class);
         String currentTime = DateHelper.getNowAsString();

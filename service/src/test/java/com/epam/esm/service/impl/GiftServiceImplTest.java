@@ -9,6 +9,7 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.GiftCertificateNotFoundException;
+import com.epam.esm.exceptions.GiftCertificateWithSuchNameAlreadyExists;
 import com.epam.esm.exceptions.IllegalRequestParameterException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -419,7 +420,7 @@ public class GiftServiceImplTest {
         entityWithoutId.setCreateDate("Date");
         entityWithoutId.setLastUpdateDate("Date");
 
-
+        when(certDao.getByName(certDtoArg.getName())).thenReturn(Optional.empty());
         when(modelMapper.map(certDtoArg, GiftCertificate.class)).thenReturn(entityWithoutId);
         when(certDao.save(entityWithoutId)).thenReturn(testEntity);
         Long tagId = tag.getId();
@@ -433,6 +434,7 @@ public class GiftServiceImplTest {
         GiftCertificateDto result = service.save(certDtoArg);
         //then
         assertEquals(result, testDto);
+        verify(certDao).getByName(certDtoArg.getName());
         verify(modelMapper).map(certDtoArg, GiftCertificate.class);
         verify(certDao).save(entityWithoutId);
         verify(tagDao, times(3)).getByName(tagName);
@@ -455,7 +457,6 @@ public class GiftServiceImplTest {
         certDtoArg.setLastUpdateDate("Date");
         certDtoArg.setTags(Arrays.asList(tagDto, tagDto, tagDto));
 
-
         GiftCertificate entityWithoutId = new GiftCertificate();
         entityWithoutId.setId(null);
         entityWithoutId.setName("testCertificate");
@@ -465,6 +466,7 @@ public class GiftServiceImplTest {
         entityWithoutId.setCreateDate("Date");
         entityWithoutId.setLastUpdateDate("Date");
 
+        when(certDao.getByName(certDtoArg.getName())).thenReturn(Optional.empty());
         when(modelMapper.map(certDtoArg, GiftCertificate.class)).thenReturn(entityWithoutId);
         when(certDao.save(entityWithoutId)).thenReturn(testEntity);
         String tagName = tag.getName();
@@ -484,6 +486,7 @@ public class GiftServiceImplTest {
         GiftCertificateDto result = service.save(certDtoArg);
         //then
         assertEquals(result, testDto);
+        verify(certDao).getByName(certDtoArg.getName());
         verify(modelMapper).map(certDtoArg, GiftCertificate.class);
         verify(certDao).save(entityWithoutId);
         verify(tagDao, times(3)).getByName(tagName);
@@ -495,6 +498,17 @@ public class GiftServiceImplTest {
         verify(modelMapper).map(tag, TagDto.class);
     }
 
+
+    @Test
+    public void testSave_EntityWithGivenNameIsPresentInDb_ThrowGiftCertificateWithSuchNameAlreadyExistsException() {
+        //given
+        String certificateName = testDto.getName();
+        when(certDao.getByName(certificateName)).thenReturn(Optional.of(testEntity));
+        //when
+        //then
+        assertThrows(GiftCertificateWithSuchNameAlreadyExists.class, () -> service.save(testDto));
+        verify(certDao).getByName(certificateName);
+    }
 
     @Test
     public void testUpdateShouldUpdateGivenEntityFieldsWhenEntityWithGivenIdIsPresentInDb() {

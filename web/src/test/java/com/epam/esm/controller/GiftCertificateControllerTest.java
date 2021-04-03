@@ -44,17 +44,35 @@ public class GiftCertificateControllerTest {
 
     @BeforeAll
     static void init() {
-        defaultCertDto = new GiftCertificateDto(100L, "testCertificate", "description",
-                new BigDecimal("1.5"), 10, "Date", "Date",
-                Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
         defaultTagDto = new TagDto(100L, "testTag");
 
-        updatedDto = new GiftCertificateDto(null, "testCertificate", "description",
-                new BigDecimal("1.5"), 10, "Date", "Date",
-                Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
+        defaultCertDto = new GiftCertificateDto();
+        defaultCertDto.setId(100L);
+        defaultCertDto.setName("testCertificate");
+        defaultCertDto.setDescription("description");
+        defaultCertDto.setPrice(new BigDecimal("1.5"));
+        defaultCertDto.setDuration(10);
+        defaultCertDto.setCreateDate("Date");
+        defaultCertDto.setLastUpdateDate("Date");
+        defaultCertDto.setTags(Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
 
-        patchedDto = new GiftCertificatePatchDto("testCertificate", "description",
-                new BigDecimal("1.5"), 10, Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
+        updatedDto = new GiftCertificateDto();
+        updatedDto.setId(null);
+        updatedDto.setName("testCertificate");
+        updatedDto.setDescription("description");
+        updatedDto.setPrice(new BigDecimal("1.5"));
+        updatedDto.setDuration(10);
+        updatedDto.setCreateDate("Date");
+        updatedDto.setLastUpdateDate("Date");
+        updatedDto.setTags(Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
+
+        patchedDto = new GiftCertificatePatchDto();
+        patchedDto.setName("testCertificate");
+        patchedDto.setDescription("description");
+        patchedDto.setPrice(new BigDecimal("1.5"));
+        patchedDto.setDuration(10);
+        patchedDto.setTags(Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
+
     }
 
 

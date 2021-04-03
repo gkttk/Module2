@@ -35,12 +35,32 @@ public class GiftCertificateDaoTest {
 
     @BeforeAll
     static void init() {
-        certificate1 = new GiftCertificate(1L, "certificate1", "descripiton1",
-                new BigDecimal("1.5"), 10, "2021-03-29T11:24:04.643", "2021-03-29T11:30:18.653");
-        certificate2 = new GiftCertificate(2L, "certificate2", "descripiton2",
-                new BigDecimal("2.5"), 20, "2021-02-29T11:24:04.643", "2021-02-29T11:30:18.653");
-        certificate3 = new GiftCertificate(3L, "certificate3", "descripiton3",
-                new BigDecimal("3.5"), 30, "2021-01-29T11:24:04.643", "2021-01-29T11:30:18.653");
+        certificate1 = new GiftCertificate();
+        certificate1.setId(1L);
+        certificate1.setName("certificate1");
+        certificate1.setDescription("description1");
+        certificate1.setPrice(new BigDecimal("1.5"));
+        certificate1.setDuration(10);
+        certificate1.setCreateDate("2021-03-29T11:24:04.643");
+        certificate1.setLastUpdateDate("2021-03-29T11:30:18.653");
+
+        certificate2 = new GiftCertificate();
+        certificate2.setId(2L);
+        certificate2.setName("certificate2");
+        certificate2.setDescription("description2");
+        certificate2.setPrice(new BigDecimal("2.5"));
+        certificate2.setDuration(20);
+        certificate2.setCreateDate("2021-02-29T11:24:04.643");
+        certificate2.setLastUpdateDate("2021-02-29T11:30:18.653");
+
+        certificate3 = new GiftCertificate();
+        certificate3.setId(3L);
+        certificate3.setName("certificate3");
+        certificate3.setDescription("description3");
+        certificate3.setPrice(new BigDecimal("3.5"));
+        certificate3.setDuration(30);
+        certificate3.setCreateDate("2021-01-29T11:24:04.643");
+        certificate3.setLastUpdateDate("2021-01-29T11:30:18.653");
     }
 
     @Test
@@ -114,8 +134,15 @@ public class GiftCertificateDaoTest {
     @Rollback
     public void testSaveShouldReturnEntityWithNewId() {
         //given
-        GiftCertificate savedEntity = new GiftCertificate(null, "certificate4", "descripiton4",
-                new BigDecimal("4.5"), 40, "2020-03-29T11:24:04.643", "2020-03-29T11:30:18.653");
+        GiftCertificate savedEntity = new GiftCertificate();
+        savedEntity.setId(null);
+        savedEntity.setName("certificate4");
+        savedEntity.setDescription("description4");
+        savedEntity.setPrice(new BigDecimal("4.5"));
+        savedEntity.setDuration(40);
+        savedEntity.setCreateDate("2020-03-29T11:24:04.643");
+        savedEntity.setLastUpdateDate("2020-03-29T11:30:18.653");
+
         //when
         GiftCertificate result = giftCertificateDao.save(savedEntity);
         //then
@@ -136,8 +163,16 @@ public class GiftCertificateDaoTest {
     public void testUpdateShouldUpdateEntityFieldsWhenEntityWithGivenIdIsPresentInDb() {
         //given
         Long id = certificate1.getId();
-        GiftCertificate entityWithNewFields = new GiftCertificate(null, "certificate4", "descripiton4",
-                new BigDecimal("4.5"), 40, null, "2020-03-29T11:30:18.653");
+        GiftCertificate entityWithNewFields = new GiftCertificate();
+        entityWithNewFields.setId(null);
+        entityWithNewFields.setName("certificate4");
+        entityWithNewFields.setDescription("description4");
+        entityWithNewFields.setPrice(new BigDecimal("4.5"));
+        entityWithNewFields.setDuration(40);
+        entityWithNewFields.setCreateDate(null);
+        entityWithNewFields.setLastUpdateDate("2020-03-29T11:30:18.653");
+
+
         //when
         giftCertificateDao.update(entityWithNewFields, id);
         //then

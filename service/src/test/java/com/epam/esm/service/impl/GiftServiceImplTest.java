@@ -56,14 +56,46 @@ public class GiftServiceImplTest {
     void init() {
         tag = new Tag(100L, "testTag");
         tagDto = new TagDto(100L, "testTag");
-        testDto = new GiftCertificateDto(100L, "testCertificate", "description", new BigDecimal("1.5"),
-                10, "Date", "Date", Arrays.asList(tagDto, tagDto, tagDto));
-        secondTestDto = new GiftCertificateDto(200L, "testCertificate2", "description2", new BigDecimal("2.5"),
-                20, "Date2", "Date2", Arrays.asList(tagDto, tagDto, tagDto));
-        testEntity = new GiftCertificate(100L, "testCertificate", "description", new BigDecimal("1.5"),
-                10, "Date", "Date");
-        secondTestEntity = new GiftCertificate(200L, "testCertificate2", "description2", new BigDecimal("2.5"),
-                20, "Date2", "Date2");
+
+        testDto = new GiftCertificateDto();
+        testDto.setId(100L);
+        testDto.setName("testCertificate");
+        testDto.setDescription("description");
+        testDto.setPrice(new BigDecimal("1.5"));
+        testDto.setDuration(10);
+        testDto.setCreateDate("Date");
+        testDto.setLastUpdateDate("Date");
+        testDto.setTags(Arrays.asList(tagDto, tagDto, tagDto));
+
+
+        secondTestDto = new GiftCertificateDto();
+        secondTestDto.setId(200L);
+        secondTestDto.setName("testCertificate2");
+        secondTestDto.setDescription("description2");
+        secondTestDto.setPrice(new BigDecimal("2.5"));
+        secondTestDto.setDuration(20);
+        secondTestDto.setCreateDate("Date2");
+        secondTestDto.setLastUpdateDate("Date2");
+        secondTestDto.setTags(Arrays.asList(tagDto, tagDto, tagDto));
+
+
+        testEntity = new GiftCertificate();
+        testEntity.setId(100L);
+        testEntity.setName("testCertificate");
+        testEntity.setDescription("description");
+        testEntity.setPrice(new BigDecimal("1.5"));
+        testEntity.setDuration(10);
+        testEntity.setCreateDate("Date");
+        testEntity.setLastUpdateDate("Date");
+
+        secondTestEntity = new GiftCertificate();
+        secondTestEntity.setId(200L);
+        secondTestEntity.setName("testCertificate2");
+        secondTestEntity.setDescription("description2");
+        secondTestEntity.setPrice(new BigDecimal("2.5"));
+        secondTestEntity.setDuration(20);
+        secondTestEntity.setCreateDate("Date2");
+        secondTestEntity.setLastUpdateDate("Date2");
 
     }
 
@@ -368,12 +400,26 @@ public class GiftServiceImplTest {
     @Test
     public void testSaveShouldSaveEntityWithoutGivenTagsIfTheyAreGivenAndPresentInDbAndReturnDtoWithId() {
         //given
+        GiftCertificateDto certDtoArg = new GiftCertificateDto();
+        certDtoArg.setId(null);
+        certDtoArg.setName("testCertificate");
+        certDtoArg.setDescription("description");
+        certDtoArg.setPrice(new BigDecimal("1.5"));
+        certDtoArg.setDuration(10);
+        certDtoArg.setCreateDate("Date");
+        certDtoArg.setLastUpdateDate("Date");
+        certDtoArg.setTags(Arrays.asList(tagDto, tagDto, tagDto));
 
-        GiftCertificateDto certDtoArg = new GiftCertificateDto(null, "testCertificate", "description",
-                new BigDecimal("1.5"), 10, "Date", "Date", Arrays.asList(tagDto, tagDto, tagDto));
+        GiftCertificate entityWithoutId = new GiftCertificate();
+        entityWithoutId.setId(null);
+        entityWithoutId.setName("testCertificate");
+        entityWithoutId.setDescription("description");
+        entityWithoutId.setPrice(new BigDecimal("1.5"));
+        entityWithoutId.setDuration(10);
+        entityWithoutId.setCreateDate("Date");
+        entityWithoutId.setLastUpdateDate("Date");
 
-        GiftCertificate entityWithoutId = new GiftCertificate(null, "testCertificate", "description",
-                new BigDecimal("1.5"), 10, "Date", "Date");
+
         when(modelMapper.map(certDtoArg, GiftCertificate.class)).thenReturn(entityWithoutId);
         when(certDao.save(entityWithoutId)).thenReturn(testEntity);
         Long tagId = tag.getId();
@@ -399,11 +445,26 @@ public class GiftServiceImplTest {
     @Test
     public void testSaveShouldSaveEntityWithGivenTagsIfTheyAreGivenAndNotPresentInDbAndReturnDtoWithId() {
         //given
-        GiftCertificateDto certDtoArg = new GiftCertificateDto(null, "testCertificate", "description",
-                new BigDecimal("1.5"), 10, "Date", "Date", Arrays.asList(tagDto, tagDto, tagDto));
+        GiftCertificateDto certDtoArg = new GiftCertificateDto();
+        certDtoArg.setId(null);
+        certDtoArg.setName("testCertificate");
+        certDtoArg.setDescription("description");
+        certDtoArg.setPrice(new BigDecimal("1.5"));
+        certDtoArg.setDuration(10);
+        certDtoArg.setCreateDate("Date");
+        certDtoArg.setLastUpdateDate("Date");
+        certDtoArg.setTags(Arrays.asList(tagDto, tagDto, tagDto));
 
-        GiftCertificate entityWithoutId = new GiftCertificate(null, "testCertificate", "description",
-                new BigDecimal("1.5"), 10, "Date", "Date");
+
+        GiftCertificate entityWithoutId = new GiftCertificate();
+        entityWithoutId.setId(null);
+        entityWithoutId.setName("testCertificate");
+        entityWithoutId.setDescription("description");
+        entityWithoutId.setPrice(new BigDecimal("1.5"));
+        entityWithoutId.setDuration(10);
+        entityWithoutId.setCreateDate("Date");
+        entityWithoutId.setLastUpdateDate("Date");
+
         when(modelMapper.map(certDtoArg, GiftCertificate.class)).thenReturn(entityWithoutId);
         when(certDao.save(entityWithoutId)).thenReturn(testEntity);
         String tagName = tag.getName();
@@ -498,8 +559,13 @@ public class GiftServiceImplTest {
         //given
         TagDto newTagDto = new TagDto(null, "newTag");
         List<TagDto> tagsForPatch = Arrays.asList(tagDto, newTagDto);
-        GiftCertificatePatchDto dtoForPatch = new GiftCertificatePatchDto("newName", "newDesc",
-                new BigDecimal("2.5"), 20, tagsForPatch);
+        GiftCertificatePatchDto dtoForPatch = new GiftCertificatePatchDto();
+        dtoForPatch.setName("newName");
+        dtoForPatch.setDescription("newDesc");
+        dtoForPatch.setPrice(new BigDecimal("2.5"));
+        dtoForPatch.setDuration(20);
+        dtoForPatch.setTags(tagsForPatch);
+
         Long certificateId = testEntity.getId();
         when(certDao.getById(certificateId)).thenReturn(Optional.of(testEntity));
 
@@ -536,8 +602,13 @@ public class GiftServiceImplTest {
     @Test
     public void testPatchShouldThrowExceptionWhenEntityWithGivenIdIsNotPresentInDb() {
         //given
-        GiftCertificatePatchDto dtoForPatch = new GiftCertificatePatchDto("newName", "newDesc",
-                new BigDecimal("2.5"), 20, null);
+        GiftCertificatePatchDto dtoForPatch = new GiftCertificatePatchDto();
+        dtoForPatch.setName("newName");
+        dtoForPatch.setDescription("newDesc");
+        dtoForPatch.setPrice(new BigDecimal("2.5"));
+        dtoForPatch.setDuration(20);
+        dtoForPatch.setTags(null);
+
         long incorrectId = 150L;
         when(certDao.getById(incorrectId)).thenReturn(Optional.empty());
         //when

@@ -4,8 +4,6 @@ import com.epam.esm.entity.GiftCertificate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -25,13 +23,14 @@ public class GiftCertificateRowMapper implements RowMapper<GiftCertificate> {
 
     @Override
     public GiftCertificate mapRow(ResultSet rs, int rowNum) throws SQLException {
-        long id = rs.getLong(ID);
-        String name = rs.getString(NAME);
-        String description = rs.getString(DESCRIPTION);
-        BigDecimal price = rs.getBigDecimal(PRICE);
-        int duration = rs.getInt(DURATION);
-        String createDate = rs.getString(CREATE_DATE);
-        String lastUpdateDate = rs.getString(LAST_UPDATE_DATE);
-        return new GiftCertificate(id, name, description, price, duration, createDate, lastUpdateDate);
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setId(rs.getLong(ID));
+        giftCertificate.setName(rs.getString(NAME));
+        giftCertificate.setDescription(rs.getString(DESCRIPTION));
+        giftCertificate.setPrice(rs.getBigDecimal(PRICE));
+        giftCertificate.setDuration(rs.getInt(DURATION));
+        giftCertificate.setCreateDate(rs.getString(CREATE_DATE));
+        giftCertificate.setLastUpdateDate(rs.getString(LAST_UPDATE_DATE));
+        return giftCertificate;
     }
 }

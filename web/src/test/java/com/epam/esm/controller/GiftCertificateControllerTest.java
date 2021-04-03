@@ -2,11 +2,9 @@ package com.epam.esm.controller;
 
 
 import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.GiftCertificatePatchDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.service.GiftCertificateService;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,13 +36,12 @@ public class GiftCertificateControllerTest {
     private GiftCertificateController giftCertificateController;
 
     private static GiftCertificateDto defaultCertDto;
-    private static TagDto defaultTagDto;
-    private static GiftCertificateDto updatedDto;
-    private static GiftCertificatePatchDto patchedDto;
+    private static GiftCertificateDto testDto;
+
 
     @BeforeAll
     static void init() {
-        defaultTagDto = new TagDto(100L, "testTag");
+        TagDto defaultTagDto = new TagDto(100L, "testTag");
 
         defaultCertDto = new GiftCertificateDto();
         defaultCertDto.setId(100L);
@@ -56,22 +53,15 @@ public class GiftCertificateControllerTest {
         defaultCertDto.setLastUpdateDate("Date");
         defaultCertDto.setTags(Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
 
-        updatedDto = new GiftCertificateDto();
-        updatedDto.setId(null);
-        updatedDto.setName("testCertificate");
-        updatedDto.setDescription("description");
-        updatedDto.setPrice(new BigDecimal("1.5"));
-        updatedDto.setDuration(10);
-        updatedDto.setCreateDate("Date");
-        updatedDto.setLastUpdateDate("Date");
-        updatedDto.setTags(Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
-
-        patchedDto = new GiftCertificatePatchDto();
-        patchedDto.setName("testCertificate");
-        patchedDto.setDescription("description");
-        patchedDto.setPrice(new BigDecimal("1.5"));
-        patchedDto.setDuration(10);
-        patchedDto.setTags(Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
+        testDto = new GiftCertificateDto();
+        testDto.setId(null);
+        testDto.setName("testCertificate");
+        testDto.setDescription("description");
+        testDto.setPrice(new BigDecimal("1.5"));
+        testDto.setDuration(10);
+        testDto.setCreateDate("Date");
+        testDto.setLastUpdateDate("Date");
+        testDto.setTags(Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
 
     }
 
@@ -122,39 +112,39 @@ public class GiftCertificateControllerTest {
     @Test
     public void testCreateCertificateShouldReturnHttpStatusCreatedWhenThereAreNoErrorsInBindingResult() {
         //given
-        when(serviceMock.save(updatedDto)).thenReturn(defaultCertDto);
+        when(serviceMock.save(testDto)).thenReturn(defaultCertDto);
         ResponseEntity<GiftCertificateDto> expected = new ResponseEntity<>(defaultCertDto, HttpStatus.CREATED);
         //when
-        ResponseEntity<GiftCertificateDto> result = giftCertificateController.createCertificate(updatedDto);
+        ResponseEntity<GiftCertificateDto> result = giftCertificateController.createCertificate(testDto);
         //then
         assertEquals(result, expected);
-        verify(serviceMock).save(updatedDto);
+        verify(serviceMock).save(testDto);
     }
 
     @Test
     public void testPatchCertificateShouldReturnHttpStatusOkWithDtoWhenThereAreNotErrorsInBindingResult() {
         //given
         Long certId = defaultCertDto.getId();
-        when(serviceMock.patch(patchedDto, certId)).thenReturn(defaultCertDto);
+        when(serviceMock.patch(testDto, certId)).thenReturn(defaultCertDto);
         ResponseEntity<GiftCertificateDto> expected = ResponseEntity.ok(defaultCertDto);
         //when
-        ResponseEntity<GiftCertificateDto> result = giftCertificateController.patchCertificate(patchedDto, certId);
+        ResponseEntity<GiftCertificateDto> result = giftCertificateController.patchCertificate(testDto, certId);
         //then
         assertEquals(result, expected);
-        verify(serviceMock).patch(patchedDto, certId);
+        verify(serviceMock).patch(testDto, certId);
     }
 
     @Test
     public void testUpdateCertificateShouldReturnHttpStatusNoContentWhenThereAreNotErrorsInBindingResult() {
         //given
         Long certId = defaultCertDto.getId();
-        when(serviceMock.update(updatedDto, certId)).thenReturn(defaultCertDto);
+        when(serviceMock.update(testDto, certId)).thenReturn(defaultCertDto);
         ResponseEntity<GiftCertificateDto> expected = ResponseEntity.ok(defaultCertDto);
         //when
-        ResponseEntity<GiftCertificateDto> result = giftCertificateController.updateCertificate(updatedDto, certId);
+        ResponseEntity<GiftCertificateDto> result = giftCertificateController.updateCertificate(testDto, certId);
         //then
         assertEquals(result, expected);
-        verify(serviceMock).update(updatedDto, certId);
+        verify(serviceMock).update(testDto, certId);
     }
 
 }

@@ -5,7 +5,6 @@ import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.datehelper.DateHelper;
 import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.GiftCertificatePatchDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
@@ -235,7 +234,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     @Transactional
-    public GiftCertificateDto patch(GiftCertificatePatchDto giftCertificatePatchDto, long certificateId) {
+    public GiftCertificateDto patch(GiftCertificateDto giftCertificatePatchDto, long certificateId) {
         Optional<GiftCertificate> foundCertificateOpt = giftCertificateDao.getById(certificateId);
 
         GiftCertificate foundCertificate = foundCertificateOpt.orElseThrow(() ->

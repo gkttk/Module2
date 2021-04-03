@@ -4,7 +4,6 @@ import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.GiftCertificatePatchDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
@@ -573,7 +572,7 @@ public class GiftServiceImplTest {
         //given
         TagDto newTagDto = new TagDto(null, "newTag");
         List<TagDto> tagsForPatch = Arrays.asList(tagDto, newTagDto);
-        GiftCertificatePatchDto dtoForPatch = new GiftCertificatePatchDto();
+        GiftCertificateDto dtoForPatch = new GiftCertificateDto();
         dtoForPatch.setName("newName");
         dtoForPatch.setDescription("newDesc");
         dtoForPatch.setPrice(new BigDecimal("2.5"));
@@ -616,7 +615,7 @@ public class GiftServiceImplTest {
     @Test
     public void testPatchShouldThrowExceptionWhenEntityWithGivenIdIsNotPresentInDb() {
         //given
-        GiftCertificatePatchDto dtoForPatch = new GiftCertificatePatchDto();
+        GiftCertificateDto dtoForPatch = new GiftCertificateDto();
         dtoForPatch.setName("newName");
         dtoForPatch.setDescription("newDesc");
         dtoForPatch.setPrice(new BigDecimal("2.5"));

@@ -1,5 +1,8 @@
 package com.epam.esm.dto;
 
+import com.epam.esm.dto.groups.PatchGroup;
+import com.epam.esm.dto.groups.UpdateGroup;
+
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
@@ -14,25 +17,25 @@ import java.util.StringJoiner;
  */
 public class GiftCertificateDto {
 
-    @Null
+    @Null(groups = {UpdateGroup.class, PatchGroup.class})
     private Long id;
-    @NotBlank
-    @Size(min = 2, max = 35, message = "name should contain 2-35 characters")
+    @NotBlank(groups = UpdateGroup.class)
+    @Size(min = 2, max = 35, message = "name should contain 2-35 characters", groups = {UpdateGroup.class, PatchGroup.class})
     private String name;
-    @NotBlank
-    @Size(max = 150, message = "description should contain 0-150 characters")
+    @NotBlank(groups = UpdateGroup.class)
+    @Size(max = 150, message = "description should contain 0-150 characters", groups = {UpdateGroup.class, PatchGroup.class})
     private String description;
-    @NotNull
-    @DecimalMin(value = "0.0", message = "min price = 0")
-    @DecimalMax(value = "1000", message = "max price = 1000")
+    @NotNull(groups = UpdateGroup.class)
+    @DecimalMin(value = "0.0", message = "min price = 0", groups = {UpdateGroup.class, PatchGroup.class})
+    @DecimalMax(value = "1000", message = "max price = 1000", groups = {UpdateGroup.class, PatchGroup.class})
     private BigDecimal price;
-    @NotNull
-    @Min(1)
-    @Max(100)
-    private int duration;
-    @Null
+    @NotNull(groups = UpdateGroup.class)
+    @Min(value = 1, groups = {UpdateGroup.class, PatchGroup.class})
+    @Max(value = 100, groups = {UpdateGroup.class, PatchGroup.class})
+    private Integer duration;
+    @Null(groups = {UpdateGroup.class, PatchGroup.class})
     private String createDate;
-    @Null
+    @Null(groups = {UpdateGroup.class, PatchGroup.class})
     private String lastUpdateDate;
 
     @Valid
@@ -40,6 +43,62 @@ public class GiftCertificateDto {
 
 
     public GiftCertificateDto() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
+
+    public String getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(String lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 
     public List<TagDto> getTags() {
@@ -50,64 +109,6 @@ public class GiftCertificateDto {
         this.tags = tags;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public String getCreateDate() {
-        return createDate;
-    }
-
-    public String getLastUpdateDate() {
-        return lastUpdateDate;
-    }
-
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public void setCreateDate(String createDate) {
-        this.createDate = createDate;
-    }
-
-    public void setLastUpdateDate(String lastUpdateDate) {
-        this.lastUpdateDate = lastUpdateDate;
-    }
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -117,11 +118,11 @@ public class GiftCertificateDto {
             return false;
         }
         GiftCertificateDto that = (GiftCertificateDto) o;
-        return duration == that.duration &&
-                Objects.equals(id, that.id) &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(price, that.price) &&
+                Objects.equals(duration, that.duration) &&
                 Objects.equals(createDate, that.createDate) &&
                 Objects.equals(lastUpdateDate, that.lastUpdateDate) &&
                 Objects.equals(tags, that.tags);

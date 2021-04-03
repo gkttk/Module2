@@ -1,7 +1,8 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.GiftCertificatePatchDto;
+import com.epam.esm.dto.groups.PatchGroup;
+import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,23 +48,23 @@ public class GiftCertificateController {
 
 
     @PostMapping
-    public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody @Valid GiftCertificateDto certificateDto) {
+    public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody @Validated(UpdateGroup.class) @Valid GiftCertificateDto certificateDto) {
 
         GiftCertificateDto savedCertificate = giftCertificateService.save(certificateDto);
         return new ResponseEntity<>(savedCertificate, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GiftCertificateDto> updateCertificate(@RequestBody @Valid GiftCertificateDto giftCertificateDto,
+    public ResponseEntity<GiftCertificateDto> updateCertificate(@RequestBody @Validated(UpdateGroup.class) @Valid GiftCertificateDto giftCertificateDto,
                                                   @PathVariable long id) {
         GiftCertificateDto updatedDto = giftCertificateService.update(giftCertificateDto, id);
         return ResponseEntity.ok(updatedDto);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<GiftCertificateDto> patchCertificate(@RequestBody @Valid GiftCertificatePatchDto giftCertificatePatchDto,
+    public ResponseEntity<GiftCertificateDto> patchCertificate(@RequestBody @Validated(PatchGroup.class) @Valid GiftCertificateDto giftCertificateDto,
                                                  @PathVariable long id) {
-        GiftCertificateDto patchedDto = giftCertificateService.patch(giftCertificatePatchDto, id);
+        GiftCertificateDto patchedDto = giftCertificateService.patch(giftCertificateDto, id);
         return ResponseEntity.ok(patchedDto);
     }
 

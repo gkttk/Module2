@@ -9,8 +9,6 @@ import com.epam.esm.service.TagService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -23,7 +21,6 @@ import java.util.stream.Collectors;
  * @since 1.0
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED, readOnly = true)
 public class TagServiceImpl implements TagService {
 
     private final TagDao tagDao;
@@ -79,7 +76,7 @@ public class TagServiceImpl implements TagService {
      * @since 1.0
      */
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional
     public TagDto save(TagDto tagDto) {
         String tagName = tagDto.getName();
         Optional<Tag> foundTagOpt = tagDao.getByName(tagName);

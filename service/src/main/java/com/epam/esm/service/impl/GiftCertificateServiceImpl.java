@@ -15,8 +15,6 @@ import com.epam.esm.service.GiftCertificateService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -30,8 +28,6 @@ import java.util.stream.Stream;
  * @since 1.0
  */
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.READ_COMMITTED,
-        readOnly = true)
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private final static String NAMES_PART_KEY = "namesPart";
@@ -131,7 +127,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @since 1.0
      */
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional
     public GiftCertificateDto save(GiftCertificateDto certificate) {
         GiftCertificate giftCertificate = modelMapper.map(certificate, GiftCertificate.class);
         String currentTime = DateHelper.getNowAsString();
@@ -166,7 +162,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @since 1.0
      */
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional
     public GiftCertificateDto update(GiftCertificateDto certificateDto, long certificateId) {
 
         Optional<GiftCertificate> foundCertificateOpt = giftCertificateDao.getById(certificateId);
@@ -223,7 +219,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @since 1.0
      */
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional
     public GiftCertificateDto patch(GiftCertificatePatchDto giftCertificatePatchDto, long certificateId) {
         Optional<GiftCertificate> foundCertificateOpt = giftCertificateDao.getById(certificateId);
 

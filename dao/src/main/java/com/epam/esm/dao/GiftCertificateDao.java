@@ -14,6 +14,15 @@ import java.util.Optional;
 public interface GiftCertificateDao {
 
     /**
+     * This method get GiftCertificate entity by name.
+     *
+     * @param name GiftCertificate entity's name.
+     * @return Optional of GiftCertificate entity.
+     * @since 1.0
+     */
+    Optional<GiftCertificate> getByName(String name);
+
+    /**
      * This method saves GiftCertificate entity.
      *
      * @param certificate GiftCertificate entity without id.

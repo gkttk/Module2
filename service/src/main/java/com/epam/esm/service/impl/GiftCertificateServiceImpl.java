@@ -129,6 +129,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public GiftCertificateDto save(GiftCertificateDto certificate) {
+
+
         GiftCertificate giftCertificate = modelMapper.map(certificate, GiftCertificate.class);
         String currentTime = DateHelper.getNowAsString();
         giftCertificate.setCreateDate(currentTime);

@@ -43,6 +43,9 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     private final static String SORTING_QUERY_FIRST_PART = "SELECT * FROM " + TABLE_NAME + " ORDER BY";
 
+    private final static String GET_BY_NAME_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE name = ?";
+
+
     private final static String GET_BY_NAME_PART_PROCEDURE_NAME = "searchByPartOfName";
     private final static String GET_BY_DESCRIPTION_PART_PROCEDURE_NAME = "searchByPartOfDescription";
     private final static String RESULTS_SET_KEY = "certificates";
@@ -59,6 +62,18 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         this.rowMapper = rowMapper;
     }
 
+    /**
+     * This method get GiftCertificate entity by name.
+     *
+     * @param name GiftCertificate entity's name.
+     * @return Optional of GiftCertificate entity. If there is no GiftCertificate with given name, return Optional.empty().
+     * @since 1.0
+     */
+    @Override
+    public Optional<GiftCertificate> getByName(String name) {
+        GiftCertificate result = template.queryForStream(GET_BY_NAME_QUERY, rowMapper, name).findFirst().orElse(null);
+        return Optional.ofNullable(result);
+    }
 
     /**
      * This method saves GiftCertificate entity.

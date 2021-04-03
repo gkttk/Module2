@@ -1,7 +1,7 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.dao.GiftCertificateDao;
+import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.entity.GiftCertificate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -62,6 +62,29 @@ public class GiftCertificateDaoTest {
         certificate3.setCreateDate("2021-01-29T11:24:04.643");
         certificate3.setLastUpdateDate("2021-01-29T11:30:18.653");
     }
+
+    @Test
+    public void testGetByName_EntityWithGivenNameIsPresentInDb_ReturnOptionalWithEntity() {
+        //given
+        String name = certificate1.getName();
+        Optional<GiftCertificate> expectedResult = Optional.of(certificate1);
+        //when
+        Optional<GiftCertificate> result = giftCertificateDao.getByName(name);
+        //then
+        assertEquals(result, expectedResult);
+    }
+
+    @Test
+    public void testGetByName_EntityWithGivenNameIsNotPresentInDb_ReturnEmptyOptional() {
+        //given
+        String name = "incorrectName";
+        Optional<GiftCertificate> expectedResult = Optional.empty();
+        //when
+        Optional<GiftCertificate> result = giftCertificateDao.getByName(name);
+        //then
+        assertEquals(result, expectedResult);
+    }
+
 
     @Test
     public void testGetAllSortedShouldReturnEntitySortedListWhenEntitiesArePresentInDb() {

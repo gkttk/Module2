@@ -6,5 +6,5 @@ dependencies {
     compile 'org.hibernate:hibernate-validator:6.0.13.Final'
     implementation group: 'org.springframework', name: 'spring-jdbc', version: '5.3.5'
 
-
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.8.0-M1'
 }

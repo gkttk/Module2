@@ -1,5 +1,8 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.criteria.certificates.AllGiftCertificateCriteria;
+import com.epam.esm.criteria.certificates.TagNamesGiftCertificateCriteria;
+import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.entity.GiftCertificate;
@@ -29,9 +32,17 @@ public class GiftCertificateDaoTest {
     @Autowired
     private GiftCertificateDao giftCertificateDao;
 
+    @Autowired
+    private TagNamesGiftCertificateCriteria tagNamesGiftCertificateCriteria;
+
+    @Autowired
+    private AllGiftCertificateCriteria allGiftCertificateCriteria;
+
+
     private static GiftCertificate certificate1;
     private static GiftCertificate certificate2;
     private static GiftCertificate certificate3;
+
 
     @BeforeAll
     static void init() {
@@ -63,6 +74,31 @@ public class GiftCertificateDaoTest {
         certificate3.setLastUpdateDate("2021-01-29T11:30:18.653");
     }
 
+
+    @Test
+    public void testGetBy_UsingTagNamesCriteria_ListEntities() {
+        //given
+        String[] params = new String[]{"tag3"};
+        CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(tagNamesGiftCertificateCriteria, params);
+        List<GiftCertificate> expected = Collections.singletonList(certificate1);
+        //when
+        List<GiftCertificate> result = giftCertificateDao.getBy(factoryResult);
+        //then
+        assertEquals(result, expected);
+    }
+
+    @Test
+    public void testGetBy_UsingAllCriteria_ListEntities() {
+        //given
+        CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(allGiftCertificateCriteria, null);
+        List<GiftCertificate> expected = Arrays.asList(certificate1, certificate2, certificate3);
+        //when
+        List<GiftCertificate> result = giftCertificateDao.getBy(factoryResult);
+        //then
+        assertEquals(result, expected);
+    }
+
+
     @Test
     public void testGetByName_EntityWithGivenNameIsPresentInDb_ReturnOptionalWithEntity() {
         //given
@@ -87,41 +123,7 @@ public class GiftCertificateDaoTest {
 
 
     @Test
-    public void testGetAllSortedShouldReturnEntitySortedListWhenEntitiesArePresentInDb() {
-        //given
-        String[] sortingFieldNames = new String[]{"id"};
-        String sortingOrder = "DESC";
-        List<GiftCertificate> expected = Arrays.asList(certificate3, certificate2, certificate1);
-        //when
-        List<GiftCertificate> result = giftCertificateDao.getAllSorted(sortingFieldNames, sortingOrder);
-        //then
-        assertEquals(result, expected);
-    }
-
-    @Test
-    public void testGetAllByTagNameShouldReturnEntityListWhenEntitiesWithGivenTagNameArePresentInDb() {
-        //given
-        String tagName = "tag2";
-        List<GiftCertificate> expected = Arrays.asList(certificate1, certificate2);
-        //when
-        List<GiftCertificate> result = giftCertificateDao.getAllByTagName(tagName);
-        //then
-        assertEquals(result, expected);
-    }
-
-    @Test
-    public void testGetAllByTagNameShouldReturnEmptyListWhenEntitiesWithGivenTagNameAreNotPresentInDb() {
-        //given
-        String tagName = "incorrectTagName";
-        List<GiftCertificate> expected = Collections.emptyList();
-        //when
-        List<GiftCertificate> result = giftCertificateDao.getAllByTagName(tagName);
-        //then
-        assertEquals(result, expected);
-    }
-
-    @Test
-    public void testGetByIdShouldReturnOptionalWithEntityWhenEntityWithGivenIdIsPresentInDb() {
+    public void testGetById_EntityWithGivenIdIsPresentInDb_ReturnOptionalWithEntity() {
         //given
         Long id = certificate1.getId();
         Optional<GiftCertificate> expected = Optional.of(GiftCertificateDaoTest.certificate1);
@@ -132,7 +134,7 @@ public class GiftCertificateDaoTest {
     }
 
     @Test
-    public void testGetByIdShouldReturnEmptyOptionalWhenEntityWithGivenIdIsNotPresentInDb() {
+    public void testGetById_EntityWithGivenIdIsNotPresentInDb_ReturnEmptyOptional() {
         //given
         long incorrectId = 100L;
         Optional<GiftCertificate> expected = Optional.empty();
@@ -143,19 +145,9 @@ public class GiftCertificateDaoTest {
     }
 
     @Test
-    public void testGetAllShouldReturnEntityListWhenEntityArePresentInDb() {
-        //given
-        List<GiftCertificate> expected = Arrays.asList(certificate1, certificate2, certificate3);
-        //when
-        List<GiftCertificate> result = giftCertificateDao.getAll();
-        //then
-        assertEquals(result, expected);
-    }
-
-    @Test
     @Transactional
     @Rollback
-    public void testSaveShouldReturnEntityWithNewId() {
+    public void testSave_ReturnEntityWithNewId() {
         //given
         GiftCertificate savedEntity = new GiftCertificate();
         savedEntity.setId(null);
@@ -183,7 +175,7 @@ public class GiftCertificateDaoTest {
     @Test
     @Transactional
     @Rollback
-    public void testUpdateShouldUpdateEntityFieldsWhenEntityWithGivenIdIsPresentInDb() {
+    public void testUpdate_EntityWithGivenIdIsPresentInDb_UpdateEntityFields() {
         //given
         Long id = certificate1.getId();
         GiftCertificate entityWithNewFields = new GiftCertificate();
@@ -213,7 +205,7 @@ public class GiftCertificateDaoTest {
     @Test
     @Transactional
     @Rollback
-    public void testDeleteShouldReturnTrueWhenEntityWithGivenIdIsPresentInDb() {
+    public void testDelete_EntityWithGivenIdIsPresentInDb_ReturnTrue() {
         //given
         Long id = certificate1.getId();
         //when
@@ -225,7 +217,7 @@ public class GiftCertificateDaoTest {
     @Test
     @Transactional
     @Rollback
-    public void testDeleteShouldReturnFalseWhenEntityWithGivenIdIsNotPresentInDb() {
+    public void testDelete_EntityWithGivenIdIsNotPresentInDb_ReturnFalse() {
         //given
         long id = 100L;
         //when

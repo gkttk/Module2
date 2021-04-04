@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @PropertySource("classpath:hikari-test.properties")
-@ComponentScan(basePackages = {"com.epam.esm.dao", "com.epam.esm.mappers"})
+@ComponentScan("com.epam.esm")
 public class DaoTestConfig {
 
     private final static String HIKARI_PROPERTIES_PATH = "/hikari-test.properties";

@@ -54,53 +54,6 @@ public interface GiftCertificateDao {
      */
     Optional<GiftCertificate> getById(long id);
 
-    /**
-     * This method get all GiftCertificate entities.
-     *
-     * @return List of all GiftCertificate entities.
-     * @since 1.0
-     */
-    List<GiftCertificate> getAll();
-
-
-    /**
-     * This method get GiftCertificate entities by part of their description.
-     *
-     * @param partOfDescription part of GiftCertificate entity's description for search
-     * @return List of GiftCertificate entities which was found by part of description.
-     * @since 1.0
-     */
-    List<GiftCertificate> getAllByPartOfDescription(String partOfDescription);
-
-
-    /**
-     * This method get GiftCertificate entities by part of their name.
-     *
-     * @param partOfName part of GiftCertificate entity's name for search
-     * @return List of GiftCertificate entities which was found by part of name.
-     * @since 1.0
-     */
-    List<GiftCertificate> getAllByPartOfName(String partOfName);
-
-    /**
-     * This method get all GiftCertificate entities sorted.
-     *
-     * @param sortingFieldNames fields of GiftCertificate entity for sorting
-     * @param sortingOrder      order of sorting(ASC/DESC)
-     * @return List of all sorted GiftCertificate entities.
-     * @since 1.0
-     */
-    List<GiftCertificate> getAllSorted(String[] sortingFieldNames, String sortingOrder);
-
-    /**
-     * This method get all GiftCertificate entities which is bound with a specific tag.
-     *
-     * @param tagName name of Tag entity
-     * @return List of all GiftCertificate entities which is bound with tag that has name like tagName param.
-     * @since 1.0
-     */
-    List<GiftCertificate> getAllByTagName(String tagName);
-
 
     /**
      * This method updates all updatable fields for GiftCertificate entity.

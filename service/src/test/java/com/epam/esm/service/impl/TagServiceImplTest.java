@@ -48,7 +48,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testFindByIdShouldReturnDtoWhenEntityWithGivenIdIsPresentInDb() {
+    public void testFindById_EntityWithGivenIdIsPresentInDb_ReturnDto() {
         //given
         when(tagDaoMock.getById(anyLong())).thenReturn(Optional.of(new Tag()));
         when(modelMapperMock.map(any(), any())).thenReturn(testDto);
@@ -61,7 +61,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testFindByIdShouldThrowExceptionWhenEntityWithGivenIdIsNotPresentInDb() {
+    public void testFindById_EntityWithGivenIdIsNotPresentInDb_ThrowException() {
         //given
         long tagId = testDto.getId();
         when(tagDaoMock.getById(tagId)).thenReturn(Optional.empty());
@@ -72,7 +72,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testFindAllShouldReturnListOfDtoWhenEntitiesArePresentInDb() {
+    public void testFindAll_EntitiesArePresentInDb_ReturnListOfDto() {
         //given
         List<Tag> expectedEntitiesList = Stream.generate(Tag::new).limit(3).collect(Collectors.toList());
         List<TagDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
@@ -87,7 +87,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testFindAllShouldThrowExceptionWhenThereIsNoEntitiesInDb() {
+    public void testFindAll_ThereIsNoEntitiesInDb_ThrowException() {
         //given
         List<Tag> expectedEntitiesList = Collections.emptyList();
         when(tagDaoMock.getAll()).thenReturn(expectedEntitiesList);
@@ -98,7 +98,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testSaveShouldSaveEntityAndReturnDtoWhenGivenEntityIsNotPresentInDb() {
+    public void testSave_GivenEntityIsNotPresentInDb_SaveEntityAndReturnDto() {
         //given
         String tagName = testDto.getName();
         when(tagDaoMock.getByName(tagName)).thenReturn(Optional.empty());
@@ -114,7 +114,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testSaveShouldThrowExceptionWhenGivenEntityIsPresentInDb() {
+    public void testSave_GivenEntityIsPresentInDb_ThrowException() {
         //given
         String tagName = testDto.getName();
         when(tagDaoMock.getByName(tagName)).thenReturn(Optional.of(testEntity));
@@ -125,7 +125,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testDeleteShouldDeleteEntityIfEntityWithSuchIdIsPresentInDb() {
+    public void testDelete_EntityWithSuchIdIsPresentInDb_DeleteEntity() {
         //given
         long tagId = testDto.getId();
         when(tagDaoMock.delete(tagId)).thenReturn(true);
@@ -136,7 +136,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testDeleteShouldThrowExceptionIfEntityWithSuchIdIsNotPresentInDb() {
+    public void testDelete_EntityWithSuchIdIsNotPresentInDb_ThrowException() {
         //given
         long tagId = testDto.getId();
         when(tagDaoMock.delete(tagId)).thenReturn(false);
@@ -147,7 +147,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testFindByNameShouldReturnDtoWhenEntityWithSuchNameIsPresentInDb() {
+    public void testFindByName_EntityWithSuchNameIsPresentInDb_ReturnDto() {
         //given
         String name = testDto.getName();
         when(tagDaoMock.getByName(name)).thenReturn(Optional.of(testEntity));
@@ -161,7 +161,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testFindByNameShouldThrowExceptionWhenEntityWithSuchNameIsNotPresentInDb() {
+    public void testFindByName_EntityWithSuchNameIsNotPresentInDb_ThrowException() {
         //given
         String name = testDto.getName();
         when(tagDaoMock.getByName(name)).thenReturn(Optional.empty());

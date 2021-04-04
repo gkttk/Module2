@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @PropertySource("classpath:hikari.properties")
-@ComponentScan(basePackages = {"com.epam.esm.dao", "com.epam.esm.mappers"})
+@ComponentScan("com.epam.esm")
 public class DaoConfig {
 
     private final static String HIKARI_PROPERTIES_PATH = "/hikari.properties";

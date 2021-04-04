@@ -37,7 +37,7 @@ public class TagControllerTest {
     }
 
     @Test
-    public void testGetByNameShouldReturnHttpStatusOkWithDto() {
+    public void testGetByName_ReturnHttpStatusOkWithDto() {
         //given
         String tagName = defaultTagDto.getName();
         when(serviceMock.findByName(tagName)).thenReturn(defaultTagDto);
@@ -50,7 +50,7 @@ public class TagControllerTest {
     }
 
     @Test
-    public void testGetAllNameShouldReturnHttpStatusOkWithDtoList() {
+    public void testGetAllName_ReturnHttpStatusOkWithDtoList() {
         //given
         List<TagDto> listDto = Arrays.asList(defaultTagDto, defaultTagDto);
         when(serviceMock.findAll()).thenReturn(listDto);
@@ -63,7 +63,7 @@ public class TagControllerTest {
     }
 
     @Test
-    public void testGetByIdShouldReturnHttpStatusOkWithDto() {
+    public void testGetById_ReturnHttpStatusOkWithDto() {
         //given
         Long tagId = defaultTagDto.getId();
         when(serviceMock.findById(tagId)).thenReturn(defaultTagDto);
@@ -76,7 +76,7 @@ public class TagControllerTest {
     }
 
     @Test
-    public void testDeleteByIdShouldReturnHttpStatusNoContent() {
+    public void testDeleteById_ReturnHttpStatusNoContent() {
         //given
         Long tagId = defaultTagDto.getId();
         ResponseEntity<Void> expected = ResponseEntity.noContent().build();
@@ -89,7 +89,7 @@ public class TagControllerTest {
 
     @Test
 
-    public void testCreateTagShouldReturnHttpStatusCreatedWithDtoWhenThereAreNoValidationErrors() {
+    public void testCreateTag_ThereAreNoValidationErrors_ReturnHttpStatusCreatedWithDto() {
         //given
         when(serviceMock.save(createdTag)).thenReturn(defaultTagDto);
         ResponseEntity<TagDto> expected = new ResponseEntity<>(defaultTagDto, HttpStatus.CREATED);

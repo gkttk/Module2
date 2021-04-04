@@ -67,7 +67,7 @@ public class GiftCertificateControllerTest {
 
 
     @Test
-    public void testGetAllForQueryShouldReturnHttpStatusOkWithDtoList() {
+    public void testGetAllForQuery_ReturnHttpStatusOkWithDtoList() {
         //given
 
         Map<String, String[]> paramMap = new HashMap<>();
@@ -85,7 +85,7 @@ public class GiftCertificateControllerTest {
     }
 
     @Test
-    public void testGetByIdShouldReturnHttpStatusOkWithDto() {
+    public void testGetById_ReturnHttpStatusOkWithDto() {
         //given
         Long certId = defaultCertDto.getId();
         when(serviceMock.findById(certId)).thenReturn(defaultCertDto);
@@ -98,7 +98,7 @@ public class GiftCertificateControllerTest {
     }
 
     @Test
-    public void testDeleteByIdShouldReturnHttpStatusNoContent() {
+    public void testDeleteById_ReturnHttpStatusNoContent() {
         //given
         ResponseEntity<Void> expected = ResponseEntity.noContent().build();
         Long certId = defaultCertDto.getId();
@@ -110,7 +110,7 @@ public class GiftCertificateControllerTest {
     }
 
     @Test
-    public void testCreateCertificateShouldReturnHttpStatusCreatedWhenThereAreNoErrorsInBindingResult() {
+    public void testCreateCertificate_ThereAreNoValidationErrors_ReturnHttpStatusCreated() {
         //given
         when(serviceMock.save(testDto)).thenReturn(defaultCertDto);
         ResponseEntity<GiftCertificateDto> expected = new ResponseEntity<>(defaultCertDto, HttpStatus.CREATED);
@@ -122,7 +122,7 @@ public class GiftCertificateControllerTest {
     }
 
     @Test
-    public void testPatchCertificateShouldReturnHttpStatusOkWithDtoWhenThereAreNotErrorsInBindingResult() {
+    public void testPatchCertificate_ThereAreNoValidationErrors_ReturnHttpStatusOkWithDto() {
         //given
         Long certId = defaultCertDto.getId();
         when(serviceMock.patch(testDto, certId)).thenReturn(defaultCertDto);
@@ -135,7 +135,7 @@ public class GiftCertificateControllerTest {
     }
 
     @Test
-    public void testUpdateCertificateShouldReturnHttpStatusNoContentWhenThereAreNotErrorsInBindingResult() {
+    public void testUpdateCertificate_ThereAreNoValidationErrors_ReturnHttpStatusNoContent() {
         //given
         Long certId = defaultCertDto.getId();
         when(serviceMock.update(testDto, certId)).thenReturn(defaultCertDto);

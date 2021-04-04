@@ -115,7 +115,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testGetAllForQueryShouldReturnListOfDtoWhenThereAreNoRequestParamsAndThereAreEntitiesInDb() {
+    public void testGetAllForQuery_ThereAreNoRequestParamsAndThereAreEntitiesInDb_ReturnListOfDto() {
         //given
         Map<String, String[]> reqParams = new HashMap<>();
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(criteriaMock, null);
@@ -149,7 +149,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testGetAllForQueryShouldThrowExceptionWhenThereAreNoRequestParamsAndThereAreEntitiesInDb() {
+    public void testGetAllForQuery_ThereAreNoRequestParamsAndThereAreEntitiesInDb_ThrowException() {
         //given
         Map<String, String[]> reqParams = new HashMap<>();
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(criteriaMock, null);
@@ -165,7 +165,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testGetAllForQueryShouldReturnDtoListWhenThereAreRequestParamsDescriptionsPartAndThereAreEntitiesInDb() {
+    public void testGetAllForQuery_ThereAreRequestParamsDescriptionsPartAndThereAreEntitiesInDb_ReturnDtoList() {
         //given
         Map<String, String[]> reqParams = new HashMap<>();
         String firstPartOfDescription = "testPart1";
@@ -207,7 +207,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testGetAllForQueryShouldThrowExceptionWhenThereAreRequestParamsDescriptionsPartAndThereAreNoEntitiesInDb() {
+    public void testGetAllForQuery_ThereAreRequestParamsDescriptionsPartAndThereAreNoEntitiesInDb_ThrowException() {
         //given
         Map<String, String[]> reqParams = new HashMap<>();
         String firstPartOfDescription = "testPart1";
@@ -231,7 +231,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testGetAllForQueryShouldReturnDtoListWhenThereAreRequestParamsNamesPartAndThereAreEntitiesInDb() {
+    public void testGetAllForQuery_ThereAreRequestParamsNamesPartAndThereAreEntitiesInDb_ReturnDtoList() {
         //given
         Map<String, String[]> reqParams = new HashMap<>();
         String firstNamePart = "testName1";
@@ -272,7 +272,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testGetAllForQueryShouldThrowExceptionWhenThereAreRequestParamsNamesPartAndThereAreNoEntitiesInDb() {
+    public void testGetAllForQuery_ThereAreRequestParamsNamesPartAndThereAreNoEntitiesInDb_ThrowException() {
         //given
         Map<String, String[]> reqParams = new HashMap<>();
         String firstNamePart = "testName1";
@@ -292,7 +292,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testGetAllForQueryShouldReturnDtoListWhenThereAreRequestParamsSortFieldsAndOrderAndThereAreEntitiesInDb() {
+    public void testGetAllForQuery_ThereAreRequestParamsSortFieldsAndOrderAndThereAreEntitiesInDb_ReturnDtoList() {
         //given
         Map<String, String[]> reqParams = new HashMap<>();
         String sortField = "id";
@@ -340,7 +340,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testFindAllForQueryShouldThrowExceptionWhenThereAreRequestParamsRequestParamsSortFieldsAndOrderAndThereAreNoEntitiesInDb() {
+    public void testFindAllForQuery_ThereAreRequestParamsRequestParamsSortFieldsAndOrderAndThereAreNoEntitiesInDb_ThrowException() {
         //given
         Map<String, String[]> reqParams = new HashMap<>();
         String sortField = "id";
@@ -364,7 +364,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testFindAllForQueryShouldReturnDtoListWhenThereAreRequestParamsTagNamesAndThereAreEntitiesInDb() {
+    public void testFindAllForQuery_ThereAreRequestParamsTagNamesAndThereAreEntitiesInDb_ReturnDtoList() {
         //given
         Map<String, String[]> reqParams = new HashMap<>();
         String firstTagName = "tagName1";
@@ -405,7 +405,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testFindAllForQueryShouldThrowExceptionWhenThereAreRequestParamsTagNamesAndThereAreNoEntitiesInDb() {
+    public void testFindAllForQuery_ThereAreRequestParamsTagNamesAndThereAreNoEntitiesInDb_ThrowException() {
         //given
         Map<String, String[]> reqParams = new HashMap<>();
         String firstTagName = "tagName1";
@@ -427,7 +427,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testFindByIdShouldReturnDtoWithGivenIdWhenEntityIsPresentInDb() {
+    public void testFindById_EntityIsPresentInDb_ReturnDtoWithGivenId() {
         ///given
         Long id = testDto.getId();
         when(certDao.getById(id)).thenReturn(Optional.of(testEntity));
@@ -442,7 +442,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testFindByIdShouldThrowExceptionWhenEntityWithGivenIdIsNotPresentInDb() {
+    public void testFindById_EntityWithGivenIdIsNotPresentInDb_ThrowException() {
         ///given
         Long id = testDto.getId();
         when(certDao.getById(id)).thenReturn(Optional.empty());
@@ -454,7 +454,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testSaveShouldSaveEntityWithoutGivenTagsIfTheyAreGivenAndPresentInDbAndReturnDtoWithId() {
+    public void testSave_TagsAreGivenAndPresentInDbAndReturnDtoWithId_SaveEntityWithoutGivenTags() {
         //given
         GiftCertificateDto certDtoArg = new GiftCertificateDto();
         certDtoArg.setId(null);
@@ -501,7 +501,7 @@ public class GiftServiceImplTest {
 
 
     @Test
-    public void testSaveShouldSaveEntityWithGivenTagsIfTheyAreGivenAndNotPresentInDbAndReturnDtoWithId() {
+    public void testSave_TagsAreGivenAndNotPresentInDbAndReturnDtoWithId_SaveEntityWithGivenTags() {
         //given
         GiftCertificateDto certDtoArg = new GiftCertificateDto();
         certDtoArg.setId(null);
@@ -567,7 +567,7 @@ public class GiftServiceImplTest {
     }
 
     @Test
-    public void testUpdateShouldUpdateGivenEntityFieldsWhenEntityWithGivenIdIsPresentInDb() {
+    public void testUpdate_EntityWithGivenIdIsPresentInDb_UpdateGivenEntityFields() {
         //given
         Long certId = testDto.getId();
 
@@ -590,7 +590,7 @@ public class GiftServiceImplTest {
     }
 
     @Test
-    public void testUpdateShouldThrowExceptionWhenEntityWithGivenIdIsNotPresentInDb() {
+    public void testUpdate_EntityWithGivenIdIsNotPresentInDb_ThrowException() {
         //given
         long incorrectId = 120L;
 
@@ -602,7 +602,7 @@ public class GiftServiceImplTest {
     }
 
     @Test
-    public void testDeleteShouldDeleteEntityWhenEntityWithGivenIdIsPresentInDb() {
+    public void testDelete_GivenIdIsPresentInDb_DeleteEntityWhenEntity() {
         //given
         Long tagId = tagDto.getId();
         when(certDao.delete(tagId)).thenReturn(true);
@@ -613,7 +613,7 @@ public class GiftServiceImplTest {
     }
 
     @Test
-    public void testDeleteShouldThrowExceptionWhenEntityWithGivenIdIsNotPresentInDb() {
+    public void testDelete_EntityWithGivenIdIsNotPresentInDb_ThrowException() {
         //given
         long incorrectId = 120L;
         when(certDao.delete(incorrectId)).thenReturn(false);
@@ -625,7 +625,7 @@ public class GiftServiceImplTest {
 
     @Test
 
-    public void testPatchShouldPatchEntityFieldsAndAddNewTagsWhenEntityWithGivenIdIsPresentInDb() {
+    public void testPatch_EntityWithGivenIdIsPresentInDb_PatchEntityFieldsAndAddNewTags() {
         //given
         TagDto newTagDto = new TagDto(null, "newTag");
         List<TagDto> tagsForPatch = Arrays.asList(tagDto, newTagDto);
@@ -670,7 +670,7 @@ public class GiftServiceImplTest {
     }
 
     @Test
-    public void testPatchShouldThrowExceptionWhenEntityWithGivenIdIsNotPresentInDb() {
+    public void testPatch_EntityWithGivenIdIsNotPresentInDb_ThrowException() {
         //given
         GiftCertificateDto dtoForPatch = new GiftCertificateDto();
         dtoForPatch.setName("newName");

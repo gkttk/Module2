@@ -40,6 +40,12 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(ResponseError.ILLEGAL_REQUEST_PARAMETER, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(IncorrectSortingFieldException.class)
+    public ResponseEntity<ResponseError> handleIncorrectSortingFieldException() {
+        return new ResponseEntity<>(ResponseError.INCORRECT_SORTING_FIELD, HttpStatus.BAD_REQUEST);
+    }
+
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
                                                                   HttpHeaders headers, HttpStatus status,

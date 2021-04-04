@@ -1,5 +1,6 @@
 package com.epam.esm.dao;
 
+import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.entity.GiftCertificate;
 
 import java.util.List;
@@ -12,6 +13,18 @@ import java.util.Optional;
  * @since 1.0
  */
 public interface GiftCertificateDao {
+
+
+    /**
+     * This method combines all getList queries.
+     *
+     * @param criteriaWithParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
+     *                           and arrays of params for searching.
+     * @return list of GiftCertificate entities
+     * @since 1.0
+     */
+    List<GiftCertificate> getBy(CriteriaFactoryResult<GiftCertificate> criteriaWithParams);
+
 
     /**
      * This method get GiftCertificate entity by name.

@@ -1,5 +1,7 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.criteria.Criteria;
+import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,24 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         this.template = template;
         this.rowMapper = rowMapper;
     }
+
+    /**
+     * This method combines all getList queries.
+     *
+     * @param criteriaWithParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
+     *                           and arrays of params for searching.
+     * @return list of GiftCertificate entities
+     *
+     * @since 1.0
+     */
+    public List<GiftCertificate> getBy(CriteriaFactoryResult<GiftCertificate> criteriaWithParams) {
+        Criteria<GiftCertificate> criteria = criteriaWithParams.getCriteria();
+        String[] params = criteriaWithParams.getParams();
+
+        return criteria.find(params);
+
+    }
+
 
     /**
      * This method get GiftCertificate entity by name.

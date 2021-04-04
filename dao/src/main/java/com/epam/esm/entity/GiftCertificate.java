@@ -15,7 +15,7 @@ public class GiftCertificate {
     private String name;
     private String description;
     private BigDecimal price;
-    private int duration;
+    private Integer duration;
     private String createDate;
     private String lastUpdateDate;
 
@@ -39,7 +39,7 @@ public class GiftCertificate {
         return price;
     }
 
-    public int getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
@@ -67,7 +67,7 @@ public class GiftCertificate {
         this.price = price;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(Integer duration) {
         this.duration = duration;
     }
 
@@ -88,7 +88,7 @@ public class GiftCertificate {
             return false;
         }
         GiftCertificate that = (GiftCertificate) o;
-        return duration == that.duration &&
+        return Objects.equals(duration, that.duration) &&
                 Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&

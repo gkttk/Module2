@@ -1,5 +1,8 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.criteria.Criteria;
+import com.epam.esm.criteria.factory.GiftCertificateCriteriaFactory;
+import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
@@ -10,17 +13,20 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.GiftCertificateNotFoundException;
 import com.epam.esm.exceptions.GiftCertificateWithSuchNameAlreadyExists;
-import com.epam.esm.exceptions.IllegalRequestParameterException;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.sorting.GiftCertificateSortingHelper;
+import com.epam.esm.sorting.SortingHelper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Default implementation of {@link com.epam.esm.service.GiftCertificateService} interface.
@@ -30,9 +36,6 @@ import java.util.stream.Stream;
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
-    private final static String NAMES_PART_KEY = "namesPart";
-    private final static String DESCRIPTION_PART_KEY = "descriptionsPart";
-    private final static String TAG_NAMES_KEY = "tagNames";
     private final static String SORT_FIELDS_KEY = "sortFields";
     private final static String ORDER_KEY = "order";
 
@@ -41,58 +44,55 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final TagDao tagDao;
     private final CertificateTagsDao certificateTagsDao;
 
+    private final GiftCertificateCriteriaFactory criteriaFactory;
+    private final SortingHelper<GiftCertificate> sortingHelper;
+
+
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, ModelMapper modelMapper, TagDao tagDao,
-                                      CertificateTagsDao certificateTagsDao) {
+                                      CertificateTagsDao certificateTagsDao, GiftCertificateCriteriaFactory criteriaFactory,
+                                      GiftCertificateSortingHelper sortingHelper) {
         this.giftCertificateDao = giftCertificateDao;
         this.modelMapper = modelMapper;
         this.tagDao = tagDao;
         this.certificateTagsDao = certificateTagsDao;
+        this.criteriaFactory = criteriaFactory;
+        this.sortingHelper = sortingHelper;
     }
 
     /**
      * This method do request to dao layer which depends on argument of the method.
-     * If the argument of the method contains @see {@link #NAMES_PART_KEY} than will be called {@link #getAllByPartOfNames(String[]) method}.
-     * If the argument of the method contains @see {@link #DESCRIPTION_PART_KEY} than will be called {@link #getAllByPartOfDescriptions(String[]) method}.
-     * If the argument of the method contains @see {@link #TAG_NAMES_KEY} than will be called {@link #getAllByTagNames(String[]) method}.
-     * If the argument of the method contains @see {@link #SORT_FIELDS_KEY} than will be called {@link #getAllSorted(String[], String)} method}.
+     * The method uses {@link GiftCertificateCriteriaFactory} for getting a correct {@link Criteria} which is based on passed request parameters.
+     * If the argument of the method additionally contains {@link #SORT_FIELDS_KEY} parameter then
+     * got result by {@link Criteria} will be sorted according to {@link #ORDER_KEY} parameter. If {@link #ORDER_KEY} parameter is not
+     * present or not equal "DESC" then sorting by ascending order.
      *
      * @param reqParams parameters of a request.
      * @return List of GiftCertificateDao.
-     * @throws IllegalRequestParameterException if argument of the method contains {@link #SORT_FIELDS_KEY} key and
-     *                                          doesn't contain {@link #ORDER_KEY} key at the same time.
      * @since 1.0
      */
     @Override
     public List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams) {
-        for (Map.Entry<String, String[]> entry : reqParams.entrySet()) {
-            String key = entry.getKey();
-            switch (key) {
-                case NAMES_PART_KEY: {
-                    String[] namesPart = entry.getValue();
-                    return getAllByPartOfNames(namesPart);
-                }
-                case DESCRIPTION_PART_KEY: {
-                    String[] descriptionsPart = entry.getValue();
-                    return getAllByPartOfDescriptions(descriptionsPart);
-                }
-                case TAG_NAMES_KEY: {
-                    String[] tagNames = entry.getValue();
-                    return getAllByTagNames(tagNames);
-                }
-                case SORT_FIELDS_KEY: {
-                    String[] sortFields = entry.getValue();
-                    String[] orders = reqParams.get(ORDER_KEY);
-                    if (orders == null ||
-                            (!orders[0].equalsIgnoreCase("desc") && !orders[0].equalsIgnoreCase("asc"))) {
-                        throw new IllegalRequestParameterException("There is no correct order-parameter in request");
-                    }
-                    return getAllSorted(sortFields, orders[0]);
-                }
-            }
+
+        CriteriaFactoryResult<GiftCertificate> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
+
+        List<GiftCertificate> foundCertificates = giftCertificateDao.getBy(criteriaWithParams);
+
+        if (foundCertificates.isEmpty()) {
+            throw new GiftCertificateNotFoundException("Can't find gift certificates");
         }
 
-        return getAll();
+        if (reqParams.containsKey(SORT_FIELDS_KEY)) {
+            String[] sortFields = reqParams.get(SORT_FIELDS_KEY);
+            String[] orders = reqParams.get(ORDER_KEY);
+
+            foundCertificates = sortingHelper.getSorted(sortFields, orders[0], foundCertificates);
+        }
+
+        return foundCertificates.stream()
+                .map(certificate -> modelMapper.map(certificate, GiftCertificateDto.class))
+                .peek(this::fillCertificateDtoWithTags)
+                .collect(Collectors.toList());
     }
 
 
@@ -206,7 +206,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     }
 
-
     /**
      * This method deletes GiftCertificate entity with given id from db.
      *
@@ -298,132 +297,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         return dto;
     }
-
-    /**
-     * This method get all GiftCertificate entities from database and converts them to GiftCertificateDto.
-     *
-     * @return list of all GiftCertificateDto.
-     * @throws GiftCertificateNotFoundException if there are no GiftCertificate entities in db.
-     * @since 1.0
-     */
-    private List<GiftCertificateDto> getAll() {
-        List<GiftCertificate> entities = giftCertificateDao.getAll();
-        if (entities.isEmpty()) {
-            throw new GiftCertificateNotFoundException("There are no gift certificates in DB");
-        }
-
-        return entities.stream()
-                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
-                .peek(this::fillCertificateDtoWithTags)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * This method get all GiftCertificate entities by their tag names, convert them to DTO and fills
-     * them with tags.
-     *
-     * @param tagNames array of tag names for search
-     * @return list of GiftCertificateDto with given tag names for search.
-     * @throws GiftCertificateNotFoundException if there are not GiftCertificate entities with such tag names in db.
-     * @since 1.0
-     */
-    private List<GiftCertificateDto> getAllByTagNames(String[] tagNames) {
-
-        Set<GiftCertificate> allEntities = new LinkedHashSet<>();
-
-        Stream.of(tagNames).forEach(tagName -> {
-            List<GiftCertificate> entities = giftCertificateDao.getAllByTagName(tagName);
-            allEntities.addAll(entities);
-        });
-
-        if (allEntities.isEmpty()) {
-            throw new GiftCertificateNotFoundException(String.format("There are no gift certificates with this tag name: %s in DB",
-                    String.join(",", tagNames)));
-        }
-        return allEntities.stream()
-                .map(certificate -> modelMapper.map(certificate, GiftCertificateDto.class))
-                .peek(this::fillCertificateDtoWithTags)
-                .collect(Collectors.toList());
-    }
-
-
-    /**
-     * This method get all GiftCertificate entities by parts of their descriptions, convert them to DTO and fills
-     * them with tags.
-     *
-     * @param descriptionsPart array of description parts for search
-     * @return list of GiftCertificateDto with given description parts for search.
-     * @throws GiftCertificateNotFoundException if there are not GiftCertificate entities with such description parts in db.
-     * @since 1.0
-     */
-    private List<GiftCertificateDto> getAllByPartOfDescriptions(String[] descriptionsPart) {
-        Set<GiftCertificate> allEntities = new LinkedHashSet<>();
-
-        Stream.of(descriptionsPart).forEach(descriptionPart -> {
-            List<GiftCertificate> entities = giftCertificateDao.getAllByPartOfDescription(descriptionPart);
-            allEntities.addAll(entities);
-        });
-
-
-        if (allEntities.isEmpty()) {
-            throw new GiftCertificateNotFoundException(String.format("There are no gift certificates in DB with description like: %s",
-                    String.join(",", descriptionsPart)));
-        }
-        return allEntities.stream()
-                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
-                .peek(this::fillCertificateDtoWithTags)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * This method get all GiftCertificate entities by parts of their names, convert them to DTO and fills
-     * them with tags.
-     *
-     * @param namesPart array of names part for search
-     * @return list of GiftCertificateDto with given names part for search.
-     * @throws GiftCertificateNotFoundException if there are not GiftCertificate entities with such names part in db.
-     * @since 1.0
-     */
-    private List<GiftCertificateDto> getAllByPartOfNames(String[] namesPart) {
-        Set<GiftCertificate> allEntities = new LinkedHashSet<>();
-
-        Stream.of(namesPart).forEach(namePart -> {
-            List<GiftCertificate> entities = giftCertificateDao.getAllByPartOfName(namePart);
-            allEntities.addAll(entities);
-        });
-
-        if (allEntities.isEmpty()) {
-            throw new GiftCertificateNotFoundException(String.format("There are no gift certificates in DB with names like: %s",
-                    String.join(",", namesPart)));
-        }
-        return allEntities.stream()
-                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
-                .peek(this::fillCertificateDtoWithTags)
-                .collect(Collectors.toList());
-    }
-
-
-    /**
-     * This method get all GiftCertificate entities from db sorted.
-     *
-     * @param sortingFieldNames field names for a sorting.
-     * @param sortingOrder      order of the sorting.
-     * @return list of all GiftCertificateDto sorted.
-     * @throws GiftCertificateNotFoundException if there are not GiftCertificate entities in db.
-     * @since 1.0
-     */
-    private List<GiftCertificateDto> getAllSorted(String[] sortingFieldNames, String sortingOrder) {
-        List<GiftCertificate> entities = giftCertificateDao.getAllSorted(sortingFieldNames, sortingOrder);
-
-        if (entities.isEmpty()) {
-            throw new GiftCertificateNotFoundException("There are no gift certificates in DB");
-        }
-        return entities.stream()
-                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
-                .peek(this::fillCertificateDtoWithTags)
-                .collect(Collectors.toList());
-    }
-
 
     /**
      * This method link a tag with a GiftCertificate entity and, if given tag is not present in db, creates it.

@@ -9,7 +9,8 @@ public enum ResponseError {
     TAG_WITH_SUCH_NAME_EXISTS("Tag already exists", 42000),
     GIFT_CERTIFICATE_WITH_SUCH_NAME_EXISTS("Gift certificate already exists", 42010),
     INCORRECT_VALIDATION("Incorrect validation", 43501),
-    ILLEGAL_REQUEST_PARAMETER("Illegal request parameter", 44600);
+    ILLEGAL_REQUEST_PARAMETER("Illegal request parameter", 44600),
+    INCORRECT_SORTING_FIELD("Incorrect field for sorting was passed", 44601);
 
 
     private String message;

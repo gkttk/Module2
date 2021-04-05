@@ -16,10 +16,7 @@ public abstract class AbstractCriteriaFactory {
         return appContext;
     }
 
-
     public AbstractCriteriaFactory(ApplicationContext appContext) {
         this.appContext = appContext;
     }
-
-
 }

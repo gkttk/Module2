@@ -25,7 +25,6 @@ public class GiftCertificateCriteriaFactory extends AbstractCriteriaFactory impl
     private final static String DESCRIPTION_PART_KEY = "descriptionsPart";
     private final static String TAG_NAMES_KEY = "tagNames";
 
-
     private final static String NAMES_PART_CRITERIA_BEAN_NAME = "namePartsGCCriteria";
     private final static String DESCRIPTION_PART_CRITERIA_BEAN_NAME = "descriptionPartsGCCriteria";
     private final static String TAG_NAMES_CRITERIA_BEAN_NAME = "tagNamesGCCriteria";
@@ -36,28 +35,24 @@ public class GiftCertificateCriteriaFactory extends AbstractCriteriaFactory impl
         super(appContext);
     }
 
-
     public CriteriaFactoryResult<GiftCertificate> getCriteriaWithParams(Map<String, String[]> reqParams) {
-
-        for (Map.Entry<String, String[]> entry : reqParams.entrySet()) {
-            String key = entry.getKey();
-            switch (key) {
-                case NAMES_PART_KEY: {
-                    return new CriteriaFactoryResult<>((NamePartsGiftCertificateCriteria) getAppContext().getBean(NAMES_PART_CRITERIA_BEAN_NAME),
-                            entry.getValue());
-                }
-                case DESCRIPTION_PART_KEY: {
-                    return new CriteriaFactoryResult<>((DescriptionPartsGiftCertificateCriteria) getAppContext().getBean(DESCRIPTION_PART_CRITERIA_BEAN_NAME),
-                            entry.getValue());
-                }
-                case TAG_NAMES_KEY: {
-                    return new CriteriaFactoryResult<>((TagNamesGiftCertificateCriteria) getAppContext().getBean(TAG_NAMES_CRITERIA_BEAN_NAME),
-                            entry.getValue());
-                }
-            }
+        String[] params;
+        params = reqParams.get(NAMES_PART_KEY);
+        if (params != null) {
+            return new CriteriaFactoryResult<>((NamePartsGiftCertificateCriteria) getAppContext().getBean(NAMES_PART_CRITERIA_BEAN_NAME),
+                    params);
+        }
+        params = reqParams.get(DESCRIPTION_PART_KEY);
+        if (params != null) {
+            return new CriteriaFactoryResult<>((DescriptionPartsGiftCertificateCriteria) getAppContext().getBean(DESCRIPTION_PART_CRITERIA_BEAN_NAME),
+                    params);
+        }
+        params = reqParams.get(TAG_NAMES_KEY);
+        if (params != null) {
+            return new CriteriaFactoryResult<>((TagNamesGiftCertificateCriteria) getAppContext().getBean(TAG_NAMES_CRITERIA_BEAN_NAME),
+                    params);
         }
         return new CriteriaFactoryResult<>((AllGiftCertificateCriteria) getAppContext().getBean(ALL_CRITERIA_BEAN_NAME));
-
     }
 
 

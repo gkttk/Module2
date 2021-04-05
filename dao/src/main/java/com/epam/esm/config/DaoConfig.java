@@ -34,6 +34,4 @@ public class DaoConfig {
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(dataSource());
     }
-
-
 }

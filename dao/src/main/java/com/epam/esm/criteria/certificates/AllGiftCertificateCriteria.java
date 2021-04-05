@@ -17,13 +17,13 @@ import java.util.List;
 @Component("allGCCriteria")
 public class AllGiftCertificateCriteria extends AbstractGiftCertificateCriteria implements Criteria<GiftCertificate> {
 
-    private final static String GET_ALL_QUERY = "SELECT * FROM " + TABLE_NAME;
+    private final static String GET_ALL_QUERY = "SELECT id, name, description, price, duration," +
+            " create_date, last_update_date FROM " + TABLE_NAME;
 
     @Autowired
     public AllGiftCertificateCriteria(JdbcTemplate template, RowMapper<GiftCertificate> rowMapper) {
         super(template, rowMapper);
     }
-
 
     @Override
     public List<GiftCertificate> find(String[] params) {

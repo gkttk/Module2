@@ -1,7 +1,10 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.dao.config.DaoTestConfig;
+import com.epam.esm.criteria.result.CriteriaFactoryResult;
+import com.epam.esm.criteria.tags.AllTagCriteria;
+import com.epam.esm.criteria.tags.CertificateIdTagCriteria;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,6 +31,12 @@ public class TagDaoTest {
     @Autowired
     private TagDao tagDao;
 
+    @Autowired
+    private CertificateIdTagCriteria certificateIdTagCriteria;
+
+    @Autowired
+    private AllTagCriteria allTagCriteria;
+
     private static Tag tag1;
     private static Tag tag2;
     private static Tag tag3;
@@ -40,9 +49,8 @@ public class TagDaoTest {
         tag3 = new Tag(3L, "tag3");
     }
 
-
     @Test
-    public void testGetByIdShouldReturnOptionalWithEntityWhenEntityWithGivenIdIsPresentInDb() {
+    public void testGetById_EntityWithGivenIdIsPresentInDb_ReturnOptionalWithEntity() {
         //given
         Optional<Tag> expected = Optional.of(tag1);
         Long tagId = expected.get().getId();
@@ -53,7 +61,7 @@ public class TagDaoTest {
     }
 
     @Test
-    public void testGetByIdShouldReturnEmptyOptionalWhenEntityWithGivenIdIsNotPresentInDb() {
+    public void testGetById_EntityWithGivenIdIsNotPresentInDb_ReturnEmptyOptional() {
         //given
         long tagId = 100L;
         Optional<Tag> expected = Optional.empty();
@@ -64,34 +72,38 @@ public class TagDaoTest {
     }
 
     @Test
-    public void testGetAllByCertificateIdShouldReturnListEntityWhenCertificateWithGivenIdIsPresentInDb() {
+    public void testGetBy_TagsWithGivenCertificateIdIsPresentInDb_ReturnListTags() {
         //given
-        long certificateId = 2;
-        List<Tag> expected = Arrays.asList(tag1, tag2);
+        String[] params = new String[]{"3"};
+        CriteriaFactoryResult<Tag> factoryResult = new CriteriaFactoryResult<>(certificateIdTagCriteria, params);
+
+        List<Tag> expected = Collections.singletonList(tag1);
         //when
-        List<Tag> result = tagDao.getAllByCertificateId(certificateId);
+        List<Tag> result = tagDao.getBy(factoryResult);
         //then
         assertEquals(result, expected);
     }
 
     @Test
-    public void testGetAllByCertificateIdShouldReturnEmptyListWhenCertificateWithGivenIdIsNotPresentInDb() {
+    public void testGetBy_TagsWithGivenCertificateIdIsPresentInDb_ReturnTagsList() {
         //given
-        long certificateId = 100L;
+        String[] params = new String[]{"100"};
+        CriteriaFactoryResult<Tag> factoryResult = new CriteriaFactoryResult<>(certificateIdTagCriteria, params);
         List<Tag> expected = Collections.emptyList();
         //when
-        List<Tag> result = tagDao.getAllByCertificateId(certificateId);
+        List<Tag> result = tagDao.getBy(factoryResult);
         //then
         assertEquals(result, expected);
     }
 
 
     @Test
-    public void testGetAllShouldReturnEntityListWhenThereAreEntitiesInDb() {
+    public void testGetBy_ThereAreEntitiesInDb_ReturnAllTagsList() {
         //given
+        CriteriaFactoryResult<Tag> factoryResult = new CriteriaFactoryResult<>(allTagCriteria, null);
         List<Tag> expected = Arrays.asList(tag1, tag2, tag3);
         //when
-        List<Tag> result = tagDao.getAll();
+        List<Tag> result = tagDao.getBy(factoryResult);
         //then
         assertEquals(result, expected);
     }
@@ -99,7 +111,7 @@ public class TagDaoTest {
     @Test
     @Transactional
     @Rollback
-    public void testSaveShouldReturnSavedEntityWithNewId() {
+    public void testSave_ReturnSavedEntityWithNewId() {
         //given
         Tag savedEntity = new Tag(null, "newTag");
         //when
@@ -112,7 +124,7 @@ public class TagDaoTest {
     @Test
     @Transactional
     @Rollback
-    public void testDeleteShouldReturnTrueWhenEntityWithGivenIdIsPresentInDb() {
+    public void testDelete_EntityWithGivenIdIsPresentInDb_ReturnTrue() {
         //given
         Long tagId = tag1.getId();
         //when
@@ -124,7 +136,7 @@ public class TagDaoTest {
     @Test
     @Transactional
     @Rollback
-    public void testDeleteShouldReturnFalseWhenEntityWithGivenIdIsNotPresentInDb() {
+    public void testDelete_EntityWithGivenIdIsNotPresentInDb_ReturnFalse() {
         //given
         long tagId = 100L;
         //when
@@ -134,7 +146,7 @@ public class TagDaoTest {
     }
 
     @Test
-    public void testGetByNameShouldReturnOptionalEntityWhenEntityWithGivenNameIsPresentInDb() {
+    public void testGetByName_EntityWithGivenNameIsPresentInDb_ReturnOptionalEntity() {
         //given
         String tagName = tag1.getName();
         Optional<Tag> expected = Optional.of(TagDaoTest.tag1);
@@ -145,7 +157,7 @@ public class TagDaoTest {
     }
 
     @Test
-    public void testGetByNameShouldReturnEmptyOptionalWhenEntityWithGivenNameIsNotPresentInDb() {
+    public void testGetByName_EntityWithGivenNameIsNotPresentInDb_ReturnEmptyOptional() {
         //given
         String tagName = "incorrectName";
         Optional<Tag> expected = Optional.empty();

@@ -1,5 +1,6 @@
 package com.epam.esm.dao;
 
+import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.entity.Tag;
 
 import java.util.List;
@@ -12,6 +13,16 @@ import java.util.Optional;
  * @since 1.0
  */
 public interface TagDao {
+
+    /**
+     * This method combines all getList queries.
+     *
+     * @param criteriaWithParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
+     *                           and arrays of params for searching.
+     * @return list of Tag entities
+     * @since 1.0
+     */
+    List<Tag> getBy(CriteriaFactoryResult<Tag> criteriaWithParams);
 
     /**
      * This method saves Tag entity.
@@ -39,23 +50,6 @@ public interface TagDao {
      * @since 1.0
      */
     Optional<Tag> getByName(String tagName);
-
-    /**
-     * This method get all Tag entities.
-     *
-     * @return List of all Tag entities.
-     * @since 1.0
-     */
-    List<Tag> getAll();
-
-    /**
-     * This method get all Tag entities which is bound with a specific GiftCertificate entity.
-     *
-     * @param certificateId id of GiftCertificate entity
-     * @return List of all Tag entities which is bound with GiftCertificate that has id like id-param.
-     * @since 1.0
-     */
-    List<Tag> getAllByCertificateId(long certificateId);
 
     /**
      * This method delete Tag entity.

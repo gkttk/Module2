@@ -1,6 +1,7 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.criteria.Criteria;
+import com.epam.esm.criteria.factory.CriteriaFactory;
 import com.epam.esm.criteria.factory.GiftCertificateCriteriaFactory;
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.CertificateTagsDao;
@@ -22,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,25 +36,28 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private final static String SORT_FIELDS_KEY = "sortFields";
     private final static String ORDER_KEY = "order";
+    private final static String CERTIFICATE_ID_KEY = "certificateId";
 
     private final ModelMapper modelMapper;
     private final GiftCertificateDao giftCertificateDao;
     private final TagDao tagDao;
     private final CertificateTagsDao certificateTagsDao;
 
-    private final GiftCertificateCriteriaFactory criteriaFactory;
+    private final CriteriaFactory<GiftCertificate> criteriaGiftCertificateFactory;
+    private final CriteriaFactory<Tag> criteriaTagFactory;
     private final SortingHelper<GiftCertificate> sortingHelper;
 
 
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, ModelMapper modelMapper, TagDao tagDao,
-                                      CertificateTagsDao certificateTagsDao, GiftCertificateCriteriaFactory criteriaFactory,
-                                      GiftCertificateSortingHelper sortingHelper) {
+                                      CertificateTagsDao certificateTagsDao, GiftCertificateCriteriaFactory criteriaGiftCertificateFactory,
+                                      CriteriaFactory<Tag> criteriaTagFactory, GiftCertificateSortingHelper sortingHelper) {
         this.giftCertificateDao = giftCertificateDao;
         this.modelMapper = modelMapper;
         this.tagDao = tagDao;
         this.certificateTagsDao = certificateTagsDao;
-        this.criteriaFactory = criteriaFactory;
+        this.criteriaGiftCertificateFactory = criteriaGiftCertificateFactory;
+        this.criteriaTagFactory = criteriaTagFactory;
         this.sortingHelper = sortingHelper;
     }
 
@@ -73,8 +74,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     public List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams) {
-
-        CriteriaFactoryResult<GiftCertificate> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
+        CriteriaFactoryResult<GiftCertificate> criteriaWithParams = criteriaGiftCertificateFactory.getCriteriaWithParams(reqParams);
 
         List<GiftCertificate> foundCertificates = giftCertificateDao.getBy(criteriaWithParams);
 
@@ -222,8 +222,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
 
-
-
     /**
      * This method partly updates GiftCertificate entity.Also the method link passed tags with the GiftCertificate
      * entity and, if the tag doesn't exist in db, creates it.
@@ -246,7 +244,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         giftCertificateDao.update(foundCertificate, certificateId); //update
 
         List<TagDto> passedTags = giftCertificatePatchDto.getTags();  //get passed tags
-        List<Tag> certTags = new ArrayList<>(tagDao.getAllByCertificateId(certificateId)); //get all tags of current patching entity
+
+        Map<String, String[]> params = new HashMap<>();
+        params.put(CERTIFICATE_ID_KEY, new String[]{String.valueOf(certificateId)});
+        CriteriaFactoryResult<Tag> criteriaWithParams = criteriaTagFactory.getCriteriaWithParams(params);
+        List<Tag> certTags = new ArrayList<>(tagDao.getBy(criteriaWithParams)); //get all tags of current patching entity
 
         if (passedTags != null) { //if passed tags are not empty
             passedTags.forEach(tagDto -> {
@@ -312,7 +314,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @since 1.0
      */
     private void fillCertificateDtoWithTags(GiftCertificateDto giftCertificateDto) {
-        List<Tag> tags = tagDao.getAllByCertificateId(giftCertificateDto.getId());
+        long certificateId = giftCertificateDto.getId();
+        Map<String, String[]> params = new HashMap<>();
+        params.put(CERTIFICATE_ID_KEY, new String[]{String.valueOf(certificateId)});
+        CriteriaFactoryResult<Tag> criteriaWithParams = criteriaTagFactory.getCriteriaWithParams(params);
+    List<Tag> tags = tagDao.getBy(criteriaWithParams);
         List<TagDto> tagsDto = tags.stream()
                 .map(tag -> modelMapper.map(tag, TagDto.class))
                 .collect(Collectors.toList());
@@ -339,13 +345,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     /**
      * This method fills {@param targetEntity} param by present fields of {@param fromDto} param and sets an update_time field.
-     * @param targetEntity GiftCertificate entity from db.
-     * @param fromDto Passed GiftCertificateDto with fields for patch.
-     * @param certificateId id of GiftCertificate entity from db.
      *
+     * @param targetEntity  GiftCertificate entity from db.
+     * @param fromDto       Passed GiftCertificateDto with fields for patch.
+     * @param certificateId id of GiftCertificate entity from db.
      * @since 1.0
      */
-    private void changeEntityFieldsIfPresent(GiftCertificate targetEntity, GiftCertificateDto fromDto, long certificateId){
+    private void changeEntityFieldsIfPresent(GiftCertificate targetEntity, GiftCertificateDto fromDto, long certificateId) {
         String name = fromDto.getName();
         if (name != null) {
             exceptionWhenAnotherCertificateWithGivenNameExistsInDb(name, certificateId);

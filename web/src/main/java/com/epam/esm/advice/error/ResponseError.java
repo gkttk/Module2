@@ -10,7 +10,8 @@ public enum ResponseError {
     GIFT_CERTIFICATE_WITH_SUCH_NAME_EXISTS("Gift certificate already exists", 42010),
     INCORRECT_VALIDATION("Incorrect validation", 43501),
     ILLEGAL_REQUEST_PARAMETER("Illegal request parameter", 44600),
-    INCORRECT_SORTING_FIELD("Incorrect field for sorting was passed", 44601);
+    INCORRECT_GIFT_CERTIFICATE_SORTING_FIELD("Incorrect field for sorting GiftCertificate was passed", 44601),
+    INCORRECT_TAG_SORTING_FIELD("Incorrect field for sorting Tag was passed", 44602);
 
 
     private String message;

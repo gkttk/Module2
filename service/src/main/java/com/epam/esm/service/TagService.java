@@ -3,6 +3,7 @@ package com.epam.esm.service;
 import com.epam.esm.dto.TagDto;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This interface represents an api to interact with the Tag dao layer.
@@ -15,7 +16,7 @@ public interface TagService {
 
     TagDto findById(long id);
 
-    List<TagDto> findAll();
+    List<TagDto> findAllForQuery(Map<String, String[]> reqParams);
 
     TagDto save(TagDto tag);
 

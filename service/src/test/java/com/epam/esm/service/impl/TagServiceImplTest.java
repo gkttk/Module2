@@ -1,5 +1,9 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.criteria.factory.TagCriteriaFactory;
+import com.epam.esm.criteria.result.CriteriaFactoryResult;
+import com.epam.esm.criteria.tags.AllTagCriteria;
+import com.epam.esm.criteria.tags.CertificateIdTagCriteria;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
@@ -13,10 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,6 +35,15 @@ public class TagServiceImplTest {
     private TagDao tagDaoMock;
     @Mock
     private ModelMapper modelMapperMock;
+
+    @Mock
+    private TagCriteriaFactory tagCriteriaFactory;
+
+    @Mock
+    private AllTagCriteria allTagCriteria;
+
+    @Mock
+    private CertificateIdTagCriteria certificateIdTagCriteria;
 
     @InjectMocks
     private TagServiceImpl tagService;
@@ -74,27 +84,32 @@ public class TagServiceImplTest {
     @Test
     public void testFindAll_EntitiesArePresentInDb_ReturnListOfDto() {
         //given
-        List<Tag> expectedEntitiesList = Stream.generate(Tag::new).limit(3).collect(Collectors.toList());
+
+        CriteriaFactoryResult<Tag> criteriaFactoryResult = new CriteriaFactoryResult<>(allTagCriteria,null);
+
+        List<Tag> expectedEntitiesList = Arrays.asList(testEntity, testEntity, testEntity);
         List<TagDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
-        when(tagDaoMock.getAll()).thenReturn(expectedEntitiesList);
-        when(modelMapperMock.map(any(), any())).thenReturn(testDto);
+
+        when(tagCriteriaFactory.getCriteriaWithParams(anyMap())).thenReturn(criteriaFactoryResult);
+        when(tagDaoMock.getBy(any())).thenReturn(expectedEntitiesList);
+        when(modelMapperMock.map(testEntity, TagDto.class)).thenReturn(testDto);
         //when
-        List<TagDto> result = tagService.findAll();
+        List<TagDto> result = tagService.findAllForQuery(anyMap());
         //then
-        verify(tagDaoMock).getAll();
+        verify(tagDaoMock).getBy(criteriaFactoryResult);
         verify(modelMapperMock, times(expectedEntitiesList.size())).map(any(), any());
         assertEquals(result, expectedResult);
     }
 
-    @Test
+   @Test
     public void testFindAll_ThereIsNoEntitiesInDb_ThrowException() {
         //given
         List<Tag> expectedEntitiesList = Collections.emptyList();
-        when(tagDaoMock.getAll()).thenReturn(expectedEntitiesList);
+        when(tagDaoMock.getBy(any())).thenReturn(expectedEntitiesList);
         //when
         //then
-        assertThrows(TagNotFoundException.class, () -> tagService.findAll());
-        verify(tagDaoMock).getAll();
+        assertThrows(TagNotFoundException.class, () -> tagService.findAllForQuery(anyMap()));
+        verify(tagDaoMock).getBy(any());
     }
 
     @Test

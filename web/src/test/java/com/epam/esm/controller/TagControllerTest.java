@@ -10,11 +10,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.WebRequest;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -23,6 +26,9 @@ public class TagControllerTest {
 
     @Mock
     private TagService serviceMock;
+
+    @Mock
+    private WebRequest webRequestMock;
 
     @InjectMocks
     private TagController tagController;
@@ -53,13 +59,14 @@ public class TagControllerTest {
     public void testGetAllName_ReturnHttpStatusOkWithDtoList() {
         //given
         List<TagDto> listDto = Arrays.asList(defaultTagDto, defaultTagDto);
-        when(serviceMock.findAll()).thenReturn(listDto);
+        when(webRequestMock.getParameterMap()).thenReturn(new HashMap<>());
+        when(serviceMock.findAllForQuery(anyMap())).thenReturn(listDto);
         ResponseEntity<List<TagDto>> expected = ResponseEntity.ok(listDto);
         //when
-        ResponseEntity<List<TagDto>> result = tagController.getAll();
+        ResponseEntity<List<TagDto>> result = tagController.getAll(webRequestMock);
         //then
         assertEquals(result, expected);
-        verify(serviceMock).findAll();
+        verify(serviceMock).findAllForQuery(anyMap());
     }
 
     @Test

@@ -1,17 +1,22 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.criteria.Criteria;
+import com.epam.esm.criteria.factory.CriteriaFactory;
+import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.TagNotFoundException;
 import com.epam.esm.exceptions.TagWithSuchNameAlreadyExists;
 import com.epam.esm.service.TagService;
+import com.epam.esm.sorting.SortingHelper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,13 +28,51 @@ import java.util.stream.Collectors;
 @Service
 public class TagServiceImpl implements TagService {
 
+    private final static String SORT_FIELDS_KEY = "sortFields";
+    private final static String ORDER_KEY = "order";
+
     private final TagDao tagDao;
     private final ModelMapper modelMapper;
+    private final CriteriaFactory<Tag> criteriaFactory;
+    private final SortingHelper<Tag> sortingHelper;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper) {
+    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, CriteriaFactory<Tag> criteriaFactory, SortingHelper<Tag> sortingHelper) {
         this.tagDao = tagDao;
         this.modelMapper = modelMapper;
+        this.criteriaFactory = criteriaFactory;
+        this.sortingHelper = sortingHelper;
+    }
+
+
+    /**
+     * This method do request to dao layer which depends on argument of the method.
+     * The method uses {@link com.epam.esm.criteria.factory.TagCriteriaFactory} for getting a correct {@link Criteria} which is based on passed request parameters.
+     *
+     * @param reqParams parameters of a request.
+     * @return List of TagDao.
+     * @since 1.0
+     */
+    @Override
+    public List<TagDto> findAllForQuery(Map<String, String[]> reqParams) {
+
+        CriteriaFactoryResult<Tag> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
+
+        List<Tag> foundTags = tagDao.getBy(criteriaWithParams);
+        if (foundTags.isEmpty()) {
+            throw new TagNotFoundException("There are no tags in DB");
+        }
+
+        if (reqParams.containsKey(SORT_FIELDS_KEY)) {
+            String[] sortFields = reqParams.get(SORT_FIELDS_KEY);
+            String[] orders = reqParams.get(ORDER_KEY);
+
+            foundTags = sortingHelper.getSorted(sortFields, orders[0], foundTags);
+        }
+
+        return foundTags.stream()
+                .map(entity -> modelMapper.map(entity, TagDto.class))
+                .collect(Collectors.toList());
     }
 
 
@@ -48,23 +91,6 @@ public class TagServiceImpl implements TagService {
         Tag foundTag = foundTagOpt.orElseThrow(() -> new TagNotFoundException(String.format("Can't find a tag with id: %d", id)));
 
         return modelMapper.map(foundTag, TagDto.class);
-    }
-
-
-    /**
-     * This method get list of all TagDto from db.
-     *
-     * @return list of all TagDto from db.
-     * @throws TagNotFoundException if there are no Tag entities in db.
-     * @since 1.0
-     */
-    @Override
-    public List<TagDto> findAll() {
-        List<Tag> entities = tagDao.getAll();
-        if (entities.isEmpty()) {
-            throw new TagNotFoundException("There are no tags in DB");
-        }
-        return entities.stream().map(entity -> modelMapper.map(entity, TagDto.class)).collect(Collectors.toList());
     }
 
     /**

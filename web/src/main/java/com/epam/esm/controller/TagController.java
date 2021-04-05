@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/tags", produces = "application/json")
@@ -28,8 +30,9 @@ public class TagController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TagDto>> getAll() {
-        List<TagDto> tags = tagService.findAll();
+    public ResponseEntity<List<TagDto>> getAll(WebRequest request) {
+        Map<String, String[]> reqParams = request.getParameterMap();
+        List<TagDto> tags = tagService.findAllForQuery(reqParams);
         return ResponseEntity.ok(tags);
     }
 

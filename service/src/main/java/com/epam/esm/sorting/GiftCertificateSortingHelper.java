@@ -1,7 +1,7 @@
 package com.epam.esm.sorting;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.exceptions.IncorrectSortingFieldException;
+import com.epam.esm.exceptions.IncorrectGiftCertificateSortingFieldException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class GiftCertificateSortingHelper implements SortingHelper<GiftCertifica
      *
      * @param fields fields for sorting.
      * @return built comparator for sorting.
-     * @throws IncorrectSortingFieldException when the {@param fields} array contains incorrect value of field.
+     * @throws IncorrectGiftCertificateSortingFieldException when the {@param fields} array contains incorrect value of field.
      */
     private Comparator<GiftCertificate> buildComparator(String[] fields) {
 
@@ -115,7 +115,7 @@ public class GiftCertificateSortingHelper implements SortingHelper<GiftCertifica
                             break;
                         }
                         default:
-                            throw new IncorrectSortingFieldException(String.format("Can't sort by the field: %s", field));
+                            throw new IncorrectGiftCertificateSortingFieldException(String.format("Can't sort GiftCertificates by the field: %s", field));
                     }
                 });
 

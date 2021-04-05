@@ -1,5 +1,7 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.criteria.Criteria;
+import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +27,10 @@ public class TagDaoImpl implements TagDao {
 
     private static final String TABLE_NAME = "tag";
     private final static String GET_BY_ID_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
-    private final static String GET_ALL_QUERY = "SELECT * FROM " + TABLE_NAME;
     private final static String SAVE_QUERY = "INSERT INTO " + TABLE_NAME + " (name) " +
             "VALUES (?)";
     private final static String DELETE_QUERY = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
     private final static String GET_BY_NAME_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE name = ?";
-
-    private final static String GET_ALL_BY_CERTIFICATE_ID = "SELECT t.id, t.name FROM " + TABLE_NAME +
-            " t JOIN certificates_tags ct on t.id = ct.tag_id WHERE ct.certificate_id = ?";
-
 
     private final JdbcTemplate template;
     private final RowMapper<Tag> rowMapper;
@@ -96,26 +93,19 @@ public class TagDaoImpl implements TagDao {
     }
 
     /**
-     * This method get all Tag entities.
+     * This method combines all getList queries.
      *
-     * @return List of all Tag entities.
+     * @param criteriaWithParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
+     *                           and arrays of params for searching.
+     * @return list of Tag entities
      * @since 1.0
      */
     @Override
-    public List<Tag> getAll() {
-        return template.query(GET_ALL_QUERY, rowMapper);
-    }
+    public List<Tag> getBy(CriteriaFactoryResult<Tag> criteriaWithParams) {
+        Criteria<Tag> criteria = criteriaWithParams.getCriteria();
+        String[] params = criteriaWithParams.getParams();
 
-    /**
-     * This method get all Tag entities which is bound with a specific GiftCertificate entity.
-     *
-     * @param certificateId id of GiftCertificate entity
-     * @return List of all Tag entities which is bound with GiftCertificate that has id like id-param.
-     * @since 1.0
-     */
-    @Override
-    public List<Tag> getAllByCertificateId(long certificateId) {
-        return template.query(GET_ALL_BY_CERTIFICATE_ID, rowMapper, certificateId);
+        return criteria.find(params);
     }
 
     /**

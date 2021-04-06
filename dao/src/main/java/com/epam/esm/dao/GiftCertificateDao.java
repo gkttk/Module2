@@ -39,10 +39,10 @@ public interface GiftCertificateDao {
      * This method saves GiftCertificate entity.
      *
      * @param certificate GiftCertificate entity without id.
-     * @return GiftCertificate entity with generated id.
+     * @return id of inserted entity
      * @since 1.0
      */
-    GiftCertificate save(GiftCertificate certificate);
+    Long save(GiftCertificate certificate);
 
 
     /**

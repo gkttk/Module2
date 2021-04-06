@@ -27,10 +27,9 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     private final static String TABLE_NAME = "gift_certificate";
     private final static String GET_BY_ID_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
-    private final static String SAVE_QUERY = "INSERT INTO " + TABLE_NAME + " (name, description, price, duration," +
-            " create_date, last_update_date) " + "VALUES (?,?,?,?,?,?)";
+    private final static String SAVE_QUERY = "INSERT INTO " + TABLE_NAME + " (name, description, price, duration) " + "VALUES (?,?,?,?)";
     private final static String UPDATE_QUERY = "UPDATE " + TABLE_NAME + " SET name = ?, description = ?, " +
-            "price = ?, duration = ?, last_update_date = ? WHERE id = ?";
+            "price = ?, duration = ? WHERE id = ?";
     private final static String DELETE_QUERY = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
 
     private final static String GET_BY_NAME_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE name = ?";
@@ -78,11 +77,11 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * The method uses KayHolder for getting generated id for GiftCertificate entity from db.
      *
      * @param certificate GiftCertificate entity without id.
-     * @return GiftCertificate entity with generated id.
+     * @return id of inserted GiftCertificate entity
      * @since 1.0
      */
     @Override
-    public GiftCertificate save(GiftCertificate certificate) {
+    public Long save(GiftCertificate certificate) {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(connection -> {
@@ -91,14 +90,10 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
             ps.setString(2, certificate.getDescription());
             ps.setBigDecimal(3, certificate.getPrice());
             ps.setInt(4, certificate.getDuration());
-            ps.setString(5, certificate.getCreateDate());
-            ps.setString(6, certificate.getLastUpdateDate());
             return ps;
         }, keyHolder);
 
-        certificate.setId(keyHolder.getKey().longValue());
-
-        return certificate;
+        return keyHolder.getKey().longValue();
     }
 
     /**
@@ -125,7 +120,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     @Override
     public void update(GiftCertificate certificate, long id) {
         template.update(UPDATE_QUERY, certificate.getName(), certificate.getDescription(),
-                certificate.getPrice(), certificate.getDuration(), certificate.getLastUpdateDate(), id);
+                certificate.getPrice(), certificate.getDuration(), id);
     }
 
     /**

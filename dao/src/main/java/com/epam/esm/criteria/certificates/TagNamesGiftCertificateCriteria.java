@@ -17,8 +17,8 @@ import java.util.*;
 public class TagNamesGiftCertificateCriteria extends AbstractGiftCertificateCriteria implements Criteria<GiftCertificate> {
 
     private final static String GET_ALL_BY_TAG_NAME = "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration," +
-            " gc.create_date, gc.last_update_date FROM " + TABLE_NAME + " gc JOIN certificates_tags ct on gc.id = ct.certificate_id" +
-            " JOIN tag t on t.id = ct.tag_id WHERE t.name = ?";
+            " create_date, last_update_date FROM " + TABLE_NAME + " gc JOIN certificates_tags ct on gc.id = ct.certificate_id"
+            + " JOIN tag t on t.id = ct.tag_id WHERE t.name = ?";
 
 
     public TagNamesGiftCertificateCriteria(JdbcTemplate template, RowMapper<GiftCertificate> rowMapper) {

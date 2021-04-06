@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * This class maps ResultSet from db to GiftCertificate entity.
@@ -21,6 +23,10 @@ public class GiftCertificateRowMapper implements RowMapper<GiftCertificate> {
     private final static String CREATE_DATE = "create_date";
     private final static String LAST_UPDATE_DATE = "last_update_date";
 
+    private final static String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
+
+
     @Override
     public GiftCertificate mapRow(ResultSet rs, int rowNum) throws SQLException {
         GiftCertificate giftCertificate = new GiftCertificate();
@@ -29,8 +35,13 @@ public class GiftCertificateRowMapper implements RowMapper<GiftCertificate> {
         giftCertificate.setDescription(rs.getString(DESCRIPTION));
         giftCertificate.setPrice(rs.getBigDecimal(PRICE));
         giftCertificate.setDuration(rs.getInt(DURATION));
-        giftCertificate.setCreateDate(rs.getString(CREATE_DATE));
-        giftCertificate.setLastUpdateDate(rs.getString(LAST_UPDATE_DATE));
+
+        String creationDateString = rs.getString(CREATE_DATE);
+        giftCertificate.setCreateDate(LocalDateTime.parse(creationDateString, formatter));
+
+        String lastUpdateDateString = rs.getString(LAST_UPDATE_DATE);
+        giftCertificate.setLastUpdateDate(LocalDateTime.parse(lastUpdateDateString, formatter));
+
         return giftCertificate;
     }
 }

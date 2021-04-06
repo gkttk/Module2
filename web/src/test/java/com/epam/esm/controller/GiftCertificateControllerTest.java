@@ -49,8 +49,6 @@ public class GiftCertificateControllerTest {
         defaultCertDto.setDescription("description");
         defaultCertDto.setPrice(new BigDecimal("1.5"));
         defaultCertDto.setDuration(10);
-        defaultCertDto.setCreateDate("Date");
-        defaultCertDto.setLastUpdateDate("Date");
         defaultCertDto.setTags(Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
 
         testDto = new GiftCertificateDto();
@@ -59,8 +57,6 @@ public class GiftCertificateControllerTest {
         testDto.setDescription("description");
         testDto.setPrice(new BigDecimal("1.5"));
         testDto.setDuration(10);
-        testDto.setCreateDate("Date");
-        testDto.setLastUpdateDate("Date");
         testDto.setTags(Arrays.asList(defaultTagDto, defaultTagDto, defaultTagDto));
 
     }

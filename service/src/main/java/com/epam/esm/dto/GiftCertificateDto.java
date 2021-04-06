@@ -6,6 +6,7 @@ import com.epam.esm.dto.groups.UpdateGroup;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -34,9 +35,9 @@ public class GiftCertificateDto {
     @Max(value = 100, groups = {UpdateGroup.class, PatchGroup.class})
     private Integer duration;
     @Null(groups = {UpdateGroup.class, PatchGroup.class})
-    private String createDate;
+    private LocalDateTime createDate;
     @Null(groups = {UpdateGroup.class, PatchGroup.class})
-    private String lastUpdateDate;
+    private LocalDateTime lastUpdateDate;
 
     @Valid
     private List<TagDto> tags;
@@ -85,19 +86,19 @@ public class GiftCertificateDto {
         this.duration = duration;
     }
 
-    public String getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public String getLastUpdateDate() {
+    public LocalDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public void setLastUpdateDate(String lastUpdateDate) {
+    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 
@@ -117,15 +118,15 @@ public class GiftCertificateDto {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        GiftCertificateDto that = (GiftCertificateDto) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(price, that.price) &&
-                Objects.equals(duration, that.duration) &&
-                Objects.equals(createDate, that.createDate) &&
-                Objects.equals(lastUpdateDate, that.lastUpdateDate) &&
-                Objects.equals(tags, that.tags);
+        GiftCertificateDto dto = (GiftCertificateDto) o;
+        return Objects.equals(id, dto.id) &&
+                Objects.equals(name, dto.name) &&
+                Objects.equals(description, dto.description) &&
+                Objects.equals(price, dto.price) &&
+                Objects.equals(duration, dto.duration) &&
+                Objects.equals(createDate, dto.createDate) &&
+                Objects.equals(lastUpdateDate, dto.lastUpdateDate) &&
+                Objects.equals(tags, dto.tags);
     }
 
     @Override
@@ -141,8 +142,8 @@ public class GiftCertificateDto {
                 .add("description='" + description + "'")
                 .add("price=" + price)
                 .add("duration=" + duration)
-                .add("createDate='" + createDate + "'")
-                .add("lastUpdateDate='" + lastUpdateDate + "'")
+                .add("createDate=" + createDate)
+                .add("lastUpdateDate=" + lastUpdateDate)
                 .add("tags=" + tags)
                 .toString();
     }

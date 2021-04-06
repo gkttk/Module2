@@ -36,8 +36,6 @@ public class GiftCertificateSortingHelperTest {
         entity1.setDescription("description");
         entity1.setPrice(new BigDecimal("1.5"));
         entity1.setDuration(10);
-        entity1.setCreateDate("Date");
-        entity1.setLastUpdateDate("Date");
 
         entity2 = new GiftCertificate();
         entity2.setId(200L);
@@ -45,8 +43,6 @@ public class GiftCertificateSortingHelperTest {
         entity2.setDescription("description");
         entity2.setPrice(new BigDecimal("1.5"));
         entity2.setDuration(10);
-        entity2.setCreateDate("Date");
-        entity2.setLastUpdateDate("Date");
 
         entity3 = new GiftCertificate();
         entity3.setId(300L);
@@ -54,8 +50,6 @@ public class GiftCertificateSortingHelperTest {
         entity3.setDescription("description");
         entity3.setPrice(new BigDecimal("1.5"));
         entity3.setDuration(10);
-        entity3.setCreateDate("Date");
-        entity3.setLastUpdateDate("Date");
 
         sortingFields = new String[]{"id"};
     }

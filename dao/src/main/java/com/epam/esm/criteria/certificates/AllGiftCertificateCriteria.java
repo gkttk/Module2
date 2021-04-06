@@ -18,7 +18,7 @@ import java.util.List;
 public class AllGiftCertificateCriteria extends AbstractGiftCertificateCriteria implements Criteria<GiftCertificate> {
 
     private final static String GET_ALL_QUERY = "SELECT id, name, description, price, duration," +
-            " create_date, last_update_date FROM " + TABLE_NAME;
+            "create_date, last_update_date FROM " + TABLE_NAME;
 
     @Autowired
     public AllGiftCertificateCriteria(JdbcTemplate template, RowMapper<GiftCertificate> rowMapper) {
@@ -28,7 +28,5 @@ public class AllGiftCertificateCriteria extends AbstractGiftCertificateCriteria 
     @Override
     public List<GiftCertificate> find(String[] params) {
         return template.query(GET_ALL_QUERY, rowMapper);
-
     }
-
 }

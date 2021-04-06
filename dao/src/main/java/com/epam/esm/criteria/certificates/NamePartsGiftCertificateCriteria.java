@@ -18,6 +18,7 @@ import java.util.*;
  */
 @Component("namePartsGCCriteria")
 public class NamePartsGiftCertificateCriteria extends AbstractGiftCertificateCriteria implements Criteria<GiftCertificate> {
+
     private final static String GET_BY_NAME_PART_PROCEDURE_NAME = "searchByPartOfName";
     private final static String NAME_IN_PARAM_FOR_PART_OF_NAME = "in_partOfName";
     private final static String RESULTS_SET_KEY = "certificates";

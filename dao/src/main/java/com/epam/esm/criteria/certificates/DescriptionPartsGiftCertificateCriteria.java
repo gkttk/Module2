@@ -18,7 +18,8 @@ import java.util.*;
  * @since 1.0
  */
 @Component("descriptionPartsGCCriteria")
-public class DescriptionPartsGiftCertificateCriteria  extends AbstractGiftCertificateCriteria implements Criteria<GiftCertificate> {
+public class DescriptionPartsGiftCertificateCriteria extends AbstractGiftCertificateCriteria implements Criteria<GiftCertificate> {
+
     private final static String NAME_IN_PARAM_FOR_PART_OF_DESCRIPTION = "in_partOfDescription";
     private final static String GET_BY_DESCRIPTION_PART_PROCEDURE_NAME = "searchByPartOfDescription";
     private final static String RESULTS_SET_KEY = "certificates";
@@ -49,6 +50,4 @@ public class DescriptionPartsGiftCertificateCriteria  extends AbstractGiftCertif
 
         return simpleJdbcCall.execute(params);
     }
-
-
 }

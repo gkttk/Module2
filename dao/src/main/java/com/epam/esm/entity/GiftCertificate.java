@@ -1,6 +1,7 @@
 package com.epam.esm.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -16,8 +17,8 @@ public class GiftCertificate {
     private String description;
     private BigDecimal price;
     private Integer duration;
-    private String createDate;
-    private String lastUpdateDate;
+    private LocalDateTime createDate;
+    private LocalDateTime lastUpdateDate;
 
 
     public GiftCertificate() {
@@ -43,11 +44,11 @@ public class GiftCertificate {
         return duration;
     }
 
-    public String getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public String getLastUpdateDate() {
+    public LocalDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
@@ -71,11 +72,11 @@ public class GiftCertificate {
         this.duration = duration;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public void setLastUpdateDate(String lastUpdateDate) {
+    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 
@@ -88,11 +89,11 @@ public class GiftCertificate {
             return false;
         }
         GiftCertificate that = (GiftCertificate) o;
-        return Objects.equals(duration, that.duration) &&
-                Objects.equals(id, that.id) &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(price, that.price) &&
+                Objects.equals(duration, that.duration) &&
                 Objects.equals(createDate, that.createDate) &&
                 Objects.equals(lastUpdateDate, that.lastUpdateDate);
     }
@@ -110,8 +111,8 @@ public class GiftCertificate {
                 .add("description='" + description + "'")
                 .add("price=" + price)
                 .add("duration=" + duration)
-                .add("createDate='" + createDate + "'")
-                .add("lastUpdateDate='" + lastUpdateDate + "'")
+                .add("createDate=" + createDate)
+                .add("lastUpdateDate=" + lastUpdateDate)
                 .toString();
     }
 }

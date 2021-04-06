@@ -13,10 +13,10 @@ import java.util.StringJoiner;
  */
 public class TagDto {
 
-    @Null
+    @Null(message = "Id value must be null")
     private Long id;
-    @NotBlank
-    @Size(min = 2, max = 15, message = "Tag name should contain 2-15 characters")
+    @NotBlank(message = "Name value must not be null")
+    @Size(min = 2, max = 15, message = "Name value must contain 2-15 characters")
     private String name;
 
     public TagDto() {

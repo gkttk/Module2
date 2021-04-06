@@ -3,12 +3,10 @@ package com.epam.esm.service.impl;
 import com.epam.esm.criteria.factory.TagCriteriaFactory;
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.criteria.tags.AllTagCriteria;
-import com.epam.esm.criteria.tags.CertificateIdTagCriteria;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exceptions.TagNotFoundException;
-import com.epam.esm.exceptions.TagWithSuchNameAlreadyExists;
+import com.epam.esm.exceptions.TagException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,9 +15,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,6 +32,7 @@ public class TagServiceImplTest {
 
     @Mock
     private TagDao tagDaoMock;
+
     @Mock
     private ModelMapper modelMapperMock;
 
@@ -41,9 +41,6 @@ public class TagServiceImplTest {
 
     @Mock
     private AllTagCriteria allTagCriteria;
-
-    @Mock
-    private CertificateIdTagCriteria certificateIdTagCriteria;
 
     @InjectMocks
     private TagServiceImpl tagService;
@@ -77,7 +74,7 @@ public class TagServiceImplTest {
         when(tagDaoMock.getById(tagId)).thenReturn(Optional.empty());
         //when
         //then
-        assertThrows(TagNotFoundException.class, () -> tagService.findById(tagId));
+        assertThrows(TagException.class, () -> tagService.findById(tagId));
         verify(tagDaoMock).getById(tagId);
     }
 
@@ -85,7 +82,7 @@ public class TagServiceImplTest {
     public void testFindAll_EntitiesArePresentInDb_ReturnListOfDto() {
         //given
 
-        CriteriaFactoryResult<Tag> criteriaFactoryResult = new CriteriaFactoryResult<>(allTagCriteria,null);
+        CriteriaFactoryResult<Tag> criteriaFactoryResult = new CriteriaFactoryResult<>(allTagCriteria, null);
 
         List<Tag> expectedEntitiesList = Arrays.asList(testEntity, testEntity, testEntity);
         List<TagDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
@@ -101,14 +98,14 @@ public class TagServiceImplTest {
         assertEquals(result, expectedResult);
     }
 
-   @Test
+    @Test
     public void testFindAll_ThereIsNoEntitiesInDb_ThrowException() {
         //given
         List<Tag> expectedEntitiesList = Collections.emptyList();
         when(tagDaoMock.getBy(any())).thenReturn(expectedEntitiesList);
         //when
         //then
-        assertThrows(TagNotFoundException.class, () -> tagService.findAllForQuery(anyMap()));
+        assertThrows(TagException.class, () -> tagService.findAllForQuery(anyMap()));
         verify(tagDaoMock).getBy(any());
     }
 
@@ -135,7 +132,7 @@ public class TagServiceImplTest {
         when(tagDaoMock.getByName(tagName)).thenReturn(Optional.of(testEntity));
         //when
         //then
-        assertThrows(TagWithSuchNameAlreadyExists.class, () -> tagService.save(testDto));
+        assertThrows(TagException.class, () -> tagService.save(testDto));
         verify(tagDaoMock).getByName(tagName);
     }
 
@@ -157,7 +154,7 @@ public class TagServiceImplTest {
         when(tagDaoMock.delete(tagId)).thenReturn(false);
         //when
         //then
-        assertThrows(TagNotFoundException.class, () -> tagService.delete(tagId));
+        assertThrows(TagException.class, () -> tagService.delete(tagId));
         verify(tagDaoMock).delete(tagId);
     }
 
@@ -182,7 +179,7 @@ public class TagServiceImplTest {
         when(tagDaoMock.getByName(name)).thenReturn(Optional.empty());
         //when
         //then
-        assertThrows(TagNotFoundException.class, () -> tagService.findByName(name));
+        assertThrows(TagException.class, () -> tagService.findByName(name));
         verify(tagDaoMock).getByName(name);
     }
 

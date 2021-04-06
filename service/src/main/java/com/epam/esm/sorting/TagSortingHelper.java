@@ -1,8 +1,7 @@
 package com.epam.esm.sorting;
 
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exceptions.IncorrectGiftCertificateSortingFieldException;
-import com.epam.esm.exceptions.IncorrectTagSortingFieldException;
+import com.epam.esm.exceptions.GiftCertificateException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 /**
  * Default implementation of {@link SortingHelper} interface for {@link Tag} entity.
@@ -22,8 +20,9 @@ public class TagSortingHelper implements SortingHelper<Tag> {
 
     private final static String ID_FIELD = "id";
     private final static String NAME_FIELD = "name";
-
     private final static String DESC_ORDER = "desc";
+    private final static int INVALID_SORT_FIELD_ERROR_CODE = 44602;
+
 
     /**
      * This method returns a sorted list of Tag entities.
@@ -72,7 +71,7 @@ public class TagSortingHelper implements SortingHelper<Tag> {
      *
      * @param fields fields for sorting.
      * @return built comparator for sorting.
-     * @throws IncorrectGiftCertificateSortingFieldException when the {@param fields} array contains incorrect value of field.
+     * @throws GiftCertificateException when the {@param fields} array contains incorrect value of field.
      */
     private Comparator<Tag> buildComparator(String[] fields) {
 
@@ -90,7 +89,7 @@ public class TagSortingHelper implements SortingHelper<Tag> {
                             break;
                         }
                         default:
-                            throw new IncorrectTagSortingFieldException(String.format("Can't sort Tags by the field: %s", field));
+                            throw new GiftCertificateException(INVALID_SORT_FIELD_ERROR_CODE, String.format("Can't sort Tags by the field: %s", field));
                     }
                 });
 

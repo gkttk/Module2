@@ -6,8 +6,7 @@ import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exceptions.TagNotFoundException;
-import com.epam.esm.exceptions.TagWithSuchNameAlreadyExists;
+import com.epam.esm.exceptions.TagException;
 import com.epam.esm.service.TagService;
 import com.epam.esm.sorting.SortingHelper;
 import org.modelmapper.ModelMapper;
@@ -36,6 +35,10 @@ public class TagServiceImpl implements TagService {
     private final CriteriaFactory<Tag> criteriaFactory;
     private final SortingHelper<Tag> sortingHelper;
 
+    private final static int TAG_NOT_FOUND_ERROR_CODE = 40402;
+    private final static int TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE = 42000;
+
+
     @Autowired
     public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, CriteriaFactory<Tag> criteriaFactory, SortingHelper<Tag> sortingHelper) {
         this.tagDao = tagDao;
@@ -51,6 +54,7 @@ public class TagServiceImpl implements TagService {
      *
      * @param reqParams parameters of a request.
      * @return List of TagDao.
+     * @throws TagException is there are no tags in db.
      * @since 1.0
      */
     @Override
@@ -60,7 +64,7 @@ public class TagServiceImpl implements TagService {
 
         List<Tag> foundTags = tagDao.getBy(criteriaWithParams);
         if (foundTags.isEmpty()) {
-            throw new TagNotFoundException("There are no tags in DB");
+            throw new TagException(TAG_NOT_FOUND_ERROR_CODE, "There are no tags in DB");
         }
 
         if (reqParams.containsKey(SORT_FIELDS_KEY)) {
@@ -81,14 +85,14 @@ public class TagServiceImpl implements TagService {
      *
      * @param id Tag entity id.
      * @return TagDto with id.
-     * @throws TagNotFoundException if there is no Tag entity with given id in db.
+     * @throws TagException if there is no Tag entity with given id in db.
      * @since 1.0
      */
     @Override
     public TagDto findById(long id) {
         Optional<Tag> foundTagOpt = tagDao.getById(id);
 
-        Tag foundTag = foundTagOpt.orElseThrow(() -> new TagNotFoundException(String.format("Can't find a tag with id: %d", id)));
+        Tag foundTag = foundTagOpt.orElseThrow(() -> new TagException(TAG_NOT_FOUND_ERROR_CODE, String.format("Can't find a tag with id: %d", id)));
 
         return modelMapper.map(foundTag, TagDto.class);
     }
@@ -98,7 +102,7 @@ public class TagServiceImpl implements TagService {
      *
      * @param tagDto DTO for saving without id.
      * @return saved DTO with id.
-     * @throws TagWithSuchNameAlreadyExists if Tag entity with a name like DTO already exists in db.
+     * @throws TagException if Tag entity with a name like DTO already exists in db.
      * @since 1.0
      */
     @Override
@@ -108,7 +112,7 @@ public class TagServiceImpl implements TagService {
         Optional<Tag> foundTagOpt = tagDao.getByName(tagName);
 
         if (foundTagOpt.isPresent()) {
-            throw new TagWithSuchNameAlreadyExists(String.format("Tag with name: %s already exist in DB",
+            throw new TagException(TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE, String.format("Tag with name: %s already exist in DB",
                     tagName));
         } else {
             Tag entity = modelMapper.map(tagDto, Tag.class);
@@ -123,14 +127,14 @@ public class TagServiceImpl implements TagService {
      * This method deletes a Tag entity from db.
      *
      * @param id Tag entity's id for deleting.
-     * @throws TagNotFoundException if there is no Tag entity with given id in db.
+     * @throws TagException if there is no Tag entity with given id in db.
      * @since 1.0
      */
     @Override
     public void delete(long id) {
         boolean isDeleted = tagDao.delete(id);
         if (!isDeleted) {
-            throw new TagNotFoundException(String.format("Tag with id: %d is not found in DB", id));
+            throw new TagException(TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with id: %d is not found in DB", id));
         }
     }
 
@@ -139,13 +143,13 @@ public class TagServiceImpl implements TagService {
      *
      * @param tagName name of Tag entity.
      * @return DTO with id with given name.
-     * @throws TagNotFoundException is there is no Tag entity with given name in db.
+     * @throws TagException is there is no Tag entity with given name in db.
      * @since 1.0
      */
     @Override
     public TagDto findByName(String tagName) {
         Optional<Tag> foundTagOpt = tagDao.getByName(tagName);
-        Tag foundTag = foundTagOpt.orElseThrow(() -> new TagNotFoundException(String.format("Tag with name: %s is not found in DB",
+        Tag foundTag = foundTagOpt.orElseThrow(() -> new TagException(TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with name: %s is not found in DB",
                 tagName)));
         return modelMapper.map(foundTag, TagDto.class);
     }

@@ -1,7 +1,7 @@
 package com.epam.esm.sorting;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.exceptions.IncorrectGiftCertificateSortingFieldException;
+import com.epam.esm.exceptions.GiftCertificateException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ public class GiftCertificateSortingHelper implements SortingHelper<GiftCertifica
     private final static String CREATE_DATE_FIELD = "createDate";
     private final static String LAST_UPDATE_DATE_FIELD = "lastUpdateDate";
     private final static String DESC_ORDER = "desc";
+    private final static int INVALID_SORT_FIELD_ERROR_CODE = 44601;
 
 
     /**
@@ -77,7 +78,7 @@ public class GiftCertificateSortingHelper implements SortingHelper<GiftCertifica
      *
      * @param fields fields for sorting.
      * @return built comparator for sorting.
-     * @throws IncorrectGiftCertificateSortingFieldException when the {@param fields} array contains incorrect value of field.
+     * @throws GiftCertificateException when the {@param fields} array contains incorrect value of field.
      */
     private Comparator<GiftCertificate> buildComparator(String[] fields) {
 
@@ -115,7 +116,7 @@ public class GiftCertificateSortingHelper implements SortingHelper<GiftCertifica
                             break;
                         }
                         default:
-                            throw new IncorrectGiftCertificateSortingFieldException(String.format("Can't sort GiftCertificates by the field: %s", field));
+                            throw new GiftCertificateException(INVALID_SORT_FIELD_ERROR_CODE, String.format("Can't sort GiftCertificates by the field: %s", field));
                     }
                 });
 

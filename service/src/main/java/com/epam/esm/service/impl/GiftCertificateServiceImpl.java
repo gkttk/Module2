@@ -11,8 +11,7 @@ import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exceptions.GiftCertificateNotFoundException;
-import com.epam.esm.exceptions.GiftCertificateWithSuchNameAlreadyExists;
+import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.sorting.GiftCertificateSortingHelper;
 import com.epam.esm.sorting.SortingHelper;
@@ -49,6 +48,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private final EntityValidator<GiftCertificate> giftCertificateEntityValidator;
 
+    private final static int CERTIFICATE_NOT_FOUND_CODE = 40401;
+    private final static int CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE = 42010;
+
 
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, ModelMapper modelMapper, TagDao tagDao,
@@ -73,6 +75,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      *
      * @param reqParams parameters of a request.
      * @return List of GiftCertificateDao.
+     * @throws GiftCertificateException if there is no entity in database.
      * @since 1.0
      */
     @Override
@@ -82,7 +85,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         List<GiftCertificate> foundCertificates = giftCertificateDao.getBy(criteriaWithParams);
 
         if (foundCertificates.isEmpty()) {
-            throw new GiftCertificateNotFoundException("Can't find gift certificates");
+            throw new GiftCertificateException(CERTIFICATE_NOT_FOUND_CODE, "Can't find gift certificates");
         }
 
         if (reqParams.containsKey(SORT_FIELDS_KEY)) {
@@ -106,7 +109,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      *
      * @param id id of necessary entity.
      * @return GiftCertificateDto with id and tags.
-     * @throws GiftCertificateNotFoundException if there is no entity with given id in database.
+     * @throws GiftCertificateException if there is no entity with given id in database.
      * @since 1.0
      */
     @Override
@@ -114,7 +117,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Optional<GiftCertificate> foundCertificateOpt = giftCertificateDao.getById(id);
 
         GiftCertificate foundCertificate = foundCertificateOpt.orElseThrow(() ->
-                new GiftCertificateNotFoundException(String.format("Can't find a certificate with id: %d", id)));
+                new GiftCertificateException(CERTIFICATE_NOT_FOUND_CODE, String.format("Can't find a certificate with id: %d", id)));
 
         GiftCertificateDto giftCertificateDto = modelMapper.map(foundCertificate, GiftCertificateDto.class);
         fillCertificateDtoWithTags(giftCertificateDto);
@@ -149,7 +152,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return findDtoWithFields(insertedId);
     }
 
-    private GiftCertificateDto findDtoWithFields(long certificateId){
+    private GiftCertificateDto findDtoWithFields(long certificateId) {
         Optional<GiftCertificate> entityOpt = giftCertificateDao.getById(certificateId);
         GiftCertificateDto dto = modelMapper.map(entityOpt.get(), GiftCertificateDto.class);
         fillCertificateDtoWithTags(dto);
@@ -157,14 +160,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
 
-
     /**
      * This method does full update for GiftCertificate entity with given id.
      *
      * @param passedDto DTO contains field for updating GiftCertificate entity.
-     * @param certId  id of updatable GiftCertificate entity.
+     * @param certId    id of updatable GiftCertificate entity.
      * @return GiftCertificateDto with id and tags.
-     * @throws GiftCertificateNotFoundException if GiftCertificate entity with given id doesn't exist in db.
      * @since 1.0
      */
     @Override
@@ -202,14 +203,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * This method deletes GiftCertificate entity with given id from db.
      *
      * @param id id of deletable GiftCertificate entity.
-     * @throws GiftCertificateNotFoundException if GiftCertificate entity with given id doesn't exist in db.
+     * @throws GiftCertificateException if GiftCertificate entity with given id doesn't exist in db.
      * @since 1.0
      */
     @Override
     public void delete(long id) {
         boolean isDeleted = giftCertificateDao.delete(id);
         if (!isDeleted) {
-            throw new GiftCertificateNotFoundException(String.format("GiftCertificate with id: %d doesn't exist in DB", id));
+            throw new GiftCertificateException(CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d doesn't exist in DB", id));
         }
     }
 
@@ -219,9 +220,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * entity and, if the tag doesn't exist in db, creates it.
      *
      * @param passedDto DTO contains field for partial updating GiftCertificate entity.
-     * @param certId           id of updatable GiftCertificate entity.
+     * @param certId    id of updatable GiftCertificate entity.
      * @return updated GiftCertificateDto with id and tags.
-     * @throws GiftCertificateNotFoundException if GiftCertificate entity with given id doesn't exist in db.
      * @since 1.0
      */
     @Override
@@ -311,7 +311,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Map<String, String[]> params = new HashMap<>();
         params.put(CERTIFICATE_ID_KEY, new String[]{String.valueOf(certificateId)});
         CriteriaFactoryResult<Tag> criteriaWithParams = criteriaTagFactory.getCriteriaWithParams(params);
-    List<Tag> tags = tagDao.getBy(criteriaWithParams);
+        List<Tag> tags = tagDao.getBy(criteriaWithParams);
         List<TagDto> tagsDto = tags.stream()
                 .map(tag -> modelMapper.map(tag, TagDto.class))
                 .collect(Collectors.toList());
@@ -323,14 +323,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      *
      * @param name          name of GiftCertificate entity
      * @param certificateId id of GiftCertificate entity
-     * @throws GiftCertificateWithSuchNameAlreadyExists when there is another GiftCertificate entity in db with given name.
+     * @throws GiftCertificateException when there is another GiftCertificate entity in db with given name.
      */
     private void exceptionWhenAnotherCertificateWithGivenNameExistsInDb(String name, long certificateId) {
         Optional<GiftCertificate> foundCertOpt = giftCertificateDao.getByName(name);
 
         foundCertOpt.ifPresent(certificate -> {
             if (!certificate.getId().equals(certificateId)) {
-                throw new GiftCertificateWithSuchNameAlreadyExists(String.format("Gift certificate with name: %s already exits.",
+                throw new GiftCertificateException(CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE, String.format("Gift certificate with name: %s already exits.",
                         certificate.getName()));
             }
         });
@@ -363,8 +363,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             targetEntity.setDuration(duration);
         }
 
-      //  String currentTime = DateHelper.getNowAsString();
-       // targetEntity.setLastUpdateDate(currentTime);
+        //  String currentTime = DateHelper.getNowAsString();
+        // targetEntity.setLastUpdateDate(currentTime);
     }
 
 

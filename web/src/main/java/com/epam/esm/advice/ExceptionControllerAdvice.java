@@ -1,61 +1,63 @@
 package com.epam.esm.advice;
 
 import com.epam.esm.advice.error.ResponseError;
-import com.epam.esm.exceptions.*;
+import com.epam.esm.dto.result.ErrorResult;
+import com.epam.esm.exceptions.GiftCertificateException;
+import com.epam.esm.exceptions.ResponseErrorNotFoundException;
+import com.epam.esm.exceptions.TagException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @ControllerAdvice
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(GiftCertificateNotFoundException.class)
-    public ResponseEntity<ResponseError> handleGiftCertificateNotFoundException() {
-        return new ResponseEntity<>(ResponseError.GIFT_CERTIFICATE_NOT_FOUND, HttpStatus.NOT_FOUND);
+    private final static int DEFAULT_VALIDATION_ERROR_CODE = 50000;
+
+    @ExceptionHandler(GiftCertificateException.class)
+    public ResponseEntity<ResponseError> handleGiftCertificateException(GiftCertificateException exception) {
+        int errorCode = exception.getErrorCode();
+        ResponseError error = getError(errorCode);
+        return new ResponseEntity<>(error, error.getStatus());
     }
 
-    @ExceptionHandler(TagNotFoundException.class)
-    public ResponseEntity<ResponseError> handleTagNotFoundException() {
-        return new ResponseEntity<>(ResponseError.TAG_NOT_FOUND, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(TagWithSuchNameAlreadyExists.class)
-    public ResponseEntity<ResponseError> handleEntityWithSuchNameAlreadyExists() {
-        return new ResponseEntity<>(ResponseError.TAG_WITH_SUCH_NAME_EXISTS, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(GiftCertificateWithSuchNameAlreadyExists.class)
-    public ResponseEntity<ResponseError> handleGiftCertificateWithSuchNameAlreadyExists() {
-        return new ResponseEntity<>(ResponseError.GIFT_CERTIFICATE_WITH_SUCH_NAME_EXISTS, HttpStatus.BAD_REQUEST);
-    }
-
-
-    @ExceptionHandler(IllegalRequestParameterException.class)
-    public ResponseEntity<ResponseError> handleIllegalRequestParameterException() {
-        return new ResponseEntity<>(ResponseError.ILLEGAL_REQUEST_PARAMETER, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(IncorrectGiftCertificateSortingFieldException.class)
-    public ResponseEntity<ResponseError> handleIncorrectSortingFieldException() {
-        return new ResponseEntity<>(ResponseError.INCORRECT_GIFT_CERTIFICATE_SORTING_FIELD, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(IncorrectTagSortingFieldException.class)
-    public ResponseEntity<ResponseError> handleIncorrectTagSortingFieldException() {
-        return new ResponseEntity<>(ResponseError.INCORRECT_TAG_SORTING_FIELD, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(TagException.class)
+    public ResponseEntity<ResponseError> handleTagException(TagException exception) {
+        int errorCode = exception.getErrorCode();
+        ResponseError error = getError(errorCode);
+        return new ResponseEntity<>(error, error.getStatus());
     }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
                                                                   HttpHeaders headers, HttpStatus status,
                                                                   WebRequest request) {
-        return new ResponseEntity<>(ResponseError.INCORRECT_VALIDATION, HttpStatus.BAD_REQUEST);
 
+        List<ObjectError> errors = exception.getBindingResult().getAllErrors();
+
+        List<String> messages = errors.stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(new ErrorResult(DEFAULT_VALIDATION_ERROR_CODE, messages), HttpStatus.BAD_REQUEST);
+    }
+
+
+    private ResponseError getError(int errorCode) {
+        return Stream.of(ResponseError.values())
+                .filter(error -> error.getCode() == errorCode)
+                .findFirst().orElseThrow(() -> new ResponseErrorNotFoundException(String.format("Can't find ResponseError with code:%d", errorCode)));
     }
 
 

@@ -3,10 +3,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.criteria.Criteria;
 import com.epam.esm.criteria.factory.GiftCertificateCriteriaFactory;
-import com.epam.esm.criteria.factory.TagCriteriaFactory;
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
-import com.epam.esm.criteria.tags.AllTagCriteria;
-import com.epam.esm.criteria.tags.CertificateIdTagCriteria;
 import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
@@ -14,8 +11,7 @@ import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exceptions.GiftCertificateNotFoundException;
-import com.epam.esm.exceptions.GiftCertificateWithSuchNameAlreadyExists;
+import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.sorting.GiftCertificateSortingHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -48,23 +44,14 @@ public class GiftServiceImplTest {
     @Mock
     private ModelMapper modelMapper;
 
-
     @Mock
     private GiftCertificateCriteriaFactory giftCertificateCriteriaFactory;
 
     @Mock
-    private TagCriteriaFactory tagCriteriaFactory;
-
-    @Mock
     private Criteria<GiftCertificate> criteriaMock;
-
-
-    @Mock
-    private Criteria<Tag> tagCriteria;
 
     @Mock
     private GiftCertificateSortingHelper sortingHelper;
-
 
     @InjectMocks
     private GiftCertificateServiceImpl service;
@@ -133,7 +120,7 @@ public class GiftServiceImplTest {
         List<GiftCertificateDto> result = service.findAllForQuery(anyMap());
         //then
         assertEquals(result, expectedResult);
-        verify(giftCertificateCriteriaFactory,atLeastOnce()).getCriteriaWithParams(anyMap());
+        verify(giftCertificateCriteriaFactory, atLeastOnce()).getCriteriaWithParams(anyMap());
         verify(certDao).getBy(factoryResult);
         verify(modelMapper, times(2)).map(testEntity, GiftCertificateDto.class);
     }
@@ -148,7 +135,7 @@ public class GiftServiceImplTest {
         when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
         //when
         //then
-        assertThrows(GiftCertificateNotFoundException.class, () -> service.findAllForQuery(anyMap()));
+        assertThrows(GiftCertificateException.class, () -> service.findAllForQuery(anyMap()));
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(anyMap());
         verify(certDao).getBy(factoryResult);
     }
@@ -195,7 +182,7 @@ public class GiftServiceImplTest {
         when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
         //when
         //then
-        assertThrows(GiftCertificateNotFoundException.class, () -> service.findAllForQuery(reqParams));
+        assertThrows(GiftCertificateException.class, () -> service.findAllForQuery(reqParams));
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(reqParams);
         verify(certDao).getBy(factoryResult);
     }
@@ -227,9 +214,6 @@ public class GiftServiceImplTest {
     }
 
 
-
-
-
     @Test
     public void testGetAllForQuery_ThereAreRequestParamsNamesPartAndThereAreNoEntitiesInDb_ThrowException() {
         //given
@@ -244,7 +228,7 @@ public class GiftServiceImplTest {
         when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
         //when
         //then
-        assertThrows(GiftCertificateNotFoundException.class, () -> service.findAllForQuery(reqParams));
+        assertThrows(GiftCertificateException.class, () -> service.findAllForQuery(reqParams));
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(reqParams);
         verify(certDao).getBy(factoryResult);
     }
@@ -299,7 +283,7 @@ public class GiftServiceImplTest {
         when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
         //when
         //then
-        assertThrows(GiftCertificateNotFoundException.class, () -> service.findAllForQuery(reqParams));
+        assertThrows(GiftCertificateException.class, () -> service.findAllForQuery(reqParams));
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(reqParams);
         verify(certDao).getBy(factoryResult);
     }
@@ -346,7 +330,7 @@ public class GiftServiceImplTest {
         when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
         //when
         //then
-        assertThrows(GiftCertificateNotFoundException.class, () -> service.findAllForQuery(reqParams));
+        assertThrows(GiftCertificateException.class, () -> service.findAllForQuery(reqParams));
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(reqParams);
         verify(certDao).getBy(factoryResult);
     }
@@ -374,7 +358,7 @@ public class GiftServiceImplTest {
         when(certDao.getById(id)).thenReturn(Optional.empty());
         //when
         //then
-        assertThrows(GiftCertificateNotFoundException.class, () -> service.findById(id));
+        assertThrows(GiftCertificateException.class, () -> service.findById(id));
         verify(certDao).getById(id);
     }
 
@@ -475,7 +459,7 @@ public class GiftServiceImplTest {
         when(certDao.getByName(certificateName)).thenReturn(Optional.of(testEntity));
         //when
         //then
-        assertThrows(GiftCertificateWithSuchNameAlreadyExists.class, () -> service.save(testDto));
+        assertThrows(GiftCertificateException.class, () -> service.save(testDto));
         verify(certDao).getByName(certificateName);
     }
 
@@ -512,7 +496,7 @@ public class GiftServiceImplTest {
         when(certDao.getById(incorrectId)).thenReturn(Optional.empty());
         //when
         //then
-        assertThrows(GiftCertificateNotFoundException.class, () -> service.update(testDto, incorrectId));
+        assertThrows(GiftCertificateException.class, () -> service.update(testDto, incorrectId));
         verify(certDao).getById(incorrectId);
     }
 
@@ -534,7 +518,7 @@ public class GiftServiceImplTest {
         when(certDao.delete(incorrectId)).thenReturn(false);
         //when
         //then
-        assertThrows(GiftCertificateNotFoundException.class, () -> service.delete(incorrectId));
+        assertThrows(GiftCertificateException.class, () -> service.delete(incorrectId));
         verify(certDao).delete(incorrectId);
     }
 
@@ -595,7 +579,7 @@ public class GiftServiceImplTest {
         when(certDao.getById(incorrectId)).thenReturn(Optional.empty());
         //when
         //then
-        assertThrows(GiftCertificateNotFoundException.class, () -> service.patch(dtoForPatch, incorrectId));
+        assertThrows(GiftCertificateException.class, () -> service.patch(dtoForPatch, incorrectId));
         verify(certDao).getById(incorrectId);
     }
 

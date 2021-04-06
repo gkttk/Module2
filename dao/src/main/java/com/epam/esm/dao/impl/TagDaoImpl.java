@@ -26,11 +26,11 @@ import java.util.Optional;
 public class TagDaoImpl implements TagDao {
 
     private static final String TABLE_NAME = "tag";
-    private final static String GET_BY_ID_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
+    private final static String GET_BY_ID_QUERY = "SELECT id, name FROM " + TABLE_NAME + " WHERE id = ?";
     private final static String SAVE_QUERY = "INSERT INTO " + TABLE_NAME + " (name) " +
             "VALUES (?)";
     private final static String DELETE_QUERY = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
-    private final static String GET_BY_NAME_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE name = ?";
+    private final static String GET_BY_NAME_QUERY = "SELECT id, name FROM " + TABLE_NAME + " WHERE name = ?";
 
     private final JdbcTemplate template;
     private final RowMapper<Tag> rowMapper;

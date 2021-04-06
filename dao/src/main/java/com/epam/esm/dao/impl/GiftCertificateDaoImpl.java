@@ -26,13 +26,15 @@ import java.util.Optional;
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     private final static String TABLE_NAME = "gift_certificate";
-    private final static String GET_BY_ID_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
+    private final static String GET_BY_ID_QUERY = "SELECT id, name, description, price, duration, create_date," +
+            " last_update_date FROM " + TABLE_NAME + " WHERE id = ?";
     private final static String SAVE_QUERY = "INSERT INTO " + TABLE_NAME + " (name, description, price, duration) " + "VALUES (?,?,?,?)";
     private final static String UPDATE_QUERY = "UPDATE " + TABLE_NAME + " SET name = ?, description = ?, " +
             "price = ?, duration = ? WHERE id = ?";
     private final static String DELETE_QUERY = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
 
-    private final static String GET_BY_NAME_QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE name = ?";
+    private final static String GET_BY_NAME_QUERY = "SELECT id, name, description, price, duration, create_date," +
+            " last_update_date FROM " + TABLE_NAME + " WHERE name = ?";
 
     private final JdbcTemplate template;
     private final RowMapper<GiftCertificate> rowMapper;

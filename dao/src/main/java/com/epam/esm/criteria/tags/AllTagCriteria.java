@@ -1,8 +1,6 @@
 package com.epam.esm.criteria.tags;
 
 import com.epam.esm.criteria.Criteria;
-import com.epam.esm.criteria.certificates.AbstractGiftCertificateCriteria;
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

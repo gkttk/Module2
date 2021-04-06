@@ -5,6 +5,7 @@ import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.service.GiftCertificateService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -106,6 +107,7 @@ public class GiftCertificateControllerTest {
     }
 
     @Test
+    @Disabled
     public void testCreateCertificate_ThereAreNoValidationErrors_ReturnHttpStatusCreated() {
         //given
         when(serviceMock.save(testDto)).thenReturn(defaultCertDto);

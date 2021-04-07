@@ -9,6 +9,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.TagException;
 import com.epam.esm.service.TagService;
 import com.epam.esm.sorting.SortingHelper;
+import com.epam.esm.validator.EntityValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,17 +35,17 @@ public class TagServiceImpl implements TagService {
     private final ModelMapper modelMapper;
     private final CriteriaFactory<Tag> criteriaFactory;
     private final SortingHelper<Tag> sortingHelper;
+    private final EntityValidator<Tag> validator;
 
     private final static int TAG_NOT_FOUND_ERROR_CODE = 40402;
-    private final static int TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE = 42000;
-
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, CriteriaFactory<Tag> criteriaFactory, SortingHelper<Tag> sortingHelper) {
+    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, CriteriaFactory<Tag> criteriaFactory, SortingHelper<Tag> sortingHelper, EntityValidator<Tag> validator) {
         this.tagDao = tagDao;
         this.modelMapper = modelMapper;
         this.criteriaFactory = criteriaFactory;
         this.sortingHelper = sortingHelper;
+        this.validator = validator;
     }
 
 
@@ -63,11 +64,8 @@ public class TagServiceImpl implements TagService {
         CriteriaFactoryResult<Tag> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
 
         List<Tag> foundTags = tagDao.getBy(criteriaWithParams);
-        if (foundTags.isEmpty()) {
-            throw new TagException(TAG_NOT_FOUND_ERROR_CODE, "There are no tags in DB");
-        }
 
-        if (reqParams.containsKey(SORT_FIELDS_KEY)) {
+        if (!foundTags.isEmpty() && reqParams.containsKey(SORT_FIELDS_KEY)) {
             String[] sortFields = reqParams.get(SORT_FIELDS_KEY);
             String[] orders = reqParams.get(ORDER_KEY);
 
@@ -90,10 +88,7 @@ public class TagServiceImpl implements TagService {
      */
     @Override
     public TagDto findById(long id) {
-        Optional<Tag> foundTagOpt = tagDao.getById(id);
-
-        Tag foundTag = foundTagOpt.orElseThrow(() -> new TagException(TAG_NOT_FOUND_ERROR_CODE, String.format("Can't find a tag with id: %d", id)));
-
+        Tag foundTag = validator.validateAndFindByIdIfExist(id);
         return modelMapper.map(foundTag, TagDto.class);
     }
 
@@ -108,19 +103,13 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional
     public TagDto save(TagDto tagDto) {
-        String tagName = tagDto.getName();
-        Optional<Tag> foundTagOpt = tagDao.getByName(tagName);
+        validator.validateIfEntityWithGivenNameExist(tagDto.getName());
 
-        if (foundTagOpt.isPresent()) {
-            throw new TagException(TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE, String.format("Tag with name: %s already exist in DB",
-                    tagName));
-        } else {
-            Tag entity = modelMapper.map(tagDto, Tag.class);
-            Tag savedEntity = tagDao.save(entity);
-            Long tagId = savedEntity.getId();
-            tagDto.setId(tagId);
-            return tagDto;
-        }
+        Tag entity = modelMapper.map(tagDto, Tag.class);
+        Tag savedEntity = tagDao.save(entity);
+        tagDto.setId(savedEntity.getId());
+        return tagDto;
+
     }
 
     /**

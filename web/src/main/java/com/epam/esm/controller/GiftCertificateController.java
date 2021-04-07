@@ -56,7 +56,7 @@ public class GiftCertificateController {
                 .path("/{id}")
                 .buildAndExpand(savedCertificate.getId())
                 .toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(savedCertificate);
     }
 
     @PutMapping("/{id}")

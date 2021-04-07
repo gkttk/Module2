@@ -84,7 +84,6 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public Long save(GiftCertificate certificate) {
-
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(SAVE_QUERY, Statement.RETURN_GENERATED_KEYS);

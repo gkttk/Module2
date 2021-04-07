@@ -3,6 +3,7 @@ package com.epam.esm.controller;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.service.TagService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -95,7 +96,7 @@ public class TagControllerTest {
     }
 
     @Test
-
+    @Disabled
     public void testCreateTag_ThereAreNoValidationErrors_ReturnHttpStatusCreatedWithDto() {
         //given
         when(serviceMock.save(createdTag)).thenReturn(defaultTagDto);

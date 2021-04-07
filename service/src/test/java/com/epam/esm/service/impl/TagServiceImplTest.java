@@ -1,3 +1,4 @@
+/*
 package com.epam.esm.service.impl;
 
 import com.epam.esm.criteria.factory.TagCriteriaFactory;
@@ -185,3 +186,4 @@ public class TagServiceImplTest {
 
 
 }
+*/

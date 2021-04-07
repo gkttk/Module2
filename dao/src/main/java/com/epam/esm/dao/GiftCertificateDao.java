@@ -44,7 +44,6 @@ public interface GiftCertificateDao {
      */
     Long save(GiftCertificate certificate);
 
-
     /**
      * This method get GiftCertificate entity by id.
      *

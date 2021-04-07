@@ -55,7 +55,7 @@ public class TagDaoTest {
         Optional<Tag> expected = Optional.of(tag1);
         Long tagId = expected.get().getId();
         //when
-        Optional<Tag> result = tagDao.getById(tagId);
+        Optional<Tag> result = tagDao.findById(tagId);
         //then
         assertEquals(result, expected);
     }
@@ -66,7 +66,7 @@ public class TagDaoTest {
         long tagId = 100L;
         Optional<Tag> expected = Optional.empty();
         //when
-        Optional<Tag> result = tagDao.getById(tagId);
+        Optional<Tag> result = tagDao.findById(tagId);
         //then
         assertEquals(result, expected);
     }
@@ -79,7 +79,7 @@ public class TagDaoTest {
 
         List<Tag> expected = Collections.singletonList(tag1);
         //when
-        List<Tag> result = tagDao.getBy(factoryResult);
+        List<Tag> result = tagDao.findBy(factoryResult);
         //then
         assertEquals(result, expected);
     }
@@ -91,7 +91,7 @@ public class TagDaoTest {
         CriteriaFactoryResult<Tag> factoryResult = new CriteriaFactoryResult<>(certificateIdTagCriteria, params);
         List<Tag> expected = Collections.emptyList();
         //when
-        List<Tag> result = tagDao.getBy(factoryResult);
+        List<Tag> result = tagDao.findBy(factoryResult);
         //then
         assertEquals(result, expected);
     }
@@ -103,7 +103,7 @@ public class TagDaoTest {
         CriteriaFactoryResult<Tag> factoryResult = new CriteriaFactoryResult<>(allTagCriteria, null);
         List<Tag> expected = Arrays.asList(tag1, tag2, tag3);
         //when
-        List<Tag> result = tagDao.getBy(factoryResult);
+        List<Tag> result = tagDao.findBy(factoryResult);
         //then
         assertEquals(result, expected);
     }
@@ -151,7 +151,7 @@ public class TagDaoTest {
         String tagName = tag1.getName();
         Optional<Tag> expected = Optional.of(TagDaoTest.tag1);
         //when
-        Optional<Tag> result = tagDao.getByName(tagName);
+        Optional<Tag> result = tagDao.findByName(tagName);
         //then
         assertEquals(result, expected);
     }
@@ -162,7 +162,7 @@ public class TagDaoTest {
         String tagName = "incorrectName";
         Optional<Tag> expected = Optional.empty();
         //when
-        Optional<Tag> result = tagDao.getByName(tagName);
+        Optional<Tag> result = tagDao.findByName(tagName);
         //then
         assertEquals(result, expected);
     }

@@ -84,70 +84,70 @@ public class GiftCertificateDaoTest {
 
 
     @Test
-    public void testGetBy_UsingTagNamesCriteria_ListEntities() {
+    public void testFindBy_UsingTagNamesCriteria_ListEntities() {
         //given
         String[] params = new String[]{"tag3"};
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(tagNamesGiftCertificateCriteria, params);
         List<GiftCertificate> expected = Collections.singletonList(certificate1);
         //when
-        List<GiftCertificate> result = giftCertificateDao.getBy(factoryResult);
+        List<GiftCertificate> result = giftCertificateDao.findBy(factoryResult);
         //then
         assertEquals(result, expected);
     }
 
     @Test
-    public void testGetBy_UsingAllCriteria_ListEntities() {
+    public void testFindBy_UsingAllCriteria_ListEntities() {
         //given
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(allGiftCertificateCriteria, null);
         List<GiftCertificate> expected = Arrays.asList(certificate1, certificate2, certificate3);
         //when
-        List<GiftCertificate> result = giftCertificateDao.getBy(factoryResult);
+        List<GiftCertificate> result = giftCertificateDao.findBy(factoryResult);
         //then
         assertEquals(result, expected);
     }
 
 
     @Test
-    public void testGetByName_EntityWithGivenNameIsPresentInDb_ReturnOptionalWithEntity() {
+    public void testFindByName_EntityWithGivenNameIsPresentInDb_ReturnOptionalWithEntity() {
         //given
         String name = certificate1.getName();
         Optional<GiftCertificate> expectedResult = Optional.of(certificate1);
         //when
-        Optional<GiftCertificate> result = giftCertificateDao.getByName(name);
+        Optional<GiftCertificate> result = giftCertificateDao.findByName(name);
         //then
         assertEquals(result, expectedResult);
     }
 
     @Test
-    public void testGetByName_EntityWithGivenNameIsNotPresentInDb_ReturnEmptyOptional() {
+    public void testFindByName_EntityWithGivenNameIsNotPresentInDb_ReturnEmptyOptional() {
         //given
         String name = "incorrectName";
         Optional<GiftCertificate> expectedResult = Optional.empty();
         //when
-        Optional<GiftCertificate> result = giftCertificateDao.getByName(name);
+        Optional<GiftCertificate> result = giftCertificateDao.findByName(name);
         //then
         assertEquals(result, expectedResult);
     }
 
 
     @Test
-    public void testGetById_EntityWithGivenIdIsPresentInDb_ReturnOptionalWithEntity() {
+    public void testFindById_EntityWithGivenIdIsPresentInDb_ReturnOptionalWithEntity() {
         //given
         Long id = certificate1.getId();
         Optional<GiftCertificate> expected = Optional.of(GiftCertificateDaoTest.certificate1);
         //when
-        Optional<GiftCertificate> result = giftCertificateDao.getById(id);
+        Optional<GiftCertificate> result = giftCertificateDao.findById(id);
         //then
         assertEquals(result, expected);
     }
 
     @Test
-    public void testGetById_EntityWithGivenIdIsNotPresentInDb_ReturnEmptyOptional() {
+    public void testFindById_EntityWithGivenIdIsNotPresentInDb_ReturnEmptyOptional() {
         //given
         long incorrectId = 100L;
         Optional<GiftCertificate> expected = Optional.empty();
         //when
-        Optional<GiftCertificate> result = giftCertificateDao.getById(incorrectId);
+        Optional<GiftCertificate> result = giftCertificateDao.findById(incorrectId);
         //then
         assertEquals(result, expected);
     }
@@ -167,7 +167,7 @@ public class GiftCertificateDaoTest {
         savedEntity.setCreateDate(LocalDateTime.parse("2020-03-29 11:24:04", formatter));
         savedEntity.setLastUpdateDate(LocalDateTime.parse("2020-03-29 11:30:18", formatter));
         //when
-        GiftCertificate result = giftCertificateDao.getById(giftCertificateDao.save(savedEntity)).orElse(null);
+        GiftCertificate result = giftCertificateDao.findById(giftCertificateDao.save(savedEntity)).orElse(null);
                 //then
         assertNotNull(savedEntity.getId());
         assertAll(
@@ -198,7 +198,7 @@ public class GiftCertificateDaoTest {
         //when
         giftCertificateDao.update(entityWithNewFields, id);
         //then
-        Optional<GiftCertificate> fromDb = giftCertificateDao.getById(id);
+        Optional<GiftCertificate> fromDb = giftCertificateDao.findById(id);
         GiftCertificate giftCertificateFromDb = fromDb.get();
         assertAll(
                 () -> assertEquals(entityWithNewFields.getName(), giftCertificateFromDb.getName()),

@@ -27,13 +27,13 @@ public class TagValidator implements EntityValidator<Tag> {
     }
 
     public Tag validateAndFindByIdIfExist(long tagId) {
-        Optional<Tag> foundTagOpt = tagDao.getById(tagId);
+        Optional<Tag> foundTagOpt = tagDao.findById(tagId);
         return foundTagOpt.orElseThrow(() ->
                 new TagException(TAG_NOT_FOUND_ERROR_CODE, String.format("Can't find a tag with id: %d", tagId)));
     }
 
     public void validateIfEntityWithGivenNameExist(String tagName) {
-        Optional<Tag> foundTagOpt = tagDao.getByName(tagName);
+        Optional<Tag> foundTagOpt = tagDao.findByName(tagName);
         if (foundTagOpt.isPresent()) {
             throw new TagException(TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE, String.format("Tag with name: %s already exist in DB",
                     tagName));
@@ -50,7 +50,7 @@ public class TagValidator implements EntityValidator<Tag> {
      */
     @Override
     public void validateIfAnotherEntityWithGivenNameExist(String tagName, long tagId) {
-        Optional<Tag> foundTagOpt = tagDao.getByName(tagName);
+        Optional<Tag> foundTagOpt = tagDao.findByName(tagName);
         foundTagOpt.ifPresent(tag -> {
             if (!tag.getId().equals(tagId)) {
                 throw new TagException(TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE, String.format("Tag with name: %s and id: %d already exits.",

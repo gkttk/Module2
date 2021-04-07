@@ -116,7 +116,7 @@ public class GiftServiceImplTest {
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(criteriaMock, null);
         when(giftCertificateCriteriaFactory.getCriteriaWithParams(anyMap())).thenReturn(factoryResult);
         List<GiftCertificate> expectedEntityList = Arrays.asList(testEntity, testEntity);
-        when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
+        when(certDao.findBy(factoryResult)).thenReturn(expectedEntityList);
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
 
         List<GiftCertificateDto> expectedResult = Arrays.asList(testDto, testDto);
@@ -125,7 +125,7 @@ public class GiftServiceImplTest {
         //then
         assertEquals(result, expectedResult);
         verify(giftCertificateCriteriaFactory, atLeastOnce()).getCriteriaWithParams(anyMap());
-        verify(certDao).getBy(factoryResult);
+        verify(certDao).findBy(factoryResult);
         verify(modelMapper, times(2)).map(testEntity, GiftCertificateDto.class);
     }
 
@@ -136,14 +136,14 @@ public class GiftServiceImplTest {
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(criteriaMock, null);
         when(giftCertificateCriteriaFactory.getCriteriaWithParams(anyMap())).thenReturn(factoryResult);
         List<GiftCertificate> expectedEntityList = Collections.emptyList();
-        when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
+        when(certDao.findBy(factoryResult)).thenReturn(expectedEntityList);
         List<GiftCertificateDto> expectedResult = Collections.emptyList();
         //when
         List<GiftCertificateDto> result = service.findAllForQuery(anyMap());
         //then
         assertEquals(result, expectedResult);
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(anyMap());
-        verify(certDao).getBy(factoryResult);
+        verify(certDao).findBy(factoryResult);
     }
 
 
@@ -159,7 +159,7 @@ public class GiftServiceImplTest {
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(criteriaMock, params);
         when(giftCertificateCriteriaFactory.getCriteriaWithParams(reqParams)).thenReturn(factoryResult);
         List<GiftCertificate> expectedEntityList = Arrays.asList(testEntity, testEntity);
-        when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
+        when(certDao.findBy(factoryResult)).thenReturn(expectedEntityList);
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
 
         List<GiftCertificateDto> expectedResult = Arrays.asList(testDto, testDto);
@@ -168,7 +168,7 @@ public class GiftServiceImplTest {
         //then
         assertEquals(result, expectedResult);
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(reqParams);
-        verify(certDao).getBy(factoryResult);
+        verify(certDao).findBy(factoryResult);
         verify(modelMapper, times(2)).map(testEntity, GiftCertificateDto.class);
     }
 
@@ -185,14 +185,14 @@ public class GiftServiceImplTest {
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(criteriaMock, params);
         when(giftCertificateCriteriaFactory.getCriteriaWithParams(reqParams)).thenReturn(factoryResult);
         List<GiftCertificate> expectedEntityList = Collections.emptyList();
-        when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
+        when(certDao.findBy(factoryResult)).thenReturn(expectedEntityList);
         List<GiftCertificateDto> expectedResult = Collections.emptyList();
         //when
         List<GiftCertificateDto> result = service.findAllForQuery(reqParams);
         //then
         assertEquals(result, expectedResult);
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(reqParams);
-        verify(certDao).getBy(factoryResult);
+        verify(certDao).findBy(factoryResult);
     }
 
 
@@ -208,7 +208,7 @@ public class GiftServiceImplTest {
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(criteriaMock, params);
         when(giftCertificateCriteriaFactory.getCriteriaWithParams(reqParams)).thenReturn(factoryResult);
         List<GiftCertificate> expectedEntityList = Arrays.asList(testEntity, testEntity);
-        when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
+        when(certDao.findBy(factoryResult)).thenReturn(expectedEntityList);
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
 
         List<GiftCertificateDto> expectedResult = Arrays.asList(testDto, testDto);
@@ -217,7 +217,7 @@ public class GiftServiceImplTest {
         //then
         assertEquals(result, expectedResult);
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(reqParams);
-        verify(certDao).getBy(factoryResult);
+        verify(certDao).findBy(factoryResult);
         verify(modelMapper, times(2)).map(testEntity, GiftCertificateDto.class);
     }
 
@@ -233,14 +233,14 @@ public class GiftServiceImplTest {
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(criteriaMock, params);
         when(giftCertificateCriteriaFactory.getCriteriaWithParams(reqParams)).thenReturn(factoryResult);
         List<GiftCertificate> expectedEntityList = Collections.emptyList();
-        when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
+        when(certDao.findBy(factoryResult)).thenReturn(expectedEntityList);
         List<GiftCertificateDto> expectedResult = Collections.emptyList();
         //when
         List<GiftCertificateDto> result = service.findAllForQuery(reqParams);
         //then
         assertEquals(result, expectedResult);
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(reqParams);
-        verify(certDao).getBy(factoryResult);
+        verify(certDao).findBy(factoryResult);
     }
 
 
@@ -258,7 +258,7 @@ public class GiftServiceImplTest {
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(criteriaMock, sortFields);
         when(giftCertificateCriteriaFactory.getCriteriaWithParams(reqParams)).thenReturn(factoryResult);
         List<GiftCertificate> expectedEntityList = Arrays.asList(testEntity, secondTestEntity);
-        when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
+        when(certDao.findBy(factoryResult)).thenReturn(expectedEntityList);
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
         when(modelMapper.map(secondTestEntity, GiftCertificateDto.class)).thenReturn(secondTestDto);
         when(sortingHelper.getSorted(sortFields, order, expectedEntityList)).thenReturn(Arrays.asList(secondTestEntity, testEntity));
@@ -269,7 +269,7 @@ public class GiftServiceImplTest {
         //then
         assertEquals(result, expectedResult);
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(reqParams);
-        verify(certDao).getBy(factoryResult);
+        verify(certDao).findBy(factoryResult);
         verify(sortingHelper).getSorted(sortFields, order, expectedEntityList);
         verify(modelMapper).map(testEntity, GiftCertificateDto.class);
         verify(modelMapper).map(secondTestEntity, GiftCertificateDto.class);
@@ -289,14 +289,14 @@ public class GiftServiceImplTest {
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(criteriaMock, sortFields);
         when(giftCertificateCriteriaFactory.getCriteriaWithParams(reqParams)).thenReturn(factoryResult);
         List<GiftCertificate> expectedEntityList = Collections.emptyList();
-        when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
+        when(certDao.findBy(factoryResult)).thenReturn(expectedEntityList);
         List<GiftCertificateDto> expectedResult = Collections.emptyList();
         //when
         List<GiftCertificateDto> result = service.findAllForQuery(reqParams);
         //then
         assertEquals(result, expectedResult);
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(reqParams);
-        verify(certDao).getBy(factoryResult);
+        verify(certDao).findBy(factoryResult);
     }
 
 
@@ -312,7 +312,7 @@ public class GiftServiceImplTest {
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(criteriaMock, params);
         when(giftCertificateCriteriaFactory.getCriteriaWithParams(reqParams)).thenReturn(factoryResult);
         List<GiftCertificate> expectedEntityList = Arrays.asList(testEntity, testEntity);
-        when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
+        when(certDao.findBy(factoryResult)).thenReturn(expectedEntityList);
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
 
         List<GiftCertificateDto> expectedResult = Arrays.asList(testDto, testDto);
@@ -321,7 +321,7 @@ public class GiftServiceImplTest {
         //then
         assertEquals(result, expectedResult);
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(reqParams);
-        verify(certDao).getBy(factoryResult);
+        verify(certDao).findBy(factoryResult);
         verify(modelMapper, times(2)).map(testEntity, GiftCertificateDto.class);
     }
 
@@ -338,14 +338,14 @@ public class GiftServiceImplTest {
         CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(criteriaMock, params);
         when(giftCertificateCriteriaFactory.getCriteriaWithParams(reqParams)).thenReturn(factoryResult);
         List<GiftCertificate> expectedEntityList = Collections.emptyList();
-        when(certDao.getBy(factoryResult)).thenReturn(expectedEntityList);
+        when(certDao.findBy(factoryResult)).thenReturn(expectedEntityList);
         List<GiftCertificateDto> expectedResult = Collections.emptyList();
         //when
         List<GiftCertificateDto> result = service.findAllForQuery(reqParams);
         //then
         assertEquals(result, expectedResult);
         verify(giftCertificateCriteriaFactory).getCriteriaWithParams(reqParams);
-        verify(certDao).getBy(factoryResult);
+        verify(certDao).findBy(factoryResult);
     }
 
 
@@ -353,13 +353,13 @@ public class GiftServiceImplTest {
     public void testFindById_EntityIsPresentInDb_ReturnDtoWithGivenId() {
         ///given
         Long id = testDto.getId();
-        when(certDao.getById(id)).thenReturn(Optional.of(testEntity));
+        when(certDao.findById(id)).thenReturn(Optional.of(testEntity));
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
         //when
         GiftCertificateDto result = service.findById(id);
         //then
         assertEquals(result, testDto);
-        verify(certDao).getById(id);
+        verify(certDao).findById(id);
         verify(modelMapper).map(testEntity, GiftCertificateDto.class);
     }
 
@@ -368,11 +368,11 @@ public class GiftServiceImplTest {
     public void testFindById_EntityWithGivenIdIsNotPresentInDb_ThrowException() {
         ///given
         Long id = testDto.getId();
-        when(certDao.getById(id)).thenReturn(Optional.empty());
+        when(certDao.findById(id)).thenReturn(Optional.empty());
         //when
         //then
         assertThrows(GiftCertificateException.class, () -> service.findById(id));
-        verify(certDao).getById(id);
+        verify(certDao).findById(id);
     }
 
 
@@ -395,22 +395,22 @@ public class GiftServiceImplTest {
         entityWithoutId.setPrice(new BigDecimal("1.5"));
         entityWithoutId.setDuration(10);
 
-        when(certDao.getByName(certDtoArg.getName())).thenReturn(Optional.empty());
+        when(certDao.findByName(certDtoArg.getName())).thenReturn(Optional.empty());
         when(modelMapper.map(certDtoArg, GiftCertificate.class)).thenReturn(entityWithoutId);
         when(certDao.save(entityWithoutId)).thenReturn(testEntity.getId());
         Long tagId = tag.getId();
         String tagName = tag.getName();
         Long certificateId = testEntity.getId();
-        when(tagDao.getByName(tagName)).thenReturn(Optional.of(tag));
+        when(tagDao.findByName(tagName)).thenReturn(Optional.of(tag));
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
         //when
         GiftCertificateDto result = service.save(certDtoArg);
         //then
         assertEquals(result, testDto);
-        verify(certDao).getByName(certDtoArg.getName());
+        verify(certDao).findByName(certDtoArg.getName());
         verify(modelMapper).map(certDtoArg, GiftCertificate.class);
         verify(certDao).save(entityWithoutId);
-        verify(tagDao, times(3)).getByName(tagName);
+        verify(tagDao, times(3)).findByName(tagName);
         verify(certificateTagsDao, times(3)).save(certificateId, tagId);
         verify(modelMapper).map(testEntity, GiftCertificateDto.class);
     }
@@ -435,11 +435,11 @@ public class GiftServiceImplTest {
         entityWithoutId.setPrice(new BigDecimal("1.5"));
         entityWithoutId.setDuration(10);
 
-        when(certDao.getByName(certDtoArg.getName())).thenReturn(Optional.empty());
+        when(certDao.findByName(certDtoArg.getName())).thenReturn(Optional.empty());
         when(modelMapper.map(certDtoArg, GiftCertificate.class)).thenReturn(entityWithoutId);
         when(certDao.save(entityWithoutId)).thenReturn(testEntity.getId());
         String tagName = tag.getName();
-        when(tagDao.getByName(tagName)).thenReturn(Optional.empty());
+        when(tagDao.findByName(tagName)).thenReturn(Optional.empty());
 
         Tag tagWithoutId = new Tag(null, "testTag");
         when(modelMapper.map(tagDto, Tag.class)).thenReturn(tagWithoutId);
@@ -453,10 +453,10 @@ public class GiftServiceImplTest {
         GiftCertificateDto result = service.save(certDtoArg);
         //then
         assertEquals(result, testDto);
-        verify(certDao).getByName(certDtoArg.getName());
+        verify(certDao).findByName(certDtoArg.getName());
         verify(modelMapper).map(certDtoArg, GiftCertificate.class);
         verify(certDao).save(entityWithoutId);
-        verify(tagDao, times(3)).getByName(tagName);
+        verify(tagDao, times(3)).findByName(tagName);
         verify(modelMapper, times(3)).map(tagDto, Tag.class);
         verify(tagDao, times(3)).save(tagWithoutId);
         verify(certificateTagsDao, times(3)).save(certificateId, tagId);
@@ -469,11 +469,11 @@ public class GiftServiceImplTest {
     public void testSave_EntityWithGivenNameIsPresentInDb_ThrowGiftCertificateWithSuchNameAlreadyExistsException() {
         //given
         String certificateName = testDto.getName();
-        when(certDao.getByName(certificateName)).thenReturn(Optional.of(testEntity));
+        when(certDao.findByName(certificateName)).thenReturn(Optional.of(testEntity));
         //when
         //then
         assertThrows(GiftCertificateException.class, () -> service.save(testDto));
-        verify(certDao).getByName(certificateName);
+        verify(certDao).findByName(certificateName);
     }
 
     @Test
@@ -482,21 +482,21 @@ public class GiftServiceImplTest {
         //given
         Long certId = testDto.getId();
 
-        when(certDao.getById(certId)).thenReturn(Optional.of(testEntity));
+        when(certDao.findById(certId)).thenReturn(Optional.of(testEntity));
         when(modelMapper.map(testDto, GiftCertificate.class)).thenReturn(testEntity);
 
         String tagName = tag.getName();
         Long tagId = tag.getId();
 
-        when(tagDao.getByName(tagName)).thenReturn(Optional.of(tag));
+        when(tagDao.findByName(tagName)).thenReturn(Optional.of(tag));
         //when
         service.update(testDto, certId);
         //then
-        verify(certDao).getById(certId);
+        verify(certDao).findById(certId);
         verify(modelMapper).map(testDto, GiftCertificate.class);
         verify(certDao).update(testEntity, certId);
         verify(certificateTagsDao).deleteAllTagsForCertificate(certId);
-        verify(tagDao, atLeast(1)).getByName(tagName);
+        verify(tagDao, atLeast(1)).findByName(tagName);
         verify(certificateTagsDao, atLeast(1)).save(certId, tagId);
     }
 
@@ -550,27 +550,27 @@ public class GiftServiceImplTest {
         when(validator.validateAndFindByIdIfExist(certificateId)).thenReturn(testEntity);
         doNothing().when(validator).validateIfAnotherEntityWithGivenNameExist(dtoForPatch.getName(), certificateId);
 
-        when(tagDao.getByName(tag.getName())).thenReturn(Optional.of(tag));
+        when(tagDao.findByName(tag.getName())).thenReturn(Optional.of(tag));
         Tag newTag = new Tag(newTagDto.getName());
         Tag newTagWithId = new Tag(130L, newTag.getName());
-        when(tagDao.getByName(newTagDto.getName())).thenReturn(Optional.empty());
+        when(tagDao.findByName(newTagDto.getName())).thenReturn(Optional.empty());
         when(modelMapper.map(newTagDto, Tag.class)).thenReturn(newTag);
         when(tagDao.save(newTag)).thenReturn(newTagWithId);
         TagDto newTagDtoWithId = new TagDto(newTagWithId.getId(), newTagWithId.getName());
         when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
         when(modelMapper.map(newTagWithId, TagDto.class)).thenReturn(newTagDtoWithId);
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
-        when(certDao.getById(certificateId)).thenReturn(Optional.of(testEntity));
+        when(certDao.findById(certificateId)).thenReturn(Optional.of(testEntity));
         //when
         GiftCertificateDto result = service.patch(dtoForPatch, certificateId);
         //then
         assertEquals(result, testDto);
         verify(validator).validateAndFindByIdIfExist(certificateId);
         verify(validator).validateIfAnotherEntityWithGivenNameExist(dtoForPatch.getName(), certificateId);
-        verify(certDao).getById(certificateId);
+        verify(certDao).findById(certificateId);
         verify(certDao).update(testEntity, certificateId);
-        verify(tagDao).getByName(tag.getName());
-        verify(tagDao).getByName(newTagDto.getName());
+        verify(tagDao).findByName(tag.getName());
+        verify(tagDao).findByName(newTagDto.getName());
         verify(modelMapper).map(newTagDto, Tag.class);
         verify(tagDao).save(newTag);
         verify(certificateTagsDao).save(certificateId, newTagWithId.getId());

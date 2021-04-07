@@ -23,7 +23,7 @@ public interface GiftCertificateDao {
      * @return list of GiftCertificate entities
      * @since 1.0
      */
-    List<GiftCertificate> getBy(CriteriaFactoryResult<GiftCertificate> criteriaWithParams);
+    List<GiftCertificate> findBy(CriteriaFactoryResult<GiftCertificate> criteriaWithParams);
 
 
     /**
@@ -33,7 +33,7 @@ public interface GiftCertificateDao {
      * @return Optional of GiftCertificate entity.
      * @since 1.0
      */
-    Optional<GiftCertificate> getByName(String name);
+    Optional<GiftCertificate> findByName(String name);
 
     /**
      * This method saves GiftCertificate entity.
@@ -51,7 +51,7 @@ public interface GiftCertificateDao {
      * @return Optional of GiftCertificate entity.
      * @since 1.0
      */
-    Optional<GiftCertificate> getById(long id);
+    Optional<GiftCertificate> findById(long id);
 
 
     /**

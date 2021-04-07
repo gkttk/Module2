@@ -22,7 +22,7 @@ public interface TagDao {
      * @return list of Tag entities
      * @since 1.0
      */
-    List<Tag> getBy(CriteriaFactoryResult<Tag> criteriaWithParams);
+    List<Tag> findBy(CriteriaFactoryResult<Tag> criteriaWithParams);
 
     /**
      * This method saves Tag entity.
@@ -40,7 +40,7 @@ public interface TagDao {
      * @return Optional of Tag entity.
      * @since 1.0
      */
-    Optional<Tag> getById(long id);
+    Optional<Tag> findById(long id);
 
     /**
      * This method get Tag entity by name.
@@ -49,7 +49,7 @@ public interface TagDao {
      * @return Optional of Tag entity.
      * @since 1.0
      */
-    Optional<Tag> getByName(String tagName);
+    Optional<Tag> findByName(String tagName);
 
     /**
      * This method delete Tag entity.

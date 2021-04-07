@@ -74,7 +74,7 @@ public class TagDaoImpl implements TagDao {
      * @since 1.0
      */
     @Override
-    public Optional<Tag> getById(long id) {
+    public Optional<Tag> findById(long id) {
         Tag tag = template.queryForStream(GET_BY_ID_QUERY, rowMapper, id).findFirst().orElse(null);
         return Optional.ofNullable(tag);
     }
@@ -87,7 +87,7 @@ public class TagDaoImpl implements TagDao {
      * @since 1.0
      */
     @Override
-    public Optional<Tag> getByName(String tagName) {
+    public Optional<Tag> findByName(String tagName) {
         Tag tag = template.queryForStream(GET_BY_NAME_QUERY, rowMapper, tagName).findFirst().orElse(null);
         return Optional.ofNullable(tag);
     }
@@ -101,7 +101,7 @@ public class TagDaoImpl implements TagDao {
      * @since 1.0
      */
     @Override
-    public List<Tag> getBy(CriteriaFactoryResult<Tag> criteriaWithParams) {
+    public List<Tag> findBy(CriteriaFactoryResult<Tag> criteriaWithParams) {
         Criteria<Tag> criteria = criteriaWithParams.getCriteria();
         String[] params = criteriaWithParams.getParams();
 

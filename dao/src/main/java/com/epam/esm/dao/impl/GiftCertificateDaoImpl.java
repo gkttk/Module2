@@ -53,7 +53,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @return list of GiftCertificate entities
      * @since 1.0
      */
-    public List<GiftCertificate> getBy(CriteriaFactoryResult<GiftCertificate> criteriaWithParams) {
+    public List<GiftCertificate> findBy(CriteriaFactoryResult<GiftCertificate> criteriaWithParams) {
         Criteria<GiftCertificate> criteria = criteriaWithParams.getCriteria();
         String[] params = criteriaWithParams.getParams();
 
@@ -69,7 +69,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @since 1.0
      */
     @Override
-    public Optional<GiftCertificate> getByName(String name) {
+    public Optional<GiftCertificate> findByName(String name) {
         GiftCertificate result = template.queryForStream(GET_BY_NAME_QUERY, rowMapper, name).findFirst().orElse(null);
         return Optional.ofNullable(result);
     }
@@ -105,7 +105,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @since 1.0
      */
     @Override
-    public Optional<GiftCertificate> getById(long id) {
+    public Optional<GiftCertificate> findById(long id) {
         GiftCertificate result = template.queryForStream(GET_BY_ID_QUERY, rowMapper, id).findFirst().orElse(null);
         return Optional.ofNullable(result);
     }

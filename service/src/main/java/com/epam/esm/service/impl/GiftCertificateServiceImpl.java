@@ -81,7 +81,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams) {
         CriteriaFactoryResult<GiftCertificate> criteriaWithParams = criteriaGiftCertificateFactory.getCriteriaWithParams(reqParams);
 
-        List<GiftCertificate> foundCertificates = giftCertificateDao.getBy(criteriaWithParams);
+        List<GiftCertificate> foundCertificates = giftCertificateDao.findBy(criteriaWithParams);
 
         if (!foundCertificates.isEmpty() && reqParams.containsKey(SORT_FIELDS_KEY)) {
             String[] sortFields = reqParams.get(SORT_FIELDS_KEY);
@@ -108,7 +108,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     public GiftCertificateDto findById(long id) {
-        Optional<GiftCertificate> foundCertificateOpt = giftCertificateDao.getById(id);
+        Optional<GiftCertificate> foundCertificateOpt = giftCertificateDao.findById(id);
 
         GiftCertificate foundCertificate = foundCertificateOpt.orElseThrow(() ->
                 new GiftCertificateException(CERTIFICATE_NOT_FOUND_CODE, String.format("Can't find a certificate with id: %d", id)));
@@ -193,12 +193,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         Map<String, String[]> params = Collections.singletonMap(CERTIFICATE_ID_KEY, new String[]{String.valueOf(certId)});
         CriteriaFactoryResult<Tag> criteriaWithParams = criteriaTagFactory.getCriteriaWithParams(params);
-        List<Tag> certTags = new ArrayList<>(tagDao.getBy(criteriaWithParams)); //get all tags of current patching entity
+        List<Tag> certTags = new ArrayList<>(tagDao.findBy(criteriaWithParams)); //get all tags of current patching entity
 
         List<TagDto> passedTags = passedDto.getTags();  //get passed tags
         if (passedTags != null) { //if passed tags are not empty
             passedTags.forEach(tagDto -> {
-                Optional<Tag> foundTagOpt = tagDao.getByName(tagDto.getName()); //check if the tag with such name in db
+                Optional<Tag> foundTagOpt = tagDao.findByName(tagDto.getName()); //check if the tag with such name in db
                 if (foundTagOpt.isPresent()) {//if there is a tag with the same name in db...
                     Tag foundTag = foundTagOpt.get();
                     Long tagId = foundTag.getId();
@@ -257,7 +257,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @since 1.0
      */
     private Tag addTagToCertificate(TagDto tagDto, long certificateId) {
-        Optional<Tag> foundTagOpt = tagDao.getByName(tagDto.getName());
+        Optional<Tag> foundTagOpt = tagDao.findByName(tagDto.getName());
         Tag tag;
         if (foundTagOpt.isPresent()) {
             tag = foundTagOpt.get();
@@ -280,7 +280,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         long certificateId = giftCertificateDto.getId();
         Map<String, String[]> params = Collections.singletonMap(CERTIFICATE_ID_KEY, new String[]{String.valueOf(certificateId)});
         CriteriaFactoryResult<Tag> criteriaWithParams = criteriaTagFactory.getCriteriaWithParams(params);
-        List<Tag> tags = tagDao.getBy(criteriaWithParams);
+        List<Tag> tags = tagDao.findBy(criteriaWithParams);
         List<TagDto> tagsDto = tags.stream()
                 .map(tag -> modelMapper.map(tag, TagDto.class))
                 .collect(Collectors.toList());
@@ -324,7 +324,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @throws GiftCertificateException when there is no entity with given {@param certId} in DB.
      */
     private GiftCertificateDto findDto(long certId) {
-        Optional<GiftCertificate> certOpt = giftCertificateDao.getById(certId);
+        Optional<GiftCertificate> certOpt = giftCertificateDao.findById(certId);
         GiftCertificate certEntity = certOpt.orElseThrow(() ->
                 new GiftCertificateException(CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d is not found", certId)));
         return modelMapper.map(certEntity, GiftCertificateDto.class);

@@ -32,7 +32,7 @@ public class GiftCertificateValidator implements EntityValidator<GiftCertificate
      * @since 1.0
      */
     public GiftCertificate validateAndFindByIdIfExist(long certificateId) {
-        Optional<GiftCertificate> foundCertificateOpt = giftCertificateDao.getById(certificateId);
+        Optional<GiftCertificate> foundCertificateOpt = giftCertificateDao.findById(certificateId);
         return foundCertificateOpt.orElseThrow(() ->
                 new GiftCertificateException(CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d doesn't exist in DB", certificateId)));
     }
@@ -45,7 +45,7 @@ public class GiftCertificateValidator implements EntityValidator<GiftCertificate
      * @since 1.0
      */
     public void validateIfEntityWithGivenNameExist(String certificateName) {
-        Optional<GiftCertificate> foundCertificateOpt = giftCertificateDao.getByName(certificateName);
+        Optional<GiftCertificate> foundCertificateOpt = giftCertificateDao.findByName(certificateName);
         if (foundCertificateOpt.isPresent()) {
             throw new GiftCertificateException(CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE, String.format("Gift certificate with name: %s already exits.",
                     certificateName));
@@ -62,7 +62,7 @@ public class GiftCertificateValidator implements EntityValidator<GiftCertificate
      */
     @Override
     public void validateIfAnotherEntityWithGivenNameExist(String certificateName, long certificateId) {
-        Optional<GiftCertificate> foundCertOpt = giftCertificateDao.getByName(certificateName);
+        Optional<GiftCertificate> foundCertOpt = giftCertificateDao.findByName(certificateName);
         foundCertOpt.ifPresent(certificate -> {
             if (!certificate.getId().equals(certificateId)) {
                 throw new GiftCertificateException(CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE, String.format("Gift certificate with name: %s already exits.",

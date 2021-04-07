@@ -63,7 +63,7 @@ public class TagServiceImpl implements TagService {
 
         CriteriaFactoryResult<Tag> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
 
-        List<Tag> foundTags = tagDao.getBy(criteriaWithParams);
+        List<Tag> foundTags = tagDao.findBy(criteriaWithParams);
 
         if (!foundTags.isEmpty() && reqParams.containsKey(SORT_FIELDS_KEY)) {
             String[] sortFields = reqParams.get(SORT_FIELDS_KEY);
@@ -137,7 +137,7 @@ public class TagServiceImpl implements TagService {
      */
     @Override
     public TagDto findByName(String tagName) {
-        Optional<Tag> foundTagOpt = tagDao.getByName(tagName);
+        Optional<Tag> foundTagOpt = tagDao.findByName(tagName);
         Tag foundTag = foundTagOpt.orElseThrow(() -> new TagException(TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with name: %s is not found in DB",
                 tagName)));
         return modelMapper.map(foundTag, TagDto.class);

@@ -7,16 +7,12 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * This class maps ResultSet from db to GiftCertificate entity.
  */
 @Component
 public class GiftCertificateRowMapper implements RowMapper<GiftCertificate> {
-
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(ApplicationConstants.DATE_PATTERN);
 
     @Override
     public GiftCertificate mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -26,12 +22,8 @@ public class GiftCertificateRowMapper implements RowMapper<GiftCertificate> {
         giftCertificate.setDescription(rs.getString(ApplicationConstants.DESCRIPTION_GC_RS_KEY));
         giftCertificate.setPrice(rs.getBigDecimal(ApplicationConstants.PRICE_GC_RS_KEY));
         giftCertificate.setDuration(rs.getInt(ApplicationConstants.DURATION_GC_RS_KEY));
-
-        String creationDateString = rs.getString(ApplicationConstants.CREATE_DATE_GC_RS_KEY);
-        giftCertificate.setCreateDate(LocalDateTime.parse(creationDateString, formatter));
-
-        String lastUpdateDateString = rs.getString(ApplicationConstants.LAST_UPDATE_DATE_GC_RS_KEY);
-        giftCertificate.setLastUpdateDate(LocalDateTime.parse(lastUpdateDateString, formatter));
+        giftCertificate.setCreateDate(rs.getString(ApplicationConstants.CREATE_DATE_GC_RS_KEY));
+        giftCertificate.setLastUpdateDate(rs.getString(ApplicationConstants.LAST_UPDATE_DATE_GC_RS_KEY));
 
         return giftCertificate;
     }

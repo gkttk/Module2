@@ -17,8 +17,8 @@ public class GiftCertificate {
     private String description;
     private BigDecimal price;
     private Integer duration;
-    private LocalDateTime createDate;
-    private LocalDateTime lastUpdateDate;
+    private String createDate;
+    private String lastUpdateDate;
 
 
     public GiftCertificate() {
@@ -44,11 +44,11 @@ public class GiftCertificate {
         return duration;
     }
 
-    public LocalDateTime getCreateDate() {
+    public String getCreateDate() {
         return createDate;
     }
 
-    public LocalDateTime getLastUpdateDate() {
+    public String getLastUpdateDate() {
         return lastUpdateDate;
     }
 
@@ -72,20 +72,20 @@ public class GiftCertificate {
         this.duration = duration;
     }
 
-    public void setCreateDate(LocalDateTime createDate) {
+    public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
 
-    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
+    public void setLastUpdateDate(String lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (this == o){
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass()){
             return false;
         }
         GiftCertificate that = (GiftCertificate) o;
@@ -101,18 +101,5 @@ public class GiftCertificate {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate);
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", GiftCertificate.class.getSimpleName() + "[", "]")
-                .add("id=" + id)
-                .add("name='" + name + "'")
-                .add("description='" + description + "'")
-                .add("price=" + price)
-                .add("duration=" + duration)
-                .add("createDate=" + createDate)
-                .add("lastUpdateDate=" + lastUpdateDate)
-                .toString();
     }
 }

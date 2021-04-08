@@ -35,9 +35,9 @@ public class GiftCertificateDto {
     @Max(value = 100, groups = {UpdateGroup.class, PatchGroup.class}, message = "Min duration value must be less or equal 100")
     private Integer duration;
     @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "Create date value must be null")
-    private LocalDateTime createDate;
+    private String createDate;
     @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "Last update date value must be null")
-    private LocalDateTime lastUpdateDate;
+    private String lastUpdateDate;
 
     @Valid
     private List<TagDto> tags;
@@ -86,19 +86,19 @@ public class GiftCertificateDto {
         this.duration = duration;
     }
 
-    public LocalDateTime getCreateDate() {
+    public String getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDateTime createDate) {
+    public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
 
-    public LocalDateTime getLastUpdateDate() {
+    public String getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
+    public void setLastUpdateDate(String lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 
@@ -112,10 +112,10 @@ public class GiftCertificateDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (this == o){
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass()){
             return false;
         }
         GiftCertificateDto dto = (GiftCertificateDto) o;
@@ -142,8 +142,8 @@ public class GiftCertificateDto {
                 .add("description='" + description + "'")
                 .add("price=" + price)
                 .add("duration=" + duration)
-                .add("createDate=" + createDate)
-                .add("lastUpdateDate=" + lastUpdateDate)
+                .add("createDate='" + createDate + "'")
+                .add("lastUpdateDate='" + lastUpdateDate + "'")
                 .add("tags=" + tags)
                 .toString();
     }

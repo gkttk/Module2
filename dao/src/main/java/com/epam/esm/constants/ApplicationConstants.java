@@ -44,6 +44,7 @@ public final class ApplicationConstants {
             " WHERE certificate_id = ?";
 
 
+
     //DaoConfig
     public final static String HIKARI_PROPERTIES_PATH = "/hikari.properties";
     public final static String HIKARI_PROPERTIES_TEST_PATH = "/hikari-test.properties";

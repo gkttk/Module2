@@ -60,8 +60,8 @@ public class GiftCertificateDaoTest {
         certificate1.setPrice(new BigDecimal("1.5"));
         certificate1.setDuration(10);
 
-        certificate1.setCreateDate(LocalDateTime.parse("2021-03-29 11:24:04", formatter));
-        certificate1.setLastUpdateDate(LocalDateTime.parse("2021-03-29 11:30:18", formatter));
+        certificate1.setCreateDate("2021-03-29 11:24:04");
+        certificate1.setLastUpdateDate("2021-03-29 11:30:18");
 
         certificate2 = new GiftCertificate();
         certificate2.setId(2L);
@@ -69,8 +69,8 @@ public class GiftCertificateDaoTest {
         certificate2.setDescription("description2");
         certificate2.setPrice(new BigDecimal("2.5"));
         certificate2.setDuration(20);
-        certificate2.setCreateDate(LocalDateTime.parse("2021-02-29 11:24:04", formatter));
-        certificate2.setLastUpdateDate(LocalDateTime.parse("2021-02-29 11:30:18", formatter));
+        certificate2.setCreateDate("2021-02-29 11:24:04");
+        certificate2.setLastUpdateDate("2021-02-29 11:30:18");
 
         certificate3 = new GiftCertificate();
         certificate3.setId(3L);
@@ -78,8 +78,8 @@ public class GiftCertificateDaoTest {
         certificate3.setDescription("description3");
         certificate3.setPrice(new BigDecimal("3.5"));
         certificate3.setDuration(30);
-        certificate3.setCreateDate(LocalDateTime.parse("2021-01-29 11:24:04", formatter));
-        certificate3.setLastUpdateDate(LocalDateTime.parse("2021-01-29 11:30:18", formatter));
+        certificate3.setCreateDate("2021-01-29 11:24:04");
+        certificate3.setLastUpdateDate("2021-01-29 11:30:18");
     }
 
 
@@ -164,8 +164,8 @@ public class GiftCertificateDaoTest {
         savedEntity.setDescription("description4");
         savedEntity.setPrice(new BigDecimal("4.5"));
         savedEntity.setDuration(40);
-        savedEntity.setCreateDate(LocalDateTime.parse("2020-03-29 11:24:04", formatter));
-        savedEntity.setLastUpdateDate(LocalDateTime.parse("2020-03-29 11:30:18", formatter));
+        savedEntity.setCreateDate("2020-03-29 11:24:04");
+        savedEntity.setLastUpdateDate("2020-03-29 11:30:18");
         //when
         GiftCertificate result = giftCertificateDao.findById(giftCertificateDao.save(savedEntity)).orElse(null);
                 //then
@@ -193,7 +193,7 @@ public class GiftCertificateDaoTest {
         entityWithNewFields.setPrice(new BigDecimal("4.5"));
         entityWithNewFields.setDuration(40);
         entityWithNewFields.setCreateDate(null);
-        entityWithNewFields.setLastUpdateDate(LocalDateTime.parse("2021-03-29 11:30:18", formatter));
+        entityWithNewFields.setLastUpdateDate("2021-03-29 11:30:18");
 
         //when
         giftCertificateDao.update(entityWithNewFields, id);

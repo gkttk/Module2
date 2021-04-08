@@ -24,10 +24,10 @@ public class GiftCertificateDto {
     @Size(min = 2, max = 35, message = "Name value must contain 2-35 characters", groups = {UpdateGroup.class, PatchGroup.class})
     private String name;
     @NotBlank(groups = UpdateGroup.class, message = "Description value must not be null")
-    @Size(max = 150, message = "Description must contain 0-150 characters", groups = {UpdateGroup.class, PatchGroup.class})
+    @Size(min = 20, max = 150, message = "Description must contain 20-150 characters", groups = {UpdateGroup.class, PatchGroup.class})
     private String description;
     @NotNull(groups = UpdateGroup.class, message = "Price value must not be null")
-    @DecimalMin(value = "0.0", message = "Min price value must be greater or equal 0", groups = {UpdateGroup.class, PatchGroup.class})
+    @DecimalMin(value = "0.1", message = "Min price value must be greater 0", groups = {UpdateGroup.class, PatchGroup.class})
     @DecimalMax(value = "1000", message = "Max price value must be less or equal 1000", groups = {UpdateGroup.class, PatchGroup.class})
     private BigDecimal price;
     @NotNull(groups = UpdateGroup.class, message = "Duration value must not be null")

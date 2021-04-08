@@ -17,8 +17,6 @@ public final class ApplicationConstants {
     public final static String GET_ALL_TAG_BY_CERTIFICATE_ID = "SELECT t.id, t.name FROM " + TAG_TABLE_NAME +
             " t JOIN certificates_tags ct on t.id = ct.tag_id WHERE ct.certificate_id = ?";
 
-
-
     //gift_certificate table
     public final static String GET_ALL_GC_QUERY = "SELECT id, name, description, price, duration," +
             "create_date, last_update_date FROM " + GIFT_CERTIFICATE_TABLE_NAME;
@@ -40,10 +38,9 @@ public final class ApplicationConstants {
     public final static String DELETE_TAG_QUERY = "DELETE FROM " + TAG_TABLE_NAME + " WHERE id = ?";
     public final static String GET_BY_NAME_TAG_QUERY = "SELECT id, name FROM " + TAG_TABLE_NAME + " WHERE name = ?";
 
-
     //certificate_tags table
-    public final static String SAVE_CERTIFICATE_TAGS_QUERY = "INSERT INTO " + GIFT_CERTIFICATE_TABLE_NAME + " VALUES (?,?)";
-    public final static String DELETE_ALL_TAGS_FOR_CERTIFICATE = "DELETE FROM " + GIFT_CERTIFICATE_TABLE_NAME +
+    public final static String SAVE_CERTIFICATE_TAGS_QUERY = "INSERT INTO " + CERTIFICATE_TAGS_TABLE_NAME  + " VALUES (?,?)";
+    public final static String DELETE_ALL_TAGS_FOR_CERTIFICATE = "DELETE FROM " + CERTIFICATE_TAGS_TABLE_NAME +
             " WHERE certificate_id = ?";
 
 

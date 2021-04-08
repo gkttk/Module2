@@ -5,15 +5,12 @@ import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -51,12 +48,8 @@ public class GiftCertificateController {
     @PostMapping
     public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody @Validated(UpdateGroup.class) @Valid GiftCertificateDto certificateDto) {
         GiftCertificateDto savedCertificate = giftCertificateService.save(certificateDto);
+        return ResponseEntity.ok(savedCertificate);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(savedCertificate.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(savedCertificate);
     }
 
     @PutMapping("/{id}")
@@ -72,5 +65,7 @@ public class GiftCertificateController {
         GiftCertificateDto patchedDto = giftCertificateService.patch(giftCertificateDto, id);
         return ResponseEntity.ok(patchedDto);
     }
+
+
 
 }

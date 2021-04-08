@@ -18,14 +18,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DaoTestConfig.class})
@@ -50,7 +54,6 @@ public class GiftCertificateDaoTest {
 
     @BeforeAll
     static void init() {
-
 
 
         certificate1 = new GiftCertificate();
@@ -168,7 +171,7 @@ public class GiftCertificateDaoTest {
         savedEntity.setLastUpdateDate("2020-03-29 11:30:18");
         //when
         GiftCertificate result = giftCertificateDao.findById(giftCertificateDao.save(savedEntity)).orElse(null);
-                //then
+        //then
         assertNotNull(savedEntity.getId());
         assertAll(
                 () -> assertEquals(result.getName(), savedEntity.getName()),

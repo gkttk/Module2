@@ -1,5 +1,6 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.criteria.Criteria;
 import com.epam.esm.criteria.factory.CriteriaFactory;
 import com.epam.esm.criteria.factory.GiftCertificateCriteriaFactory;
@@ -33,10 +34,6 @@ import java.util.stream.Collectors;
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
-    private final static String SORT_FIELDS_KEY = "sortFields";
-    private final static String ORDER_KEY = "order";
-    private final static String CERTIFICATE_ID_KEY = "certificateId";
-
     private final ModelMapper modelMapper;
     private final GiftCertificateDao giftCertificateDao;
     private final TagDao tagDao;
@@ -47,9 +44,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final SortingHelper<GiftCertificate> sortingHelper;
 
     private final EntityValidator<GiftCertificate> giftCertificateEntityValidator;
-
-    private final static int CERTIFICATE_NOT_FOUND_CODE = 40401;
-
 
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, ModelMapper modelMapper, TagDao tagDao,
@@ -68,8 +62,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     /**
      * This method do request to dao layer which depends on argument of the method.
      * The method uses {@link GiftCertificateCriteriaFactory} for getting a correct {@link Criteria} which is based on passed request parameters.
-     * If the argument of the method additionally contains {@link #SORT_FIELDS_KEY} parameter then
-     * got result by {@link Criteria} will be sorted according to {@link #ORDER_KEY} parameter. If {@link #ORDER_KEY} parameter is not
+     * If the argument of the method additionally contains {@link com.epam.esm.constants.ApplicationConstants} SORT_FIELDS_KEY parameter then
+     * got result by {@link Criteria} will be sorted according to {@link com.epam.esm.constants.ApplicationConstants} ORDER_KEY parameter.
+     * If {@link com.epam.esm.constants.ApplicationConstants} ORDER_KEY parameter is not
      * present or not equal "DESC" then sorting by ascending order.
      *
      * @param reqParams parameters of a request.
@@ -83,9 +78,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         List<GiftCertificate> foundCertificates = giftCertificateDao.findBy(criteriaWithParams);
 
-        if (!foundCertificates.isEmpty() && reqParams.containsKey(SORT_FIELDS_KEY)) {
-            String[] sortFields = reqParams.get(SORT_FIELDS_KEY);
-            String[] orders = reqParams.get(ORDER_KEY);
+        if (!foundCertificates.isEmpty() && reqParams.containsKey(ApplicationConstants.SORT_FIELDS_KEY)) {
+            String[] sortFields = reqParams.get(ApplicationConstants.SORT_FIELDS_KEY);
+            String[] orders = reqParams.get(ApplicationConstants.ORDER_KEY);
 
             foundCertificates = sortingHelper.getSorted(sortFields, orders[0], foundCertificates);
         }
@@ -111,7 +106,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Optional<GiftCertificate> foundCertificateOpt = giftCertificateDao.findById(id);
 
         GiftCertificate foundCertificate = foundCertificateOpt.orElseThrow(() ->
-                new GiftCertificateException(CERTIFICATE_NOT_FOUND_CODE, String.format("Can't find a certificate with id: %d", id)));
+                new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("Can't find a certificate with id: %d", id)));
 
         GiftCertificateDto giftCertificateDto = modelMapper.map(foundCertificate, GiftCertificateDto.class);
         fillCertificateDtoWithTags(giftCertificateDto);
@@ -191,7 +186,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         giftCertificateDao.update(foundCert, certId); //update
 
-        Map<String, String[]> params = Collections.singletonMap(CERTIFICATE_ID_KEY, new String[]{String.valueOf(certId)});
+        Map<String, String[]> params = Collections.singletonMap(ApplicationConstants.CERTIFICATE_ID_KEY, new String[]{String.valueOf(certId)});
         CriteriaFactoryResult<Tag> criteriaWithParams = criteriaTagFactory.getCriteriaWithParams(params);
         List<Tag> certTags = new ArrayList<>(tagDao.findBy(criteriaWithParams)); //get all tags of current patching entity
 
@@ -244,7 +239,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public void delete(long id) {
         boolean isDeleted = giftCertificateDao.delete(id);
         if (!isDeleted) {
-            throw new GiftCertificateException(CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d doesn't exist in DB", id));
+            throw new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d doesn't exist in DB", id));
         }
     }
 
@@ -278,7 +273,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      */
     private void fillCertificateDtoWithTags(GiftCertificateDto giftCertificateDto) {
         long certificateId = giftCertificateDto.getId();
-        Map<String, String[]> params = Collections.singletonMap(CERTIFICATE_ID_KEY, new String[]{String.valueOf(certificateId)});
+        Map<String, String[]> params = Collections.singletonMap(ApplicationConstants.CERTIFICATE_ID_KEY, new String[]{String.valueOf(certificateId)});
         CriteriaFactoryResult<Tag> criteriaWithParams = criteriaTagFactory.getCriteriaWithParams(params);
         List<Tag> tags = tagDao.findBy(criteriaWithParams);
         List<TagDto> tagsDto = tags.stream()
@@ -326,7 +321,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private GiftCertificateDto findDto(long certId) {
         Optional<GiftCertificate> certOpt = giftCertificateDao.findById(certId);
         GiftCertificate certEntity = certOpt.orElseThrow(() ->
-                new GiftCertificateException(CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d is not found", certId)));
+                new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d is not found", certId)));
         return modelMapper.map(certEntity, GiftCertificateDto.class);
     }
 

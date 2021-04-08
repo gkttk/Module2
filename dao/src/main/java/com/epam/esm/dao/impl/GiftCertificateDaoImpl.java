@@ -1,5 +1,6 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.criteria.Criteria;
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.GiftCertificateDao;
@@ -24,17 +25,6 @@ import java.util.Optional;
  */
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
-
-    private final static String TABLE_NAME = "gift_certificate";
-    private final static String GET_BY_ID_QUERY = "SELECT id, name, description, price, duration, create_date," +
-            " last_update_date FROM " + TABLE_NAME + " WHERE id = ?";
-    private final static String SAVE_QUERY = "INSERT INTO " + TABLE_NAME + " (name, description, price, duration) " + "VALUES (?,?,?,?)";
-    private final static String UPDATE_QUERY = "UPDATE " + TABLE_NAME + " SET name = ?, description = ?, " +
-            "price = ?, duration = ? WHERE id = ?";
-    private final static String DELETE_QUERY = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
-
-    private final static String GET_BY_NAME_QUERY = "SELECT id, name, description, price, duration, create_date," +
-            " last_update_date FROM " + TABLE_NAME + " WHERE name = ?";
 
     private final JdbcTemplate template;
     private final RowMapper<GiftCertificate> rowMapper;
@@ -70,7 +60,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public Optional<GiftCertificate> findByName(String name) {
-        GiftCertificate result = template.queryForStream(GET_BY_NAME_QUERY, rowMapper, name).findFirst().orElse(null);
+        GiftCertificate result = template.queryForStream(ApplicationConstants.GET_BY_NAME_GC_QUERY, rowMapper, name).findFirst().orElse(null);
         return Optional.ofNullable(result);
     }
 
@@ -86,7 +76,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     public Long save(GiftCertificate certificate) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         template.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(SAVE_QUERY, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(ApplicationConstants.SAVE_GC_QUERY, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, certificate.getName());
             ps.setString(2, certificate.getDescription());
             ps.setBigDecimal(3, certificate.getPrice());
@@ -106,7 +96,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public Optional<GiftCertificate> findById(long id) {
-        GiftCertificate result = template.queryForStream(GET_BY_ID_QUERY, rowMapper, id).findFirst().orElse(null);
+        GiftCertificate result = template.queryForStream(ApplicationConstants.GET_BY_ID_GC_QUERY, rowMapper, id).findFirst().orElse(null);
         return Optional.ofNullable(result);
     }
 
@@ -120,7 +110,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public void update(GiftCertificate certificate, long id) {
-        template.update(UPDATE_QUERY, certificate.getName(), certificate.getDescription(),
+        template.update(ApplicationConstants.UPDATE_GC_QUERY, certificate.getName(), certificate.getDescription(),
                 certificate.getPrice(), certificate.getDuration(), id);
     }
 
@@ -133,7 +123,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public boolean delete(long id) {
-        int updatedRows = template.update(DELETE_QUERY, id);
+        int updatedRows = template.update(ApplicationConstants.DELETE_GC_QUERY, id);
         return updatedRows >= 1;
 
     }

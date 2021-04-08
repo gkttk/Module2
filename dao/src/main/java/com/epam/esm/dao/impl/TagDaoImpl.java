@@ -1,5 +1,6 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.criteria.Criteria;
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.TagDao;
@@ -25,13 +26,6 @@ import java.util.Optional;
 @Repository
 public class TagDaoImpl implements TagDao {
 
-    private static final String TABLE_NAME = "tag";
-    private final static String GET_BY_ID_QUERY = "SELECT id, name FROM " + TABLE_NAME + " WHERE id = ?";
-    private final static String SAVE_QUERY = "INSERT INTO " + TABLE_NAME + " (name) " +
-            "VALUES (?)";
-    private final static String DELETE_QUERY = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
-    private final static String GET_BY_NAME_QUERY = "SELECT id, name FROM " + TABLE_NAME + " WHERE name = ?";
-
     private final JdbcTemplate template;
     private final RowMapper<Tag> rowMapper;
 
@@ -54,9 +48,8 @@ public class TagDaoImpl implements TagDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         String name = tag.getName();
-
         template.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(SAVE_QUERY, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(ApplicationConstants.SAVE_TAG_QUERY, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, name);
             return ps;
         }, keyHolder);
@@ -64,7 +57,6 @@ public class TagDaoImpl implements TagDao {
         tag.setId(keyHolder.getKey().longValue());
         return tag;
     }
-
 
     /**
      * This method get Tag entity by id.
@@ -75,7 +67,7 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public Optional<Tag> findById(long id) {
-        Tag tag = template.queryForStream(GET_BY_ID_QUERY, rowMapper, id).findFirst().orElse(null);
+        Tag tag = template.queryForStream(ApplicationConstants.GET_BY_ID_TAG_QUERY, rowMapper, id).findFirst().orElse(null);
         return Optional.ofNullable(tag);
     }
 
@@ -88,7 +80,7 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public Optional<Tag> findByName(String tagName) {
-        Tag tag = template.queryForStream(GET_BY_NAME_QUERY, rowMapper, tagName).findFirst().orElse(null);
+        Tag tag = template.queryForStream(ApplicationConstants.GET_BY_NAME_TAG_QUERY, rowMapper, tagName).findFirst().orElse(null);
         return Optional.ofNullable(tag);
     }
 
@@ -117,7 +109,7 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public boolean delete(long id) {
-        int updatedRows = template.update(DELETE_QUERY, id);
+        int updatedRows = template.update(ApplicationConstants.DELETE_TAG_QUERY, id);
         return updatedRows >= 1;
     }
 

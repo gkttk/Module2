@@ -1,5 +1,6 @@
 package com.epam.esm.mappers;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.entity.Tag;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -13,13 +14,10 @@ import java.sql.SQLException;
 @Component
 public class TagRowMapper implements RowMapper<Tag> {
 
-    private final static String ID = "id";
-    private final static String NAME = "name";
-
     @Override
     public Tag mapRow(ResultSet rs, int rowNum) throws SQLException {
-        long id = rs.getLong(ID);
-        String name = rs.getString(NAME);
+        long id = rs.getLong(ApplicationConstants.ID_RS_KEY);
+        String name = rs.getString(ApplicationConstants.NAME_TAG_RS_KEY);
         return new Tag(id, name);
     }
 }

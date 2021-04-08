@@ -1,5 +1,6 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.criteria.Criteria;
 import com.epam.esm.criteria.factory.CriteriaFactory;
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
@@ -28,16 +29,11 @@ import java.util.stream.Collectors;
 @Service
 public class TagServiceImpl implements TagService {
 
-    private final static String SORT_FIELDS_KEY = "sortFields";
-    private final static String ORDER_KEY = "order";
-
     private final TagDao tagDao;
     private final ModelMapper modelMapper;
     private final CriteriaFactory<Tag> criteriaFactory;
     private final SortingHelper<Tag> sortingHelper;
     private final EntityValidator<Tag> validator;
-
-    private final static int TAG_NOT_FOUND_ERROR_CODE = 40402;
 
     @Autowired
     public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, CriteriaFactory<Tag> criteriaFactory, SortingHelper<Tag> sortingHelper, EntityValidator<Tag> validator) {
@@ -47,7 +43,6 @@ public class TagServiceImpl implements TagService {
         this.sortingHelper = sortingHelper;
         this.validator = validator;
     }
-
 
     /**
      * This method do request to dao layer which depends on argument of the method.
@@ -65,9 +60,9 @@ public class TagServiceImpl implements TagService {
 
         List<Tag> foundTags = tagDao.findBy(criteriaWithParams);
 
-        if (!foundTags.isEmpty() && reqParams.containsKey(SORT_FIELDS_KEY)) {
-            String[] sortFields = reqParams.get(SORT_FIELDS_KEY);
-            String[] orders = reqParams.get(ORDER_KEY);
+        if (!foundTags.isEmpty() && reqParams.containsKey(ApplicationConstants.SORT_FIELDS_KEY)) {
+            String[] sortFields = reqParams.get(ApplicationConstants.SORT_FIELDS_KEY);
+            String[] orders = reqParams.get(ApplicationConstants.ORDER_KEY);
 
             foundTags = sortingHelper.getSorted(sortFields, orders[0], foundTags);
         }
@@ -123,7 +118,7 @@ public class TagServiceImpl implements TagService {
     public void delete(long id) {
         boolean isDeleted = tagDao.delete(id);
         if (!isDeleted) {
-            throw new TagException(TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with id: %d is not found in DB", id));
+            throw new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with id: %d is not found in DB", id));
         }
     }
 
@@ -138,7 +133,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagDto findByName(String tagName) {
         Optional<Tag> foundTagOpt = tagDao.findByName(tagName);
-        Tag foundTag = foundTagOpt.orElseThrow(() -> new TagException(TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with name: %s is not found in DB",
+        Tag foundTag = foundTagOpt.orElseThrow(() -> new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with name: %s is not found in DB",
                 tagName)));
         return modelMapper.map(foundTag, TagDto.class);
     }

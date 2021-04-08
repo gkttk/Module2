@@ -1,6 +1,6 @@
 package com.epam.esm.config;
 
-
+import com.epam.esm.constants.ApplicationConstants;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -36,8 +36,8 @@ public class WebConfig implements WebMvcConfigurer {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setOrder(1);
         viewResolver.setViewClass(JstlView.class);
-        viewResolver.setPrefix("/WEB-INF/views/");
-        viewResolver.setSuffix(".jsp");
+        viewResolver.setPrefix(ApplicationConstants.VIEW_RESOLVER_PREFIX);
+        viewResolver.setSuffix(ApplicationConstants.VIEW_RESOLVER_SUFFIX);
         return viewResolver;
     }
 
@@ -52,7 +52,7 @@ public class WebConfig implements WebMvcConfigurer {
     public ObjectMapper objectMapper() {
         JavaTimeModule module = new JavaTimeModule();
         LocalDateTimeDeserializer localDateTimeDeserializer = new
-                LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(ApplicationConstants.DATE_PATTERN));
         module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
 
         ObjectMapper objectMapper = new ObjectMapper();

@@ -1,5 +1,6 @@
 package com.epam.esm.criteria.factory;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.criteria.tags.AllTagCriteria;
 import com.epam.esm.criteria.tags.CertificateIdTagCriteria;
@@ -18,9 +19,6 @@ import java.util.Map;
  */
 @Component
 public class TagCriteriaFactory extends AbstractCriteriaFactory implements CriteriaFactory<Tag> {
-    private final static String ALL_CRITERIA_TAG_BEAN_NAME = "allTagCriteria";
-    private final static String CERTIFICATE_ID_TAG_BEAN_NAME = "certificateIdTagCriteria";
-    private final static String CERTIFICATE_ID_KEY = "certificateId";
 
     @Autowired
     public TagCriteriaFactory(ApplicationContext appContext) {
@@ -29,13 +27,13 @@ public class TagCriteriaFactory extends AbstractCriteriaFactory implements Crite
 
     public CriteriaFactoryResult<Tag> getCriteriaWithParams(Map<String, String[]> reqParams) {
         String[] params;
-        params = reqParams.get(CERTIFICATE_ID_KEY);
+        params = reqParams.get(ApplicationConstants.CERTIFICATE_ID_KEY);
         if (params != null) {
-            return new CriteriaFactoryResult<>((CertificateIdTagCriteria) getAppContext().getBean(CERTIFICATE_ID_TAG_BEAN_NAME),
+            return new CriteriaFactoryResult<>((CertificateIdTagCriteria) getAppContext().getBean(ApplicationConstants.CERTIFICATE_ID_TAG_BEAN_NAME),
                     params);
         }
 
-        return new CriteriaFactoryResult<>((AllTagCriteria) getAppContext().getBean(ALL_CRITERIA_TAG_BEAN_NAME));
+        return new CriteriaFactoryResult<>((AllTagCriteria) getAppContext().getBean(ApplicationConstants.ALL_CRITERIA_TAG_BEAN_NAME));
     }
 
 

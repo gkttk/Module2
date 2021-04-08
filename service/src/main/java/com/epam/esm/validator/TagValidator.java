@@ -1,5 +1,6 @@
 package com.epam.esm.validator;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.GiftCertificateException;
@@ -18,10 +19,6 @@ public class TagValidator implements EntityValidator<Tag> {
 
     private final TagDao tagDao;
 
-    private final static int TAG_NOT_FOUND_ERROR_CODE = 40402;
-    private final static int TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE = 42000;
-
-
     public TagValidator(TagDao tagDao) {
         this.tagDao = tagDao;
     }
@@ -29,13 +26,13 @@ public class TagValidator implements EntityValidator<Tag> {
     public Tag validateAndFindByIdIfExist(long tagId) {
         Optional<Tag> foundTagOpt = tagDao.findById(tagId);
         return foundTagOpt.orElseThrow(() ->
-                new TagException(TAG_NOT_FOUND_ERROR_CODE, String.format("Can't find a tag with id: %d", tagId)));
+                new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, String.format("Can't find a tag with id: %d", tagId)));
     }
 
     public void validateIfEntityWithGivenNameExist(String tagName) {
         Optional<Tag> foundTagOpt = tagDao.findByName(tagName);
         if (foundTagOpt.isPresent()) {
-            throw new TagException(TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE, String.format("Tag with name: %s already exist in DB",
+            throw new TagException(ApplicationConstants.TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE, String.format("Tag with name: %s already exist in DB",
                     tagName));
         }
     }
@@ -53,7 +50,7 @@ public class TagValidator implements EntityValidator<Tag> {
         Optional<Tag> foundTagOpt = tagDao.findByName(tagName);
         foundTagOpt.ifPresent(tag -> {
             if (!tag.getId().equals(tagId)) {
-                throw new TagException(TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE, String.format("Tag with name: %s and id: %d already exits.",
+                throw new TagException(ApplicationConstants.TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE, String.format("Tag with name: %s and id: %d already exits.",
                         tag.getName(), tag.getId()));
             }
         });

@@ -1,5 +1,6 @@
 package com.epam.esm.sorting;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exceptions.GiftCertificateException;
 import org.springframework.stereotype.Component;
@@ -19,23 +20,11 @@ import java.util.stream.Collectors;
 @Component
 public class GiftCertificateSortingHelper implements SortingHelper<GiftCertificate> {
 
-
-    private final static String ID_FIELD = "id";
-    private final static String NAME_FIELD = "name";
-    private final static String DESCRIPTION_FIELD = "description";
-    private final static String PRICE_FIELD = "price";
-    private final static String DURATION_FIELD = "duration";
-    private final static String CREATE_DATE_FIELD = "createDate";
-    private final static String LAST_UPDATE_DATE_FIELD = "lastUpdateDate";
-    private final static String DESC_ORDER = "desc";
-    private final static int INVALID_SORT_FIELD_ERROR_CODE = 44601;
-
-
     /**
      * This method returns a sorted list of GiftCertificate entities.
      *
      * @param fields            fields to sort by.
-     * @param order             sorting order. If {@param order} == null or not equals {{@link #DESC_ORDER}} then sorts by ascending order.
+     * @param order             sorting order. If {@param order} == null or not equals {{@link ApplicationConstants} DESC_ORDER then sorts by ascending order.
      * @param foundCertificates list of GiftCertificate entities for sorting.
      * @return sorted list of GiftCertificate entities.
      * @since 1.0
@@ -44,7 +33,7 @@ public class GiftCertificateSortingHelper implements SortingHelper<GiftCertifica
     public List<GiftCertificate> getSorted(String[] fields, String order, List<GiftCertificate> foundCertificates) {
         Comparator<GiftCertificate> comparator = buildComparator(fields);
 
-        return DESC_ORDER.equalsIgnoreCase(order) ? sortDesc(comparator, foundCertificates) : sortAsc(comparator, foundCertificates);
+        return ApplicationConstants.DESC_ORDER.equalsIgnoreCase(order) ? sortDesc(comparator, foundCertificates) : sortAsc(comparator, foundCertificates);
 
     }
 
@@ -87,36 +76,36 @@ public class GiftCertificateSortingHelper implements SortingHelper<GiftCertifica
         Arrays.stream(fields)
                 .forEach(field -> {
                     switch (field) {
-                        case ID_FIELD: {
+                        case ApplicationConstants.ID_FIELD: {
                             comparators.add(Comparator.comparing(GiftCertificate::getId));
                             break;
                         }
-                        case NAME_FIELD: {
+                        case ApplicationConstants.NAME_FIELD: {
                             comparators.add(Comparator.comparing(GiftCertificate::getName));
                             break;
                         }
-                        case DESCRIPTION_FIELD: {
+                        case ApplicationConstants.DESCRIPTION_FIELD: {
                             comparators.add(Comparator.comparing(GiftCertificate::getDescription));
                             break;
                         }
-                        case PRICE_FIELD: {
+                        case ApplicationConstants.PRICE_FIELD: {
                             comparators.add(Comparator.comparing(GiftCertificate::getPrice));
                             break;
                         }
-                        case DURATION_FIELD: {
+                        case ApplicationConstants.DURATION_FIELD: {
                             comparators.add(Comparator.comparing(GiftCertificate::getDuration));
                             break;
                         }
-                        case CREATE_DATE_FIELD: {
+                        case ApplicationConstants.CREATE_DATE_FIELD: {
                             comparators.add(Comparator.comparing(GiftCertificate::getCreateDate));
                             break;
                         }
-                        case LAST_UPDATE_DATE_FIELD: {
+                        case ApplicationConstants.LAST_UPDATE_DATE_FIELD: {
                             comparators.add(Comparator.comparing(GiftCertificate::getLastUpdateDate));
                             break;
                         }
                         default:
-                            throw new GiftCertificateException(INVALID_SORT_FIELD_ERROR_CODE, String.format("Can't sort GiftCertificates by the field: %s", field));
+                            throw new GiftCertificateException(ApplicationConstants.INVALID_SORT_FIELD_ERROR_CODE, String.format("Can't sort GiftCertificates by the field: %s", field));
                     }
                 });
 

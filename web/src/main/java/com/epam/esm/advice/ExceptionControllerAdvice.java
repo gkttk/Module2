@@ -1,6 +1,7 @@
 package com.epam.esm.advice;
 
 import com.epam.esm.advice.error.ResponseError;
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dto.result.ErrorResult;
 import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.exceptions.ResponseErrorNotFoundException;
@@ -22,8 +23,6 @@ import java.util.stream.Stream;
 
 @ControllerAdvice
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
-
-    private final static int DEFAULT_VALIDATION_ERROR_CODE = 50000;
 
     @ExceptionHandler(GiftCertificateException.class)
     public ResponseEntity<ResponseError> handleGiftCertificateException(GiftCertificateException exception) {
@@ -50,7 +49,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(new ErrorResult(DEFAULT_VALIDATION_ERROR_CODE, messages), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResult(ApplicationConstants.DEFAULT_VALIDATION_ERROR_CODE, messages), HttpStatus.BAD_REQUEST);
     }
 
 

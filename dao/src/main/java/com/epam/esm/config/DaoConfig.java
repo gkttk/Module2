@@ -1,5 +1,6 @@
 package com.epam.esm.config;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.*;
@@ -17,8 +18,6 @@ import javax.sql.DataSource;
 @ComponentScan("com.epam.esm")
 public class DaoConfig {
 
-    private final static String HIKARI_PROPERTIES_PATH = "/hikari.properties";
-
     @Bean
     public PlatformTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource());
@@ -26,7 +25,7 @@ public class DaoConfig {
 
     @Bean
     public DataSource dataSource() {
-        HikariConfig config = new HikariConfig(HIKARI_PROPERTIES_PATH);
+        HikariConfig config = new HikariConfig(ApplicationConstants.HIKARI_PROPERTIES_PATH);
         return new HikariDataSource(config);
     }
 

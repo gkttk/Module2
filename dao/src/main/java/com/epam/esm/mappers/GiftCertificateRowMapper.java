@@ -1,5 +1,6 @@
 package com.epam.esm.mappers;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -15,31 +16,21 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class GiftCertificateRowMapper implements RowMapper<GiftCertificate> {
 
-    private final static String ID = "id";
-    private final static String NAME = "name";
-    private final static String DESCRIPTION = "description";
-    private final static String PRICE = "price";
-    private final static String DURATION = "duration";
-    private final static String CREATE_DATE = "create_date";
-    private final static String LAST_UPDATE_DATE = "last_update_date";
-
-    private final static String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
-
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(ApplicationConstants.DATE_PATTERN);
 
     @Override
     public GiftCertificate mapRow(ResultSet rs, int rowNum) throws SQLException {
         GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setId(rs.getLong(ID));
-        giftCertificate.setName(rs.getString(NAME));
-        giftCertificate.setDescription(rs.getString(DESCRIPTION));
-        giftCertificate.setPrice(rs.getBigDecimal(PRICE));
-        giftCertificate.setDuration(rs.getInt(DURATION));
+        giftCertificate.setId(rs.getLong(ApplicationConstants.ID_RS_KEY));
+        giftCertificate.setName(rs.getString(ApplicationConstants.NAME_GC_RS_KEY));
+        giftCertificate.setDescription(rs.getString(ApplicationConstants.DESCRIPTION_GC_RS_KEY));
+        giftCertificate.setPrice(rs.getBigDecimal(ApplicationConstants.PRICE_GC_RS_KEY));
+        giftCertificate.setDuration(rs.getInt(ApplicationConstants.DURATION_GC_RS_KEY));
 
-        String creationDateString = rs.getString(CREATE_DATE);
+        String creationDateString = rs.getString(ApplicationConstants.CREATE_DATE_GC_RS_KEY);
         giftCertificate.setCreateDate(LocalDateTime.parse(creationDateString, formatter));
 
-        String lastUpdateDateString = rs.getString(LAST_UPDATE_DATE);
+        String lastUpdateDateString = rs.getString(ApplicationConstants.LAST_UPDATE_DATE_GC_RS_KEY);
         giftCertificate.setLastUpdateDate(LocalDateTime.parse(lastUpdateDateString, formatter));
 
         return giftCertificate;

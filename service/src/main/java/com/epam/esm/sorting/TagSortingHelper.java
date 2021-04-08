@@ -1,5 +1,6 @@
 package com.epam.esm.sorting;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.GiftCertificateException;
 import org.springframework.stereotype.Component;
@@ -18,17 +19,11 @@ import java.util.stream.Collectors;
 @Component
 public class TagSortingHelper implements SortingHelper<Tag> {
 
-    private final static String ID_FIELD = "id";
-    private final static String NAME_FIELD = "name";
-    private final static String DESC_ORDER = "desc";
-    private final static int INVALID_SORT_FIELD_ERROR_CODE = 44602;
-
-
     /**
      * This method returns a sorted list of Tag entities.
      *
      * @param fields            fields to sort by.
-     * @param order             sorting order. If {@param order} == null or not equals {{@link #DESC_ORDER}} then sorts by ascending order.
+     * @param order             sorting order. If {@param order} == null or not equals {{@link ApplicationConstants}} DESC_ORDER then sorts by ascending order.
      * @param foundCertificates list of Tag entities for sorting.
      * @return sorted list of Tag entities.
      * @since 1.0
@@ -37,7 +32,7 @@ public class TagSortingHelper implements SortingHelper<Tag> {
     public List<Tag> getSorted(String[] fields, String order, List<Tag> foundCertificates) {
         Comparator<Tag> comparator = buildComparator(fields);
 
-        return DESC_ORDER.equalsIgnoreCase(order) ? sortDesc(comparator, foundCertificates) : sortAsc(comparator, foundCertificates);
+        return ApplicationConstants.DESC_ORDER.equalsIgnoreCase(order) ? sortDesc(comparator, foundCertificates) : sortAsc(comparator, foundCertificates);
 
     }
 
@@ -80,16 +75,16 @@ public class TagSortingHelper implements SortingHelper<Tag> {
         Arrays.stream(fields)
                 .forEach(field -> {
                     switch (field) {
-                        case ID_FIELD: {
+                        case ApplicationConstants.TAG_ID_FIELD: {
                             comparators.add(Comparator.comparing(Tag::getId));
                             break;
                         }
-                        case NAME_FIELD: {
+                        case ApplicationConstants.TAG_NAME_FIELD: {
                             comparators.add(Comparator.comparing(Tag::getName));
                             break;
                         }
                         default:
-                            throw new GiftCertificateException(INVALID_SORT_FIELD_ERROR_CODE, String.format("Can't sort Tags by the field: %s", field));
+                            throw new GiftCertificateException(ApplicationConstants.INVALID_SORT_FIELD_ERROR_CODE, String.format("Can't sort Tags by the field: %s", field));
                     }
                 });
 

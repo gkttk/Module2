@@ -1,5 +1,7 @@
 package com.epam.esm.criteria.tags;
 
+import com.epam.esm.constants.ApplicationConstants;
+import com.epam.esm.criteria.AbstractCriteria;
 import com.epam.esm.criteria.Criteria;
 import com.epam.esm.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +17,7 @@ import java.util.List;
  * @since 1.0
  */
 @Component("allTagCriteria")
-public class AllTagCriteria extends AbstractTagCriteria implements Criteria<Tag> {
-
-    private final static String GET_ALL_QUERY = "SELECT id, name FROM " + TABLE_NAME;
+public class AllTagCriteria extends AbstractCriteria<Tag> implements Criteria<Tag> {
 
     @Autowired
     public AllTagCriteria(JdbcTemplate template, RowMapper<Tag> rowMapper) {
@@ -26,7 +26,7 @@ public class AllTagCriteria extends AbstractTagCriteria implements Criteria<Tag>
 
     @Override
     public List<Tag> find(String[] params) {
-        return template.query(GET_ALL_QUERY, rowMapper);
+        return template.query(ApplicationConstants.GET_ALL_TAG_QUERY, rowMapper);
 
     }
 

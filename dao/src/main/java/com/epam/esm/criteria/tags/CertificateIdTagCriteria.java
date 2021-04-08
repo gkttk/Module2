@@ -1,5 +1,7 @@
 package com.epam.esm.criteria.tags;
 
+import com.epam.esm.constants.ApplicationConstants;
+import com.epam.esm.criteria.AbstractCriteria;
 import com.epam.esm.criteria.Criteria;
 import com.epam.esm.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,7 @@ import java.util.*;
  * @since 1.0
  */
 @Component("certificateIdTagCriteria")
-public class CertificateIdTagCriteria extends AbstractTagCriteria implements Criteria<Tag> {
-
-    private final static String GET_ALL_BY_CERTIFICATE_ID = "SELECT t.id, t.name FROM " + TABLE_NAME +
-            " t JOIN certificates_tags ct on t.id = ct.tag_id WHERE ct.certificate_id = ?";
+public class CertificateIdTagCriteria extends AbstractCriteria<Tag> implements Criteria<Tag> {
 
     @Autowired
     public CertificateIdTagCriteria(JdbcTemplate template, RowMapper<Tag> rowMapper) {
@@ -29,7 +28,7 @@ public class CertificateIdTagCriteria extends AbstractTagCriteria implements Cri
     public List<Tag> find(String[] params) {
         Set<Tag> result = new HashSet<>();
         Arrays.stream(params).forEach(certId -> {
-            List<Tag> query = template.query(GET_ALL_BY_CERTIFICATE_ID, rowMapper, certId);
+            List<Tag> query = template.query(ApplicationConstants.GET_ALL_TAG_BY_CERTIFICATE_ID, rowMapper, certId);
             result.addAll(query);
         });
         return new ArrayList<>(result);

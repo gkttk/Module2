@@ -1,5 +1,6 @@
 package com.epam.esm.dao.config;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -22,11 +23,9 @@ import javax.sql.DataSource;
 @ComponentScan("com.epam.esm")
 public class DaoTestConfig {
 
-    private final static String HIKARI_PROPERTIES_PATH = "/hikari-test.properties";
-
     @Bean
     public DataSource dataSource() {
-        HikariConfig config = new HikariConfig(HIKARI_PROPERTIES_PATH);
+        HikariConfig config = new HikariConfig(ApplicationConstants.HIKARI_PROPERTIES_TEST_PATH);
         return new HikariDataSource(config);
     }
 

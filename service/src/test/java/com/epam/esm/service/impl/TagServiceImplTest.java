@@ -1,8 +1,5 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.criteria.factory.TagCriteriaFactory;
-import com.epam.esm.criteria.result.CriteriaFactoryResult;
-import com.epam.esm.criteria.tags.AllTagCriteria;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
@@ -40,12 +37,6 @@ public class TagServiceImplTest {
 
     @Mock
     private ModelMapper modelMapperMock;
-
-    @Mock
-    private TagCriteriaFactory tagCriteriaFactory;
-
-    @Mock
-    private AllTagCriteria allTagCriteria;
 
     @Mock
     private TagValidator validator;
@@ -91,18 +82,15 @@ public class TagServiceImplTest {
     public void testFindAll_EntitiesArePresentInDb_ReturnListOfDto() {
         //given
 
-        CriteriaFactoryResult<Tag> criteriaFactoryResult = new CriteriaFactoryResult<>(allTagCriteria, null);
-
         List<Tag> expectedEntitiesList = Arrays.asList(testEntity, testEntity, testEntity);
         List<TagDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
 
-        when(tagCriteriaFactory.getCriteriaWithParams(anyMap())).thenReturn(criteriaFactoryResult);
         when(tagDaoMock.findBy(any())).thenReturn(expectedEntitiesList);
         when(modelMapperMock.map(testEntity, TagDto.class)).thenReturn(testDto);
         //when
         List<TagDto> result = tagService.findAllForQuery(anyMap());
         //then
-        verify(tagDaoMock).findBy(criteriaFactoryResult);
+        verify(tagDaoMock).findBy(anyMap());
         verify(modelMapperMock, times(expectedEntitiesList.size())).map(any(), any());
         assertEquals(result, expectedResult);
     }

@@ -16,9 +16,9 @@ public enum ResponseError {
     INCORRECT_GIFT_CERTIFICATE_SORTING_FIELD("Incorrect field for sorting GiftCertificate was passed", HttpStatus.BAD_REQUEST, 44601),
     INCORRECT_TAG_SORTING_FIELD("Incorrect field for sorting Tag was passed", HttpStatus.BAD_REQUEST, 44602);
 
-    private String message;
-    private int code;
-    private HttpStatus status;
+    private final String message;
+    private final int code;
+    private final HttpStatus status;
 
     ResponseError(String message, HttpStatus status, int code) {
         this.message = message;

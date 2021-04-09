@@ -4,6 +4,7 @@ import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.entity.Tag;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -17,12 +18,12 @@ public interface TagDao {
     /**
      * This method combines all getList queries.
      *
-     * @param criteriaWithParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
+     * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
      *                           and arrays of params for searching.
      * @return list of Tag entities
      * @since 1.0
      */
-    List<Tag> findBy(CriteriaFactoryResult<Tag> criteriaWithParams);
+    List<Tag> findBy(Map<String, String[]> reqParams);
 
     /**
      * This method saves Tag entity.

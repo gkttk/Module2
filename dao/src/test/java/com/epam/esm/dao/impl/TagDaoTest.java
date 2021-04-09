@@ -1,8 +1,5 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.criteria.result.CriteriaFactoryResult;
-import com.epam.esm.criteria.tags.AllTagCriteria;
-import com.epam.esm.criteria.tags.CertificateIdTagCriteria;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.entity.Tag;
@@ -19,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,12 +31,6 @@ public class TagDaoTest {
 
     @Autowired
     private TagDao tagDao;
-
-    @Autowired
-    private CertificateIdTagCriteria certificateIdTagCriteria;
-
-    @Autowired
-    private AllTagCriteria allTagCriteria;
 
     private static Tag tag1;
     private static Tag tag2;
@@ -77,12 +69,11 @@ public class TagDaoTest {
     @Test
     public void testGetBy_TagsWithGivenCertificateIdIsPresentInDb_ReturnListTags() {
         //given
-        String[] params = new String[]{"3"};
-        CriteriaFactoryResult<Tag> factoryResult = new CriteriaFactoryResult<>(certificateIdTagCriteria, params);
-
+        String[] certIds = new String[]{"3"};
+        Map<String, String[]> params = Collections.singletonMap("certificateId", certIds);
         List<Tag> expected = Collections.singletonList(tag1);
         //when
-        List<Tag> result = tagDao.findBy(factoryResult);
+        List<Tag> result = tagDao.findBy(params);
         //then
         assertEquals(result, expected);
     }
@@ -90,11 +81,11 @@ public class TagDaoTest {
     @Test
     public void testGetBy_TagsWithGivenCertificateIdIsPresentInDb_ReturnTagsList() {
         //given
-        String[] params = new String[]{"100"};
-        CriteriaFactoryResult<Tag> factoryResult = new CriteriaFactoryResult<>(certificateIdTagCriteria, params);
+        String[] certIds = new String[]{"100"};
+        Map<String, String[]> params = Collections.singletonMap("certificateId", certIds);
         List<Tag> expected = Collections.emptyList();
         //when
-        List<Tag> result = tagDao.findBy(factoryResult);
+        List<Tag> result = tagDao.findBy(params);
         //then
         assertEquals(result, expected);
     }
@@ -103,10 +94,10 @@ public class TagDaoTest {
     @Test
     public void testGetBy_ThereAreEntitiesInDb_ReturnAllTagsList() {
         //given
-        CriteriaFactoryResult<Tag> factoryResult = new CriteriaFactoryResult<>(allTagCriteria, null);
+        Map<String, String[]> params = Collections.emptyMap();
         List<Tag> expected = Arrays.asList(tag1, tag2, tag3);
         //when
-        List<Tag> result = tagDao.findBy(factoryResult);
+        List<Tag> result = tagDao.findBy(params);
         //then
         assertEquals(result, expected);
     }

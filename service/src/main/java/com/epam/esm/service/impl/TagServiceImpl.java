@@ -2,8 +2,6 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.criteria.Criteria;
-import com.epam.esm.criteria.factory.CriteriaFactory;
-import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
@@ -31,15 +29,13 @@ public class TagServiceImpl implements TagService {
 
     private final TagDao tagDao;
     private final ModelMapper modelMapper;
-    private final CriteriaFactory<Tag> criteriaFactory;
     private final SortingHelper<Tag> sortingHelper;
     private final EntityValidator<Tag> validator;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, CriteriaFactory<Tag> criteriaFactory, SortingHelper<Tag> sortingHelper, EntityValidator<Tag> validator) {
+    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, SortingHelper<Tag> sortingHelper, EntityValidator<Tag> validator) {
         this.tagDao = tagDao;
         this.modelMapper = modelMapper;
-        this.criteriaFactory = criteriaFactory;
         this.sortingHelper = sortingHelper;
         this.validator = validator;
     }
@@ -56,9 +52,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagDto> findAllForQuery(Map<String, String[]> reqParams) {
 
-        CriteriaFactoryResult<Tag> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
-
-        List<Tag> foundTags = tagDao.findBy(criteriaWithParams);
+        List<Tag> foundTags = tagDao.findBy(reqParams);
 
         if (!foundTags.isEmpty() && reqParams.containsKey(ApplicationConstants.SORT_FIELDS_KEY)) {
             String[] sortFields = reqParams.get(ApplicationConstants.SORT_FIELDS_KEY);

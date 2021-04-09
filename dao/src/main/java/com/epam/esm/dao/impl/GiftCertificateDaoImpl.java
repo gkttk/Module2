@@ -2,6 +2,7 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.criteria.Criteria;
+import com.epam.esm.criteria.factory.CriteriaFactory;
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -28,22 +30,25 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     private final JdbcTemplate template;
     private final RowMapper<GiftCertificate> rowMapper;
+    private final CriteriaFactory<GiftCertificate> criteriaFactory;
 
     @Autowired
-    public GiftCertificateDaoImpl(JdbcTemplate template, RowMapper<GiftCertificate> rowMapper) {
+    public GiftCertificateDaoImpl(JdbcTemplate template, RowMapper<GiftCertificate> rowMapper, CriteriaFactory<GiftCertificate> criteriaFactory) {
         this.template = template;
         this.rowMapper = rowMapper;
+        this.criteriaFactory = criteriaFactory;
     }
 
     /**
      * This method combines all getList queries.
      *
-     * @param criteriaWithParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
+     * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link Criteria}
      *                           and arrays of params for searching.
      * @return list of GiftCertificate entities
      * @since 1.0
      */
-    public List<GiftCertificate> findBy(CriteriaFactoryResult<GiftCertificate> criteriaWithParams) {
+    public List<GiftCertificate> findBy(Map<String, String[]> reqParams) {
+        CriteriaFactoryResult<GiftCertificate> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
         Criteria<GiftCertificate> criteria = criteriaWithParams.getCriteria();
         String[] params = criteriaWithParams.getParams();
 

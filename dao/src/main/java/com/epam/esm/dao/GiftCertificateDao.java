@@ -4,6 +4,7 @@ import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.entity.GiftCertificate;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -18,12 +19,12 @@ public interface GiftCertificateDao {
     /**
      * This method combines all getList queries.
      *
-     * @param criteriaWithParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
+     * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
      *                           and arrays of params for searching.
      * @return list of GiftCertificate entities
      * @since 1.0
      */
-    List<GiftCertificate> findBy(CriteriaFactoryResult<GiftCertificate> criteriaWithParams);
+    List<GiftCertificate> findBy(Map<String, String[]> reqParams);
 
 
     /**

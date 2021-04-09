@@ -1,13 +1,9 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.criteria.certificates.AllGiftCertificateCriteria;
-import com.epam.esm.criteria.certificates.TagNamesGiftCertificateCriteria;
-import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.entity.GiftCertificate;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +14,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -39,23 +34,12 @@ public class GiftCertificateDaoTest {
     @Autowired
     private GiftCertificateDao giftCertificateDao;
 
-    @Autowired
-    private TagNamesGiftCertificateCriteria tagNamesGiftCertificateCriteria;
-
-    @Autowired
-    private AllGiftCertificateCriteria allGiftCertificateCriteria;
-
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     private static GiftCertificate certificate1;
     private static GiftCertificate certificate2;
     private static GiftCertificate certificate3;
 
-
     @BeforeAll
     static void init() {
-
-
         certificate1 = new GiftCertificate();
         certificate1.setId(1L);
         certificate1.setName("certificate1");
@@ -85,15 +69,14 @@ public class GiftCertificateDaoTest {
         certificate3.setLastUpdateDate("2021-01-29 11:30:18");
     }
 
-
     @Test
     public void testFindBy_UsingTagNamesCriteria_ListEntities() {
         //given
-        String[] params = new String[]{"tag3"};
-        CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(tagNamesGiftCertificateCriteria, params);
+        String[] tagNames = new String[]{"tag3"};
+        Map<String, String[]> params = Collections.singletonMap("tagNames", tagNames);
         List<GiftCertificate> expected = Collections.singletonList(certificate1);
         //when
-        List<GiftCertificate> result = giftCertificateDao.findBy(factoryResult);
+        List<GiftCertificate> result = giftCertificateDao.findBy(params);
         //then
         assertEquals(result, expected);
     }
@@ -101,10 +84,10 @@ public class GiftCertificateDaoTest {
     @Test
     public void testFindBy_UsingAllCriteria_ListEntities() {
         //given
-        CriteriaFactoryResult<GiftCertificate> factoryResult = new CriteriaFactoryResult<>(allGiftCertificateCriteria, null);
+        Map<String, String[]> params = Collections.emptyMap();
         List<GiftCertificate> expected = Arrays.asList(certificate1, certificate2, certificate3);
         //when
-        List<GiftCertificate> result = giftCertificateDao.findBy(factoryResult);
+        List<GiftCertificate> result = giftCertificateDao.findBy(params);
         //then
         assertEquals(result, expected);
     }
@@ -153,34 +136,6 @@ public class GiftCertificateDaoTest {
         Optional<GiftCertificate> result = giftCertificateDao.findById(incorrectId);
         //then
         assertEquals(result, expected);
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    @Disabled
-    public void testSave_ReturnEntityWithNewId() {
-        //given
-        GiftCertificate savedEntity = new GiftCertificate();
-        savedEntity.setId(null);
-        savedEntity.setName("certificate4");
-        savedEntity.setDescription("description4");
-        savedEntity.setPrice(new BigDecimal("4.5"));
-        savedEntity.setDuration(40);
-        savedEntity.setCreateDate("2020-03-29 11:24:04");
-        savedEntity.setLastUpdateDate("2020-03-29 11:30:18");
-        //when
-        GiftCertificate result = giftCertificateDao.findById(giftCertificateDao.save(savedEntity)).orElse(null);
-        //then
-        assertNotNull(savedEntity.getId());
-        assertAll(
-                () -> assertEquals(result.getName(), savedEntity.getName()),
-                () -> assertEquals(result.getDescription(), savedEntity.getDescription()),
-                () -> assertEquals(result.getPrice(), savedEntity.getPrice()),
-                () -> assertEquals(result.getDuration(), savedEntity.getDuration()),
-                () -> assertEquals(result.getCreateDate(), savedEntity.getCreateDate()),
-                () -> assertEquals(result.getLastUpdateDate(), savedEntity.getLastUpdateDate())
-        );
     }
 
     @Test

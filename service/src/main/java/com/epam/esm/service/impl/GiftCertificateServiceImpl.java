@@ -78,6 +78,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @throws GiftCertificateException if there is no entity in database.
      * @since 1.0
      */
+    //reqParams to dao layer
     @Override
     public List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams) {
         CriteriaFactoryResult<GiftCertificate> criteriaWithParams = criteriaGiftCertificateFactory.getCriteriaWithParams(reqParams);

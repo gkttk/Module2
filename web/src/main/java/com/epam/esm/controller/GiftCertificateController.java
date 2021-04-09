@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,7 +58,6 @@ public class GiftCertificateController {
     public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody @Validated(UpdateGroup.class) @Valid GiftCertificateDto certificateDto) {
         GiftCertificateDto savedCertificate = giftCertificateService.save(certificateDto);
         return ResponseEntity.ok(savedCertificate);
-
     }
 
     @PutMapping("/{id}")
@@ -73,6 +73,9 @@ public class GiftCertificateController {
         GiftCertificateDto patchedDto = giftCertificateService.patch(giftCertificateDto, id);
         return ResponseEntity.ok(patchedDto);
     }
+
+
+
 
 
 }

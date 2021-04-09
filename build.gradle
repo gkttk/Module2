@@ -1,3 +1,50 @@
-group 'com.epam.esm'
-version '1.0-SNAPSHOT'
+plugins {
+    id 'war'
+}
+
+allprojects {
+    apply plugin: "java"
+
+    group 'com.epam.esm'
+    version '1.0-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+
+    javadoc{
+        source = sourceSets.main.allJava
+        classpath = configurations.compile
+    }
+
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
+        options.encoding = 'UTF-8'
+    }
+
+}
+
+subprojects {
+
+    dependencies {
+        implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.5'
+
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.0-M1'
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.0-M1'
+
+        testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.8.0'
+        testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.8.0'
+
+        testImplementation group: 'org.springframework', name: 'spring-test', version: '5.3.5'
+
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
+
+
+
 

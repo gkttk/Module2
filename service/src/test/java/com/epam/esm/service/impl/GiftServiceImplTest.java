@@ -233,10 +233,10 @@ public class GiftServiceImplTest {
         Map<String, String[]> reqParams = new HashMap<>();
         String sortField = "id";
         String[] sortFields = new String[]{sortField};
-        String order = "desc";
+        String[] order = new String[]{"desc"};
         reqParams.put("sortFields", sortFields);
 
-        reqParams.put("order", new String[]{order});
+        reqParams.put("order", order);
 
         List<GiftCertificate> expectedEntityList = Arrays.asList(testEntity, secondTestEntity);
         when(certDao.findBy(anyMap())).thenReturn(expectedEntityList);

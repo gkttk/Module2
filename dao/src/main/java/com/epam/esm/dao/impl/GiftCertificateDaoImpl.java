@@ -18,6 +18,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -43,17 +44,20 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * This method combines all getList queries.
      *
      * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link Criteria}
-     *                           and arrays of params for searching.
+     *                  and arrays of params for searching.
      * @return list of GiftCertificate entities
      * @since 1.0
      */
     public List<GiftCertificate> findBy(Map<String, String[]> reqParams) {
-        CriteriaFactoryResult<GiftCertificate> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
-        Criteria<GiftCertificate> criteria = criteriaWithParams.getCriteria();
-        String[] params = criteriaWithParams.getParams();
-
-        return criteria.find(params);
-
+        List<CriteriaFactoryResult<GiftCertificate>> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
+        return criteriaWithParams.stream()
+                .flatMap(criteriaResult -> {
+                    Criteria<GiftCertificate> criteria = criteriaResult.getCriteria();
+                    String[] params = criteriaResult.getParams();
+                    return criteria.find(params).stream();
+                })
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     /**

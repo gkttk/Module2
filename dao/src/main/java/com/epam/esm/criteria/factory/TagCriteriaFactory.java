@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,14 +31,18 @@ public class TagCriteriaFactory implements CriteriaFactory<Tag> {
         this.allTagCriteria = allTagCriteria;
     }
 
-    public CriteriaFactoryResult<Tag> getCriteriaWithParams(Map<String, String[]> reqParams) {
+    public List<CriteriaFactoryResult<Tag>> getCriteriaWithParams(Map<String, String[]> reqParams) {
+        List<CriteriaFactoryResult<Tag>> criteriaFactoryResults = new ArrayList<>();
         String[] params;
         params = reqParams.get(ApplicationConstants.CERTIFICATE_ID_KEY);
         if (params != null) {
-            return new CriteriaFactoryResult<>(certificateIdCriteria, params);
+            criteriaFactoryResults.add(new CriteriaFactoryResult<>(certificateIdCriteria, params));
+        }
+        if (criteriaFactoryResults.size() < 1) {
+            criteriaFactoryResults.add(new CriteriaFactoryResult<>(allTagCriteria));
         }
 
-        return new CriteriaFactoryResult<>(allTagCriteria);
+        return criteriaFactoryResults;
     }
 
 

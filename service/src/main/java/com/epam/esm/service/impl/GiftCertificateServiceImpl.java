@@ -82,7 +82,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             String[] sortFields = reqParams.get(ApplicationConstants.SORT_FIELDS_KEY);
             String[] orders = reqParams.get(ApplicationConstants.ORDER_KEY);
 
-            foundCertificates = sortingHelper.getSorted(sortFields, orders[0], foundCertificates);
+            foundCertificates = sortingHelper.getSorted(sortFields, orders, foundCertificates);
         }
 
         return foundCertificates.stream()

@@ -2,6 +2,7 @@ package com.epam.esm.criteria.factory;
 
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,11 +15,11 @@ import java.util.Map;
 public interface CriteriaFactory<T> {
 
     /**
-     * This method return an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
+     * This method return a list of instances of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
      * and array of parameters for searching.
      *
      * @param params request parameters.
-     * @return an instance of {@link CriteriaFactoryResult}.
+     * @return a list of instances of {@link CriteriaFactoryResult}.
      */
-    CriteriaFactoryResult<T> getCriteriaWithParams(Map<String, String[]> params);
+     List<CriteriaFactoryResult<T>> getCriteriaWithParams(Map<String, String[]> params);
 }

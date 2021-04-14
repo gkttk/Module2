@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,21 +37,25 @@ public class GiftCertificateCriteriaFactory implements CriteriaFactory<GiftCerti
         this.allGCCriteria = allGCCriteria;
     }
 
-    public CriteriaFactoryResult<GiftCertificate> getCriteriaWithParams(Map<String, String[]> reqParams) {
+    public List<CriteriaFactoryResult<GiftCertificate>> getCriteriaWithParams(Map<String, String[]> reqParams) {
+        List<CriteriaFactoryResult<GiftCertificate>> criteriaFactoryResults = new ArrayList<>();
         String[] params;
         params = reqParams.get(ApplicationConstants.NAMES_PART_KEY);
         if (params != null) {
-            return new CriteriaFactoryResult<>(namesPartCriteria, params);
+            criteriaFactoryResults.add(new CriteriaFactoryResult<>(namesPartCriteria, params));
         }
         params = reqParams.get(ApplicationConstants.DESCRIPTION_PART_KEY);
         if (params != null) {
-            return new CriteriaFactoryResult<>(descriptionPartCriteria, params);
+            criteriaFactoryResults.add(new CriteriaFactoryResult<>(descriptionPartCriteria, params));
         }
         params = reqParams.get(ApplicationConstants.TAG_NAMES_KEY);
         if (params != null) {
-            return new CriteriaFactoryResult<>(tagNamesCriteria, params);
+            criteriaFactoryResults.add(new CriteriaFactoryResult<>(tagNamesCriteria, params));
         }
-        return new CriteriaFactoryResult<>(allGCCriteria);
+        if (criteriaFactoryResults.size() < 1) {
+            criteriaFactoryResults.add(new CriteriaFactoryResult<>(allGCCriteria));
+        }
+        return criteriaFactoryResults;
     }
 
 

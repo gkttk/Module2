@@ -11,7 +11,7 @@ allprojects {
     group 'com.epam.esm'
     version '1.0-SNAPSHOT'
 
-/*    test.enabled = false  //todo*/
+  /*  test.enabled = false  */ //todo
 
     repositories {
         mavenCentral()

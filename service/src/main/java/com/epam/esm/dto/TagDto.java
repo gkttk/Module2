@@ -1,5 +1,8 @@
 package com.epam.esm.dto;
 
+import com.epam.esm.dto.groups.PatchGroup;
+import com.epam.esm.dto.groups.UpdateGroup;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
@@ -13,10 +16,10 @@ import java.util.StringJoiner;
  */
 public class TagDto {
 
-    @Null(message = "Id value must be null")
+    @Null(message = "Tag's id value must be null", groups = {UpdateGroup.class, PatchGroup.class})
     private Long id;
-    @NotBlank(message = "Name value must contain 2-15 characters and not be null")
-    @Size(min = 2, max = 15, message = "Name value must contain 2-15 characters and not be null")
+    @NotBlank(message = "Tag's name value must contain 2-15 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})
+    @Size(min = 2, max = 15, message = "Tag's name value must contain 2-15 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})
     private String name;
 
     public TagDto() {

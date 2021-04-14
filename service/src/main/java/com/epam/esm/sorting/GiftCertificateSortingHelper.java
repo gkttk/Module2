@@ -30,10 +30,10 @@ public class GiftCertificateSortingHelper implements SortingHelper<GiftCertifica
      * @since 1.0
      */
     @Override
-    public List<GiftCertificate> getSorted(String[] fields, String order, List<GiftCertificate> foundCertificates) {
+    public List<GiftCertificate> getSorted(String[] fields, String[] order, List<GiftCertificate> foundCertificates) {
         Comparator<GiftCertificate> comparator = buildComparator(fields);
 
-        return ApplicationConstants.DESC_ORDER.equalsIgnoreCase(order) ? sortDesc(comparator, foundCertificates) : sortAsc(comparator, foundCertificates);
+        return (order != null && ApplicationConstants.DESC_ORDER.equalsIgnoreCase(order[0])) ? sortDesc(comparator, foundCertificates) : sortAsc(comparator, foundCertificates);
 
     }
 

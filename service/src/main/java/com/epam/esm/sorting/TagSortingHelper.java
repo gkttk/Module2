@@ -29,10 +29,10 @@ public class TagSortingHelper implements SortingHelper<Tag> {
      * @since 1.0
      */
     @Override
-    public List<Tag> getSorted(String[] fields, String order, List<Tag> foundCertificates) {
+    public List<Tag> getSorted(String[] fields, String[] order, List<Tag> foundCertificates) {
         Comparator<Tag> comparator = buildComparator(fields);
 
-        return ApplicationConstants.DESC_ORDER.equalsIgnoreCase(order) ? sortDesc(comparator, foundCertificates) : sortAsc(comparator, foundCertificates);
+        return (order != null && ApplicationConstants.DESC_ORDER.equalsIgnoreCase(order[0])) ? sortDesc(comparator, foundCertificates) : sortAsc(comparator, foundCertificates);
 
     }
 

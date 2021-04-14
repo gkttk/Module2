@@ -57,7 +57,7 @@ public class GiftCertificateSortingHelperTest {
 
     @ParameterizedTest
     @MethodSource("provideParams")
-    public void testGetSorted_SortingDifferentOrders_ReturnListOfAscSortedEntities(List<GiftCertificate> entities, List<GiftCertificate> expected, String order) {
+    public void testGetSorted_SortingDifferentOrders_ReturnListOfAscSortedEntities(List<GiftCertificate> entities, List<GiftCertificate> expected, String[] order) {
         //when
         List<GiftCertificate> result = sortingHelper.getSorted(sortingFields, order, entities);
         //then
@@ -67,10 +67,10 @@ public class GiftCertificateSortingHelperTest {
 
     private static Stream<Arguments> provideParams() {
         return Stream.of(
-                Arguments.of(Arrays.asList(entity3, entity2, entity1), Arrays.asList(entity1, entity2, entity3), "ASC"),
+                Arguments.of(Arrays.asList(entity3, entity2, entity1), Arrays.asList(entity1, entity2, entity3), new String[]{"ASC"}),
                 Arguments.of(Arrays.asList(entity3, entity2, entity1), Arrays.asList(entity1, entity2, entity3), null),
-                Arguments.of(Arrays.asList(entity3, entity2, entity1), Arrays.asList(entity1, entity2, entity3), "IncorrectOrder"),
-                Arguments.of(Arrays.asList(entity1, entity2, entity3), Arrays.asList(entity3, entity2, entity1), "DESC")
+                Arguments.of(Arrays.asList(entity3, entity2, entity1), Arrays.asList(entity1, entity2, entity3), new String[]{"IncorrectOrder"}),
+                Arguments.of(Arrays.asList(entity1, entity2, entity3), Arrays.asList(entity3, entity2, entity1), new String[]{"DESC"})
         );
     }
 

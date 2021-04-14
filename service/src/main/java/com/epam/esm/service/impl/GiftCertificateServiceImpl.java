@@ -82,7 +82,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             String[] sortFields = reqParams.get(ApplicationConstants.SORT_FIELDS_KEY);
             String[] orders = reqParams.get(ApplicationConstants.ORDER_KEY);
 
-            foundCertificates = sortingHelper.getSorted(sortFields, orders[0], foundCertificates);
+            foundCertificates = sortingHelper.getSorted(sortFields, orders, foundCertificates);
         }
 
         return foundCertificates.stream()
@@ -186,44 +186,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         giftCertificateDao.update(foundCert, certId); //update
 
-        Map<String, String[]> params = Collections.singletonMap(ApplicationConstants.CERTIFICATE_ID_KEY, new String[]{String.valueOf(certId)});
+        certificateTagsDao.deleteAllTagsForCertificate(certId);
 
-        List<Tag> certTags = new ArrayList<>(tagDao.findBy(params)); //get all tags of current patching entity
-
-        List<TagDto> passedTags = passedDto.getTags();  //get passed tags
-        if (passedTags != null) { //if passed tags are not empty
-            passedTags.forEach(tagDto -> {
-                Optional<Tag> foundTagOpt = tagDao.findByName(tagDto.getName()); //check if the tag with such name in db
-                if (foundTagOpt.isPresent()) {//if there is a tag with the same name in db...
-                    Tag foundTag = foundTagOpt.get();
-                    Long tagId = foundTag.getId();
-
-                    boolean isTagAlreadyAttachedToCertificate = certTags.stream()//attempt to find the present tag in GiftCertificate entity tags from db
-                            .map(Tag::getId)
-                            .anyMatch(tagId::equals);
-                    if (!isTagAlreadyAttachedToCertificate) {//if the present tag is not attached to current patching
-                        // GiftCertificateEntity, then attach it and add to list of passed tags(for return value)
-                        certificateTagsDao.save(certId, tagId);
-                        certTags.add(foundTag);
-                    }
-                } else { //if tag with the same name is not present in db, then save it to db,
-                    // attach to GiftCertificate entity and add to list of passed tags(for return value)
-                    Tag tagEntity = modelMapper.map(tagDto, Tag.class);
-                    Tag savedTag = tagDao.save(tagEntity);
-                    certificateTagsDao.save(certId, savedTag.getId());
-                    certTags.add(savedTag);
-                }
-            });
-        }
-
-        List<TagDto> tagsDto = certTags.stream()  //mapping all formed Tag entity to TagDto
-                .map(tag -> modelMapper.map(tag, TagDto.class))
-                .collect(Collectors.toList());
-
-        GiftCertificateDto patchedCertDto = findDto(certId);
-        patchedCertDto.setTags(tagsDto);
-
-        return patchedCertDto;
+        GiftCertificateDto dto = findDto(certId);
+        List<TagDto> tags = findTagsDto(passedDto.getTags(), certId);
+        dto.setTags(tags);
+        return dto;
     }
 
 

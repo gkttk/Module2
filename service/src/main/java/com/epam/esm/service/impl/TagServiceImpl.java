@@ -58,7 +58,7 @@ public class TagServiceImpl implements TagService {
             String[] sortFields = reqParams.get(ApplicationConstants.SORT_FIELDS_KEY);
             String[] orders = reqParams.get(ApplicationConstants.ORDER_KEY);
 
-            foundTags = sortingHelper.getSorted(sortFields, orders[0], foundTags);
+            foundTags = sortingHelper.getSorted(sortFields, orders, foundTags);
         }
 
         return foundTags.stream()

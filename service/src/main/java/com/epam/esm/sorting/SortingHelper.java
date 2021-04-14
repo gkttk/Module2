@@ -11,5 +11,5 @@ import java.util.List;
  */
 public interface SortingHelper<T> {
 
-    List<T> getSorted(String[] fields, String order, List<T> sortingObjects);
+    List<T> getSorted(String[] fields, String[] order, List<T> sortingObjects);
 }

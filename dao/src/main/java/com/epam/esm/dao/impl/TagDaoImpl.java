@@ -5,6 +5,7 @@ import com.epam.esm.criteria.Criteria;
 import com.epam.esm.criteria.factory.CriteriaFactory;
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,9 +16,13 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -92,17 +97,22 @@ public class TagDaoImpl implements TagDao {
      * This method combines all getList queries.
      *
      * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link Criteria}
-     *                           and arrays of params for searching.
+     *                  and arrays of params for searching.
      * @return list of Tag entities
      * @since 1.0
      */
     @Override
     public List<Tag> findBy(Map<String, String[]> reqParams) {
-        CriteriaFactoryResult<Tag> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
-        Criteria<Tag> criteria = criteriaWithParams.getCriteria();
-        String[] params = criteriaWithParams.getParams();
+        List<CriteriaFactoryResult<Tag>> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
 
-        return criteria.find(params);
+        return criteriaWithParams.stream()
+                .flatMap(criteriaResult->{
+                    Criteria<Tag> criteria = criteriaResult.getCriteria();
+                    String[] params = criteriaResult.getParams();
+                    return criteria.find(params).stream();
+                })
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     /**

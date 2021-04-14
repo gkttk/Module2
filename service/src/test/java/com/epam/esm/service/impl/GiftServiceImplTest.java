@@ -233,10 +233,10 @@ public class GiftServiceImplTest {
         Map<String, String[]> reqParams = new HashMap<>();
         String sortField = "id";
         String[] sortFields = new String[]{sortField};
-        String order = "desc";
+        String[] order = new String[]{"desc"};
         reqParams.put("sortFields", sortFields);
 
-        reqParams.put("order", new String[]{order});
+        reqParams.put("order", order);
 
         List<GiftCertificate> expectedEntityList = Arrays.asList(testEntity, secondTestEntity);
         when(certDao.findBy(anyMap())).thenReturn(expectedEntityList);
@@ -520,18 +520,15 @@ public class GiftServiceImplTest {
         Long certificateId = testEntity.getId();
         when(validator.validateAndFindByIdIfExist(certificateId)).thenReturn(testEntity);
         doNothing().when(validator).validateIfAnotherEntityWithGivenNameExist(dtoForPatch.getName(), certificateId);
-
+        when(certDao.findById(certificateId)).thenReturn(Optional.of(testEntity));
+        when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
         when(tagDao.findByName(tag.getName())).thenReturn(Optional.of(tag));
         Tag newTag = new Tag(newTagDto.getName());
         Tag newTagWithId = new Tag(130L, newTag.getName());
+
         when(tagDao.findByName(newTagDto.getName())).thenReturn(Optional.empty());
         when(modelMapper.map(newTagDto, Tag.class)).thenReturn(newTag);
         when(tagDao.save(newTag)).thenReturn(newTagWithId);
-        TagDto newTagDtoWithId = new TagDto(newTagWithId.getId(), newTagWithId.getName());
-        when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
-        when(modelMapper.map(newTagWithId, TagDto.class)).thenReturn(newTagDtoWithId);
-        when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
-        when(certDao.findById(certificateId)).thenReturn(Optional.of(testEntity));
         //when
         GiftCertificateDto result = service.patch(dtoForPatch, certificateId);
         //then
@@ -540,14 +537,12 @@ public class GiftServiceImplTest {
         verify(validator).validateIfAnotherEntityWithGivenNameExist(dtoForPatch.getName(), certificateId);
         verify(certDao).findById(certificateId);
         verify(certDao).update(testEntity, certificateId);
+        verify(certificateTagsDao).deleteAllTagsForCertificate(certificateId);
         verify(tagDao).findByName(tag.getName());
         verify(tagDao).findByName(newTagDto.getName());
         verify(modelMapper).map(newTagDto, Tag.class);
         verify(tagDao).save(newTag);
         verify(certificateTagsDao).save(certificateId, newTagWithId.getId());
-        verify(modelMapper).map(tag, TagDto.class);
-        verify(modelMapper).map(newTagWithId, TagDto.class);
-        verify(modelMapper).map(testEntity, GiftCertificateDto.class);
     }
 
     @Test

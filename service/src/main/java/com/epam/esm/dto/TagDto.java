@@ -15,8 +15,8 @@ public class TagDto {
 
     @Null(message = "Id value must be null")
     private Long id;
-    @NotBlank(message = "Name value must not be null")
-    @Size(min = 2, max = 15, message = "Name value must contain 2-15 characters")
+    @NotBlank(message = "Name value must contain 2-15 characters and not be null")
+    @Size(min = 2, max = 15, message = "Name value must contain 2-15 characters and not be null")
     private String name;
 
     public TagDto() {

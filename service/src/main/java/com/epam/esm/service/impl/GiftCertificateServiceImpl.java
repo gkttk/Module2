@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -186,11 +185,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         giftCertificateDao.update(foundCert, certId); //update
 
-        certificateTagsDao.deleteAllTagsForCertificate(certId);
-
         GiftCertificateDto dto = findDto(certId);
-        List<TagDto> tags = findTagsDto(passedDto.getTags(), certId);
-        dto.setTags(tags);
+
+        List<TagDto> passedTags = passedDto.getTags();
+        if (passedTags != null) {
+            certificateTagsDao.deleteAllTagsForCertificate(certId);
+            List<TagDto> tagsDto = findTagsDto(passedTags, certId);
+            dto.setTags(tagsDto);
+        } else {
+            fillCertificateDtoWithTags(dto);
+        }
+
         return dto;
     }
 

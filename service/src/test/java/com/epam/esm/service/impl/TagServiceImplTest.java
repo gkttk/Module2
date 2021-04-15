@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
+//@ContextConfiguration(classes = {ServiceConfig.class, DaoConfig.class})
 public class TagServiceImplTest {
 
     @Mock

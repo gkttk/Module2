@@ -11,8 +11,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.context.request.WebRequest;
 
 import java.math.BigDecimal;
@@ -33,6 +35,7 @@ public class GiftCertificateControllerTest {
     @Mock
     private WebRequest webRequestMock;
 
+
     @InjectMocks
     private GiftCertificateController giftCertificateController;
 
@@ -42,6 +45,7 @@ public class GiftCertificateControllerTest {
 
     @BeforeAll
     static void init() {
+
         TagDto defaultTagDto = new TagDto(100L, "testTag");
 
         defaultCertDto = new GiftCertificateDto();

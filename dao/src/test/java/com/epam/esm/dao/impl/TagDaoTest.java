@@ -5,12 +5,12 @@ import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -24,9 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DaoTestConfig.class})
-@ActiveProfiles("test")
+@SpringBootTest(classes = {DaoTestConfig.class})
+@TestPropertySource(locations = "classpath:application-integrationtest.properties")
+//@ContextConfiguration(classes = {DaoTestConfig.class})
+//@ActiveProfiles("test")
 public class TagDaoTest {
 
     @Autowired

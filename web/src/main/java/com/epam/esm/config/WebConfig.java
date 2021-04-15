@@ -26,20 +26,11 @@ import java.util.List;
 @ComponentScan(basePackages = {"com.epam.esm.controller", "com.epam.esm.advice"})
 public class WebConfig implements WebMvcConfigurer {
 
-    @Override
+ /*   @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(customJackson2HttpMessageConverter());
     }
 
-    @Bean
-    public ViewResolver getViewResolver() {
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setOrder(1);
-        viewResolver.setViewClass(JstlView.class);
-        viewResolver.setPrefix(ApplicationConstants.VIEW_RESOLVER_PREFIX);
-        viewResolver.setSuffix(ApplicationConstants.VIEW_RESOLVER_SUFFIX);
-        return viewResolver;
-    }
 
     @Bean
     public MappingJackson2HttpMessageConverter customJackson2HttpMessageConverter() {
@@ -60,7 +51,7 @@ public class WebConfig implements WebMvcConfigurer {
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.registerModule(module);
         return objectMapper;
-    }
+    }*/
 
 
 }

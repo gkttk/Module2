@@ -76,8 +76,8 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public Optional<Tag> findById(long id) {
-        Tag tag = template.queryForStream(ApplicationConstants.GET_BY_ID_TAG_QUERY, rowMapper, id).findFirst().orElse(null);
-        return Optional.ofNullable(tag);
+        Tag result = template.queryForStream(ApplicationConstants.GET_BY_ID_TAG_QUERY, rowMapper, id).findFirst().orElse(null);
+        return Optional.ofNullable(result);
     }
 
     /**
@@ -89,8 +89,8 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public Optional<Tag> findByName(String tagName) {
-        Tag tag = template.queryForStream(ApplicationConstants.GET_BY_NAME_TAG_QUERY, rowMapper, tagName).findFirst().orElse(null);
-        return Optional.ofNullable(tag);
+        Tag result = template.queryForStream(ApplicationConstants.GET_BY_NAME_TAG_QUERY, rowMapper, tagName).findFirst().orElse(null);
+        return Optional.ofNullable(result);
     }
 
     /**

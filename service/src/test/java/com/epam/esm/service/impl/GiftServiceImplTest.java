@@ -1,6 +1,7 @@
 
 package com.epam.esm.service.impl;
 
+import com.epam.esm.config.ServiceTestConfig;
 import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
@@ -19,6 +20,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -38,6 +41,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {ServiceTestConfig.class})
 public class GiftServiceImplTest {
 
     @Mock

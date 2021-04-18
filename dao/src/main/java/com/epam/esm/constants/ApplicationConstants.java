@@ -4,46 +4,26 @@ public final class ApplicationConstants {
 
     private ApplicationConstants() {}
 
-    //queries
     //table names
-    public final static String GIFT_CERTIFICATE_TABLE_NAME = "gift_certificate";
-    public final static String TAG_TABLE_NAME = "tag";
     public final static String CERTIFICATE_TAGS_TABLE_NAME = "certificates_tags";
 
     //joins
-    public final static String GET_ALL_GC_BY_TAG_NAME = "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration," +
-            " create_date, last_update_date FROM " + GIFT_CERTIFICATE_TABLE_NAME + " gc JOIN " + CERTIFICATE_TAGS_TABLE_NAME
-            + " ct on gc.id = ct.certificate_id JOIN " + TAG_TABLE_NAME + " t on t.id = ct.tag_id WHERE t.name = ?";
-    public final static String GET_ALL_TAG_BY_CERTIFICATE_ID = "SELECT t.id, t.name FROM " + TAG_TABLE_NAME +
-            " t JOIN certificates_tags ct on t.id = ct.tag_id WHERE ct.certificate_id = ?";
+    public final static String FIND_ALL_GC_BY_TAG_NAMES = "SELECT gc FROM GiftCertificate gc JOIN gc.tags t WHERE t.name =:name";
+    public final static String GET_ALL_TAG_BY_CERTIFICATE_ID = "SELECT t FROM Tag t JOIN t.giftCertificates gc WHERE gc.id = :certificateId";
 
     //gift_certificate table
-    public final static String GET_ALL_GC_QUERY = "SELECT id, name, description, price, duration," +
-            "create_date, last_update_date FROM " + GIFT_CERTIFICATE_TABLE_NAME;
-    public final static String GET_BY_ID_GC_QUERY = "SELECT id, name, description, price, duration, create_date," +
-            " last_update_date FROM " + GIFT_CERTIFICATE_TABLE_NAME + " WHERE id = ?";
-    public final static String SAVE_GC_QUERY = "INSERT INTO " + GIFT_CERTIFICATE_TABLE_NAME + " (name, description, price, duration) " + "VALUES (?,?,?,?)";
-    public final static String UPDATE_GC_QUERY = "UPDATE " + GIFT_CERTIFICATE_TABLE_NAME + " SET name = ?, description = ?, " +
-            "price = ?, duration = ? WHERE id = ?";
-    public final static String DELETE_GC_QUERY = "DELETE FROM " + GIFT_CERTIFICATE_TABLE_NAME + " WHERE id = ?";
+    public final static String FIND_ALL_GC_QUERY = "SELECT gc FROM GiftCertificate gc";
 
-    public final static String GET_BY_NAME_GC_QUERY = "SELECT id, name, description, price, duration, create_date," +
-            " last_update_date FROM " + GIFT_CERTIFICATE_TABLE_NAME + " WHERE name = ?";
 
+    public final static String FIND_GC_BY_NAME_QUERY = "SELECT gc FROM GiftCertificate gc WHERE gc.name = :name";
     //tag table
-    public final static String GET_ALL_TAG_QUERY = "SELECT id, name FROM " + TAG_TABLE_NAME;
-    public final static String GET_BY_ID_TAG_QUERY = "SELECT id, name FROM " + TAG_TABLE_NAME + " WHERE id = ?";
-    public final static String SAVE_TAG_QUERY = "INSERT INTO " + TAG_TABLE_NAME + " (name) " +
-            "VALUES (?)";
-    public final static String DELETE_TAG_QUERY = "DELETE FROM " + TAG_TABLE_NAME + " WHERE id = ?";
-    public final static String GET_BY_NAME_TAG_QUERY = "SELECT id, name FROM " + TAG_TABLE_NAME + " WHERE name = ?";
+    public final static String GET_ALL_TAG_QUERY = "SELECT t FROM Tag t";
+    public final static String GET_ALL_TAG_BY_NAME = "SELECT t FROM Tag t WHERE t.name =:name";
 
     //certificate_tags table
     public final static String SAVE_CERTIFICATE_TAGS_QUERY = "INSERT INTO " + CERTIFICATE_TAGS_TABLE_NAME  + " VALUES (?,?)";
     public final static String DELETE_ALL_TAGS_FOR_CERTIFICATE = "DELETE FROM " + CERTIFICATE_TAGS_TABLE_NAME +
             " WHERE certificate_id = ?";
-
-
 
     //DaoConfig
     public final static String HIKARI_PROPERTIES_PATH = "/hikari.properties";
@@ -112,10 +92,6 @@ public final class ApplicationConstants {
     //Tag SortingHelper
     public final static String TAG_ID_FIELD = "id";
     public final static String TAG_NAME_FIELD = "name";
-
-    //WebConfig
-    public final static String VIEW_RESOLVER_PREFIX = "/WEB-INF/views/";
-    public final static String VIEW_RESOLVER_SUFFIX = ".jsp";
 
 
 }

@@ -15,7 +15,6 @@ import java.util.Optional;
  */
 public interface GiftCertificateDao {
 
-
     /**
      * This method combines all getList queries.
      *
@@ -26,7 +25,6 @@ public interface GiftCertificateDao {
      */
     List<GiftCertificate> findBy(Map<String, String[]> reqParams);
 
-
     /**
      * This method get GiftCertificate entity by name.
      *
@@ -34,7 +32,7 @@ public interface GiftCertificateDao {
      * @return Optional of GiftCertificate entity.
      * @since 1.0
      */
-    Optional<GiftCertificate> findByName(String name);
+    GiftCertificate findByName(String name);
 
     /**
      * This method saves GiftCertificate entity.
@@ -43,7 +41,7 @@ public interface GiftCertificateDao {
      * @return id of inserted entity
      * @since 1.0
      */
-    Long save(GiftCertificate certificate);
+    GiftCertificate save(GiftCertificate certificate);
 
     /**
      * This method get GiftCertificate entity by id.
@@ -52,17 +50,15 @@ public interface GiftCertificateDao {
      * @return Optional of GiftCertificate entity.
      * @since 1.0
      */
-    Optional<GiftCertificate> findById(long id);
-
+    GiftCertificate findById(long id);
 
     /**
      * This method updates all updatable fields for GiftCertificate entity.
      *
      * @param certificate GiftCertificate entity with fields for update.
-     * @param id          GiftCertificate entity id.
      * @since 1.0
      */
-    void update(GiftCertificate certificate, long id);
+    GiftCertificate update(GiftCertificate certificate);
 
     /**
      * This method delete GiftCertificate entity.

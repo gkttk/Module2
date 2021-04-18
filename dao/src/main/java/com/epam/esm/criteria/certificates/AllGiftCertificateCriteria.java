@@ -5,10 +5,9 @@ import com.epam.esm.criteria.AbstractCriteria;
 import com.epam.esm.criteria.Criteria;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
@@ -20,12 +19,12 @@ import java.util.List;
 public class AllGiftCertificateCriteria extends AbstractCriteria<GiftCertificate> implements Criteria<GiftCertificate> {
 
     @Autowired
-    public AllGiftCertificateCriteria(JdbcTemplate template, RowMapper<GiftCertificate> rowMapper) {
-        super(template, rowMapper);
+    public AllGiftCertificateCriteria(EntityManager entityManager) {
+        super(entityManager);
     }
 
     @Override
     public List<GiftCertificate> find(String[] params) {
-        return template.query(ApplicationConstants.GET_ALL_GC_QUERY, rowMapper);
+        return entityManager.createQuery(ApplicationConstants.FIND_ALL_GC_QUERY, GiftCertificate.class).getResultList();
     }
 }

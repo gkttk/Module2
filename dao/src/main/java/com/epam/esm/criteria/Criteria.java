@@ -11,7 +11,6 @@ import java.util.List;
  */
 public interface Criteria<T> {
 
-
     /**
      * This method get entities by given params.
      *

@@ -5,10 +5,9 @@ import com.epam.esm.criteria.AbstractCriteria;
 import com.epam.esm.criteria.Criteria;
 import com.epam.esm.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
@@ -20,14 +19,14 @@ import java.util.List;
 public class AllTagCriteria extends AbstractCriteria<Tag> implements Criteria<Tag> {
 
     @Autowired
-    public AllTagCriteria(JdbcTemplate template, RowMapper<Tag> rowMapper) {
-        super(template, rowMapper);
+    public AllTagCriteria(EntityManager entityManager) {
+        super(entityManager);
     }
 
     @Override
     public List<Tag> find(String[] params) {
-        return template.query(ApplicationConstants.GET_ALL_TAG_QUERY, rowMapper);
-
+        return entityManager.createQuery(ApplicationConstants.GET_ALL_TAG_QUERY, Tag.class)
+                .getResultList();
     }
 
 }

@@ -7,17 +7,13 @@ import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -29,14 +25,12 @@ import java.util.stream.Collectors;
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
-    private final JdbcTemplate template;
-    private final RowMapper<GiftCertificate> rowMapper;
+    private final EntityManager entityManager;
     private final CriteriaFactory<GiftCertificate> criteriaFactory;
 
     @Autowired
-    public GiftCertificateDaoImpl(JdbcTemplate template, RowMapper<GiftCertificate> rowMapper, CriteriaFactory<GiftCertificate> criteriaFactory) {
-        this.template = template;
-        this.rowMapper = rowMapper;
+    public GiftCertificateDaoImpl(EntityManager entityManager, CriteriaFactory<GiftCertificate> criteriaFactory) {
+        this.entityManager = entityManager;
         this.criteriaFactory = criteriaFactory;
     }
 
@@ -68,9 +62,12 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @since 1.0
      */
     @Override
-    public Optional<GiftCertificate> findByName(String name) {
-        GiftCertificate result = template.queryForStream(ApplicationConstants.GET_BY_NAME_GC_QUERY, rowMapper, name).findFirst().orElse(null);
-        return Optional.ofNullable(result);
+    public GiftCertificate findByName(String name) {
+        TypedQuery<GiftCertificate> query = entityManager.createQuery(ApplicationConstants.FIND_GC_BY_NAME_QUERY, GiftCertificate.class)
+                .setParameter("name", name);
+        return query.getResultStream()
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -82,18 +79,12 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @since 1.0
      */
     @Override
-    public Long save(GiftCertificate certificate) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        template.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(ApplicationConstants.SAVE_GC_QUERY, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, certificate.getName());
-            ps.setString(2, certificate.getDescription());
-            ps.setBigDecimal(3, certificate.getPrice());
-            ps.setInt(4, certificate.getDuration());
-            return ps;
-        }, keyHolder);
+    public GiftCertificate save(GiftCertificate certificate) {
+        entityManager.persist(certificate);
+        entityManager.flush();
+        entityManager.detach(certificate);
+        return certificate;
 
-        return keyHolder.getKey().longValue();
     }
 
     /**
@@ -104,9 +95,8 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @since 1.0
      */
     @Override
-    public Optional<GiftCertificate> findById(long id) {
-        GiftCertificate result = template.queryForStream(ApplicationConstants.GET_BY_ID_GC_QUERY, rowMapper, id).findFirst().orElse(null);
-        return Optional.ofNullable(result);
+    public GiftCertificate findById(long id) {
+        return entityManager.find(GiftCertificate.class, id);
     }
 
 
@@ -114,13 +104,18 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * This method updates all updatable fields for GiftCertificate entity.
      *
      * @param certificate GiftCertificate entity with fields for update.
-     * @param id          GiftCertificate entity id.
      * @since 1.0
      */
     @Override
-    public void update(GiftCertificate certificate, long id) {
-        template.update(ApplicationConstants.UPDATE_GC_QUERY, certificate.getName(), certificate.getDescription(),
-                certificate.getPrice(), certificate.getDuration(), id);
+    public GiftCertificate update(GiftCertificate certificate) {
+
+        GiftCertificate reference = entityManager.getReference(GiftCertificate.class, certificate.getId());
+        certificate.setCreateDate(reference.getCreateDate());
+
+        GiftCertificate giftCertificate = entityManager.merge(certificate);
+        entityManager.flush();
+        entityManager.detach(giftCertificate);
+        return giftCertificate;
     }
 
     /**
@@ -132,9 +127,12 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public boolean delete(long id) {
-        int updatedRows = template.update(ApplicationConstants.DELETE_GC_QUERY, id);
-        return updatedRows >= 1;
-
+        GiftCertificate giftCertificate = entityManager.find(GiftCertificate.class, id);
+        if (giftCertificate != null) {
+            entityManager.remove(giftCertificate);
+            return true;
+        }
+        return false;
     }
 
 

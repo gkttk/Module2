@@ -14,7 +14,6 @@ public class CriteriaFactoryResult<T> {
     private final Criteria<T> criteria;
     private final String[] params;
 
-
     public CriteriaFactoryResult(Criteria<T> criteria) {
         this.criteria = criteria;
         this.params = null;

@@ -108,6 +108,7 @@ public class TagServiceImpl implements TagService {
      * @throws TagException if there is no Tag entity with given id in db.
      * @since 1.0
      */
+    @Transactional
     @Override
     public void delete(long id) {
         boolean isDeleted = tagDao.delete(id);

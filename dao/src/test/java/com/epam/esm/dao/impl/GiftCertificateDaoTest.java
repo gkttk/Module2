@@ -103,7 +103,7 @@ public class GiftCertificateDaoTest {
         String name = certificate1.getName();
         Optional<GiftCertificate> expectedResult = Optional.of(certificate1);
         //when
-        Optional<GiftCertificate> result = giftCertificateDao.findByName(name);
+        GiftCertificate result = giftCertificateDao.findByName(name);
         //then
         assertEquals(result, expectedResult);
     }
@@ -114,7 +114,7 @@ public class GiftCertificateDaoTest {
         String name = "incorrectName";
         Optional<GiftCertificate> expectedResult = Optional.empty();
         //when
-        Optional<GiftCertificate> result = giftCertificateDao.findByName(name);
+        GiftCertificate result = giftCertificateDao.findByName(name);
         //then
         assertEquals(result, expectedResult);
     }
@@ -126,7 +126,7 @@ public class GiftCertificateDaoTest {
         Long id = certificate1.getId();
         Optional<GiftCertificate> expected = Optional.of(GiftCertificateDaoTest.certificate1);
         //when
-        Optional<GiftCertificate> result = giftCertificateDao.findById(id);
+        GiftCertificate result = giftCertificateDao.findById(id);
         //then
         assertEquals(result, expected);
     }
@@ -137,7 +137,7 @@ public class GiftCertificateDaoTest {
         long incorrectId = 100L;
         Optional<GiftCertificate> expected = Optional.empty();
         //when
-        Optional<GiftCertificate> result = giftCertificateDao.findById(incorrectId);
+        GiftCertificate result = giftCertificateDao.findById(incorrectId);
         //then
         assertEquals(result, expected);
     }
@@ -160,7 +160,7 @@ public class GiftCertificateDaoTest {
         //when
         giftCertificateDao.update(entityWithNewFields, id);
         //then
-        Optional<GiftCertificate> fromDb = giftCertificateDao.findById(id);
+        GiftCertificate fromDb = giftCertificateDao.findById(id);
         GiftCertificate giftCertificateFromDb = fromDb.get();
         assertAll(
                 () -> assertEquals(entityWithNewFields.getName(), giftCertificateFromDb.getName()),

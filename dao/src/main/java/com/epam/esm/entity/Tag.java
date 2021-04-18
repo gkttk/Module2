@@ -1,5 +1,16 @@
 package com.epam.esm.entity;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -8,10 +19,20 @@ import java.util.StringJoiner;
  *
  * @since 1.0
  */
+@Entity
+@Table(name = "tag")
 public class Tag {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "certificates_tags",
+            joinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "certificate_id", referencedColumnName = "id"))
+    private List<GiftCertificate> giftCertificates;
 
     public Tag() {
     }
@@ -25,6 +46,7 @@ public class Tag {
         this.name = name;
     }
 
+
     public Long getId() {
         return id;
     }
@@ -33,13 +55,20 @@ public class Tag {
         return name;
     }
 
-
     public void setId(Long id) {
         this.id = id;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<GiftCertificate> getGiftCertificates() {
+        return giftCertificates;
+    }
+
+    public void setGiftCertificates(List<GiftCertificate> giftCertificates) {
+        this.giftCertificates = giftCertificates;
     }
 
     @Override
@@ -52,12 +81,13 @@ public class Tag {
         }
         Tag tag = (Tag) o;
         return Objects.equals(id, tag.id) &&
-                Objects.equals(name, tag.name);
+                Objects.equals(name, tag.name) &&
+                Objects.equals(giftCertificates, tag.giftCertificates);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, name, giftCertificates);
     }
 
     @Override

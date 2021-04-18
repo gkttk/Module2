@@ -5,25 +5,16 @@ import com.epam.esm.criteria.Criteria;
 import com.epam.esm.criteria.factory.CriteriaFactory;
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashSet;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
-
 
 /**
  * Default implementation of {@link com.epam.esm.dao.TagDao} interface.
@@ -33,14 +24,12 @@ import java.util.stream.Collectors;
 @Repository
 public class TagDaoImpl implements TagDao {
 
-    private final JdbcTemplate template;
-    private final RowMapper<Tag> rowMapper;
+    private final EntityManager entityManager;
     private final CriteriaFactory<Tag> criteriaFactory;
 
     @Autowired
-    public TagDaoImpl(JdbcTemplate template, RowMapper<Tag> rowMapper, CriteriaFactory<Tag> criteriaFactory) {
-        this.template = template;
-        this.rowMapper = rowMapper;
+    public TagDaoImpl(EntityManager entityManager, CriteriaFactory<Tag> criteriaFactory) {
+        this.entityManager = entityManager;
         this.criteriaFactory = criteriaFactory;
     }
 
@@ -54,16 +43,8 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public Tag save(Tag tag) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        String name = tag.getName();
-        template.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(ApplicationConstants.SAVE_TAG_QUERY, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, name);
-            return ps;
-        }, keyHolder);
-
-        tag.setId(keyHolder.getKey().longValue());
+        entityManager.persist(tag);
+        entityManager.detach(tag);
         return tag;
     }
 
@@ -76,8 +57,13 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public Optional<Tag> findById(long id) {
-        Tag result = template.queryForStream(ApplicationConstants.GET_BY_ID_TAG_QUERY, rowMapper, id).findFirst().orElse(null);
-        return Optional.ofNullable(result);
+        Tag result = entityManager.find(Tag.class, id);
+        if(result != null){
+            entityManager.detach(result);
+            return Optional.of(result);
+        }
+
+        return Optional.empty();
     }
 
     /**
@@ -88,9 +74,14 @@ public class TagDaoImpl implements TagDao {
      * @since 1.0
      */
     @Override
-    public Optional<Tag> findByName(String tagName) {
-        Tag result = template.queryForStream(ApplicationConstants.GET_BY_NAME_TAG_QUERY, rowMapper, tagName).findFirst().orElse(null);
-        return Optional.ofNullable(result);
+    public Optional<Tag> findByName(String tagName) {//todo return opt
+        TypedQuery<Tag> query = entityManager.createQuery(ApplicationConstants.GET_ALL_TAG_BY_NAME, Tag.class);
+        Tag tag = query.setParameter(ApplicationConstants.TAG_NAME_FIELD, tagName)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+
+        return tag != null ? Optional.of(tag) : Optional.empty();
     }
 
     /**
@@ -106,7 +97,7 @@ public class TagDaoImpl implements TagDao {
         List<CriteriaFactoryResult<Tag>> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
 
         return criteriaWithParams.stream()
-                .flatMap(criteriaResult->{
+                .flatMap(criteriaResult -> {
                     Criteria<Tag> criteria = criteriaResult.getCriteria();
                     String[] params = criteriaResult.getParams();
                     return criteria.find(params).stream();
@@ -124,8 +115,12 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public boolean delete(long id) {
-        int updatedRows = template.update(ApplicationConstants.DELETE_TAG_QUERY, id);
-        return updatedRows >= 1;
+        Tag tag = entityManager.find(Tag.class, id);
+        if (tag != null) {
+            entityManager.remove(tag);
+            return true;
+        }
+        return false;
     }
 
 

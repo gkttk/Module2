@@ -20,7 +20,6 @@ public interface CertificateTagsDao {
      */
     void save(long certificateId, long tagId);
 
-
     /**
      * This method removes all links between GiftCertificate entity and Tag entity for a specific GiftCertificate.
      *

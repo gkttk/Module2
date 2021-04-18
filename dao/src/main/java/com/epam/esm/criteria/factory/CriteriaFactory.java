@@ -9,7 +9,6 @@ import java.util.Map;
  * Common interface for all CriteriaFactories.
  *
  * @param <T> type of entity.
- *
  * @since 1.0
  */
 public interface CriteriaFactory<T> {
@@ -21,5 +20,5 @@ public interface CriteriaFactory<T> {
      * @param params request parameters.
      * @return a list of instances of {@link CriteriaFactoryResult}.
      */
-     List<CriteriaFactoryResult<T>> getCriteriaWithParams(Map<String, String[]> params);
+    List<CriteriaFactoryResult<T>> getCriteriaWithParams(Map<String, String[]> params);
 }

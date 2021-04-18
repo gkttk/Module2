@@ -5,10 +5,9 @@ import com.epam.esm.criteria.AbstractCriteria;
 import com.epam.esm.criteria.Criteria;
 import com.epam.esm.entity.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,16 +24,19 @@ import java.util.Set;
 public class CertificateIdTagCriteria extends AbstractCriteria<Tag> implements Criteria<Tag> {
 
     @Autowired
-    public CertificateIdTagCriteria(JdbcTemplate template, RowMapper<Tag> rowMapper) {
-        super(template, rowMapper);
+    public CertificateIdTagCriteria(EntityManager entityManager) {
+        super(entityManager);
     }
 
     @Override
     public List<Tag> find(String[] params) {
         Set<Tag> result = new HashSet<>();
+
         Arrays.stream(params).forEach(certId -> {
-            List<Tag> query = template.query(ApplicationConstants.GET_ALL_TAG_BY_CERTIFICATE_ID, rowMapper, certId);
-            result.addAll(query);
+            List<Tag> tags = entityManager.createQuery(ApplicationConstants.GET_ALL_TAG_BY_CERTIFICATE_ID, Tag.class)
+                    .setParameter(ApplicationConstants.CERTIFICATE_ID_KEY, Long.valueOf(certId))
+                    .getResultList();
+            result.addAll(tags);
         });
         return new ArrayList<>(result);
     }

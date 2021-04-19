@@ -74,7 +74,7 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public Optional<Tag> findByName(String tagName) {//todo return opt
-        TypedQuery<Tag> query = entityManager.createQuery(ApplicationConstants.GET_ALL_TAG_BY_NAME, Tag.class);
+        TypedQuery<Tag> query = entityManager.createQuery(ApplicationConstants.GET_TAG_BY_NAME, Tag.class);
         Tag tag = query.setParameter(ApplicationConstants.TAG_NAME_FIELD, tagName)
                 .getResultStream()
                 .findFirst()

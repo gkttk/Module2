@@ -13,6 +13,8 @@ public enum ResponseError {
     TAG_NOT_FOUND("Tag is not found", HttpStatus.NOT_FOUND, 40402),
     TAG_WITH_SUCH_NAME_EXISTS("Tag already exists", HttpStatus.BAD_REQUEST, 42000),
 
+    USER_NOT_FOUND("User is not found", HttpStatus.NOT_FOUND, 40403),
+
     INCORRECT_GIFT_CERTIFICATE_SORTING_FIELD("Incorrect field for sorting GiftCertificate was passed", HttpStatus.BAD_REQUEST, 44601),
     INCORRECT_TAG_SORTING_FIELD("Incorrect field for sorting Tag was passed", HttpStatus.BAD_REQUEST, 44602);
 

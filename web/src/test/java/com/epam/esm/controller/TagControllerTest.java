@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,13 +65,13 @@ public class TagControllerTest {
         //given
         List<TagDto> listDto = Arrays.asList(defaultTagDto, defaultTagDto);
         when(webRequestMock.getParameterMap()).thenReturn(new HashMap<>());
-        when(serviceMock.findAllForQuery(anyMap(), , )).thenReturn(listDto);
+        when(serviceMock.findAllForQuery(anyMap(), any(), any())).thenReturn(listDto);
         ResponseEntity<List<TagDto>> expected = ResponseEntity.ok(listDto);
         //when
-        ResponseEntity<List<TagDto>> result = tagController.getAll(webRequestMock);
+        ResponseEntity<List<TagDto>> result = tagController.getAll(webRequestMock, 1, 2);
         //then
         assertEquals(result, expected);
-        verify(serviceMock).findAllForQuery(anyMap(), , );
+        verify(serviceMock).findAllForQuery(anyMap(), any(), any());
     }
 
     @Test

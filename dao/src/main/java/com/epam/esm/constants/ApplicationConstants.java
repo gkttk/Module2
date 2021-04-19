@@ -22,7 +22,7 @@ public final class ApplicationConstants {
     public final static String FIND_GC_BY_NAME_QUERY = "SELECT gc FROM GiftCertificate gc WHERE gc.name = :name";
     //tag table
     public final static String GET_ALL_TAG_QUERY = "SELECT t FROM Tag t";
-    public final static String GET_ALL_TAG_BY_NAME = "SELECT t FROM Tag t WHERE t.name =:name";
+    public final static String GET_TAG_BY_NAME = "SELECT t FROM Tag t WHERE t.name =:name";
 
     //certificate_tags table
     public final static String SAVE_CERTIFICATE_TAGS_QUERY = "INSERT INTO " + CERTIFICATE_TAGS_TABLE_NAME  + " VALUES (?,?)";
@@ -60,6 +60,10 @@ public final static String OFFSET_KEY = "offset";
     public final static String CERTIFICATE_ID_TAG_BEAN_NAME = "certificateIdTagCriteria";
     public final static String CERTIFICATE_ID_KEY = "certificateId";
 
+    //User QueryBuilder
+    public final static String ROLE_KEY = "role";
+
+
     //Mappers
     public final static String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
     public final static String ID_RS_KEY = "id";
@@ -82,6 +86,7 @@ public final static String OFFSET_KEY = "offset";
     //Codes
     public final static int CERTIFICATE_NOT_FOUND_CODE = 40401;
     public final static int TAG_NOT_FOUND_ERROR_CODE = 40402;
+    public final static int USER_FOUND_ERROR_CODE = 40403;
     public final static int INVALID_SORT_FIELD_ERROR_CODE = 44601;
     public final static int CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE = 42010;
     public final static int TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE = 42000;
@@ -90,6 +95,11 @@ public final static String OFFSET_KEY = "offset";
     //SortingHelper
     public final static String DESC_ORDER = "desc";
     public final static String ASC_ORDER = "asc";
+
+    //User
+    public final static String USER_ID_FIELD = "id";
+    public final static String USER_ROLE_FIELD = "role";
+
 
     //GiftCertificate SortingHelper
     public final static String ID_FIELD = "id";

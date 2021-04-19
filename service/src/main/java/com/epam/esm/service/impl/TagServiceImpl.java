@@ -53,16 +53,7 @@ public class TagServiceImpl implements TagService {
      */
     @Override
     public List<TagDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
-
         List<Tag> foundTags = tagDao.findBy(reqParams, limit, offset);
-
-        if (!foundTags.isEmpty() && reqParams.containsKey(ApplicationConstants.SORT_FIELDS_KEY)) {
-            String[] sortFields = reqParams.get(ApplicationConstants.SORT_FIELDS_KEY);
-            String[] orders = reqParams.get(ApplicationConstants.ORDER_KEY);
-
-            foundTags = sortingHelper.getSorted(sortFields, orders, foundTags);
-        }
-
         return foundTags.stream()
                 .map(entity -> modelMapper.map(entity, TagDto.class))
                 .collect(Collectors.toList());

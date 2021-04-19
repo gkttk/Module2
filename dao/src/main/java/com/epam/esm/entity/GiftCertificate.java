@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -33,17 +34,22 @@ public class GiftCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, nullable = false)
     private String name;
+    @Column(nullable = false)
     private String description;
+    @Column(nullable = false)
     private BigDecimal price;
+    @Column(nullable = false)
     private Integer duration;
-
     @CreationTimestamp
-    @Column(name = "create_date", columnDefinition = "DATETIME", nullable = false, updatable = false)
+    @Column(name = "create_date", columnDefinition="DATETIME DEFAULT CURRENT_TIMESTAMP",
+            nullable = false, updatable = false)
     private LocalDateTime createDate;
 
-   @UpdateTimestamp
-    @Column(name = "last_update_date", columnDefinition = "DATETIME", nullable = false)
+    @UpdateTimestamp
+    @Column(name = "last_update_date",  columnDefinition="DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+            nullable = false)
     private LocalDateTime lastUpdateDate;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -54,6 +60,7 @@ public class GiftCertificate {
 
     public GiftCertificate() {
     }
+
 
     public Long getId() {
         return id;

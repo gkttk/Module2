@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
 
@@ -39,9 +40,11 @@ public class TagController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TagDto>> getAll(WebRequest request) {
+    public ResponseEntity<List<TagDto>> getAll(WebRequest request,
+                                               @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                               @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
-        List<TagDto> tags = tagService.findAllForQuery(reqParams);
+        List<TagDto> tags = tagService.findAllForQuery(reqParams, limit, offset);
         return ResponseEntity.ok(tags);
     }
 

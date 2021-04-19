@@ -16,7 +16,7 @@ public interface TagService {
 
     TagDto findById(long id);
 
-    List<TagDto> findAllForQuery(Map<String, String[]> reqParams);
+    List<TagDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
 
     TagDto save(TagDto tag);
 

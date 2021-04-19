@@ -19,6 +19,6 @@ public interface Criteria<T> {
      *
      * @since 1.0
      */
-    List<T> find(String[] params);
+    List<T> find(String[] params, int limit, int offset);
 
 }

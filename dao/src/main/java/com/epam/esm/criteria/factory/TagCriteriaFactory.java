@@ -43,7 +43,7 @@ public class TagCriteriaFactory implements CriteriaFactory<Tag> {
         }
 
         return criteriaFactoryResults;
-    }
+}
 
 
 }

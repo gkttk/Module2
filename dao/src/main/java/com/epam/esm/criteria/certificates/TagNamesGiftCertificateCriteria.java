@@ -25,7 +25,7 @@ public class TagNamesGiftCertificateCriteria extends AbstractCriteria<GiftCertif
     }
 
     @Override
-    public List<GiftCertificate> find(String[] params) {
+    public List<GiftCertificate> find(String[] params, int limit, int offset) {
         Set<GiftCertificate> result = new HashSet<>();
         Arrays.stream(params).forEach(name -> {
             List<GiftCertificate> certificates = entityManager.createQuery(ApplicationConstants.FIND_ALL_GC_BY_TAG_NAMES, GiftCertificate.class)

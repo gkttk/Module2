@@ -2,8 +2,8 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.criteria.Criteria;
-import com.epam.esm.criteria.factory.CriteriaFactory;
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
+import com.epam.esm.criteria.querybuilder.QueryBuilder;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 /**
@@ -26,12 +24,12 @@ import java.util.stream.Collectors;
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     private final EntityManager entityManager;
-    private final CriteriaFactory<GiftCertificate> criteriaFactory;
+    private final QueryBuilder<GiftCertificate> queryBuilder;
 
     @Autowired
-    public GiftCertificateDaoImpl(EntityManager entityManager, CriteriaFactory<GiftCertificate> criteriaFactory) {
+    public GiftCertificateDaoImpl(EntityManager entityManager, QueryBuilder<GiftCertificate> queryBuilder) {
         this.entityManager = entityManager;
-        this.criteriaFactory = criteriaFactory;
+        this.queryBuilder = queryBuilder;
     }
 
     /**
@@ -39,20 +37,16 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      *
      * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link Criteria}
      *                  and arrays of params for searching.
+     * @param limit
+     * @param offset
      * @return list of GiftCertificate entities
      * @since 1.0
      */
-    public List<GiftCertificate> findBy(Map<String, String[]> reqParams) {
-        List<CriteriaFactoryResult<GiftCertificate>> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
-        return criteriaWithParams.stream()
-                .flatMap(criteriaResult -> {
-                    Criteria<GiftCertificate> criteria = criteriaResult.getCriteria();
-                    String[] params = criteriaResult.getParams();
-                    return criteria.find(params).stream();
-                })
-                .distinct()
-                .collect(Collectors.toList());
+    public List<GiftCertificate> findBy(Map<String, String[]> reqParams, int limit, int offset) {
+        TypedQuery<GiftCertificate> query = queryBuilder.buildQuery(reqParams, limit, offset);
+        return query.getResultList();
     }
+
 
     /**
      * This method get GiftCertificate entity by name.

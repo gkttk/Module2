@@ -12,8 +12,6 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.sorting.GiftCertificateSortingHelper;
-import com.epam.esm.sorting.SortingHelper;
 import com.epam.esm.validator.EntityValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -42,18 +37,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateDao giftCertificateDao;
     private final TagDao tagDao;
     private final CertificateTagsDao certificateTagsDao;
-    private final SortingHelper<GiftCertificate> sortingHelper;
     private final EntityValidator<GiftCertificate> validator;
 
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, ModelMapper modelMapper, TagDao tagDao,
-                                      CertificateTagsDao certificateTagsDao, GiftCertificateSortingHelper sortingHelper,
-                                      EntityValidator<GiftCertificate> giftCertificateEntityValidator) {
+                                      CertificateTagsDao certificateTagsDao, EntityValidator<GiftCertificate> giftCertificateEntityValidator) {
         this.giftCertificateDao = giftCertificateDao;
         this.modelMapper = modelMapper;
         this.tagDao = tagDao;
         this.certificateTagsDao = certificateTagsDao;
-        this.sortingHelper = sortingHelper;
         this.validator = giftCertificateEntityValidator;
     }
 
@@ -66,33 +58,24 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * present or not equal "DESC" then sorting by ascending order.
      *
      * @param reqParams parameters of a request.
+     * @param limit
+     * @param offset
      * @return List of GiftCertificateDao.
      * @throws GiftCertificateException if there is no entity in database.
      * @since 1.0
      */
 
     @Override
-    public List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams) {
+    public List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
 
-        List<GiftCertificate> foundCertificates = giftCertificateDao.findBy(reqParams);
-
-        if (!foundCertificates.isEmpty() && reqParams.containsKey(ApplicationConstants.SORT_FIELDS_KEY)) {
-            String[] sortFields = reqParams.get(ApplicationConstants.SORT_FIELDS_KEY);
-            String[] orders = reqParams.get(ApplicationConstants.ORDER_KEY);
-
-            foundCertificates = sortingHelper.getSorted(sortFields, orders, foundCertificates);
-        }
-
+        List<GiftCertificate> foundCertificates = giftCertificateDao.findBy(reqParams, limit, offset);
         return foundCertificates.stream()
                 .map(certificate -> modelMapper.map(certificate, GiftCertificateDto.class))
-                .peek(this::fillCertificateDtoWithTags)
                 .collect(Collectors.toList());
     }
 
     /**
      * This method gets GiftCertificate entity from dao layer with given id and converts it to GiftCertificateDto.
-     * The method also calls {@link #fillCertificateDtoWithTags(GiftCertificateDto)} for filling gotten GiftCertificateDto
-     * with list of TagDto.
      *
      * @param id id of necessary entity.
      * @return GiftCertificateDto with id and tags.
@@ -258,21 +241,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
     }
 
-    /**
-     * This method fills GiftCertificateDto with tags.
-     *
-     * @param giftCertificateDto GiftCertificateDto for filling.
-     * @since 1.0
-     */
-    private void fillCertificateDtoWithTags(GiftCertificateDto giftCertificateDto) {
-        long certificateId = giftCertificateDto.getId();
-        Map<String, String[]> params = Collections.singletonMap(ApplicationConstants.CERTIFICATE_ID_KEY, new String[]{String.valueOf(certificateId)});
-        List<Tag> tags = tagDao.findBy(params);
-        List<TagDto> tagsDto = tags.stream()
-                .map(tag -> modelMapper.map(tag, TagDto.class))
-                .collect(Collectors.toList());
-        giftCertificateDto.setTags(tagsDto);
-    }
 
     /**
      * This method fills {@param targetEntity} param by present fields of {@param fromDto} param and sets an update_time field.
@@ -302,7 +270,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
 
     }
-
 
 
 }

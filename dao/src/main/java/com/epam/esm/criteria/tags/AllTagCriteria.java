@@ -24,9 +24,9 @@ public class AllTagCriteria extends AbstractCriteria<Tag> implements Criteria<Ta
     }
 
     @Override
-    public List<Tag> find(String[] params) {
+    public List<Tag> find(String[] params, int limit, int offset) {
         return entityManager.createQuery(ApplicationConstants.GET_ALL_TAG_QUERY, Tag.class)
-                .getResultList();
+                .setMaxResults(limit).setFirstResult(offset).getResultList();
     }
 
 }

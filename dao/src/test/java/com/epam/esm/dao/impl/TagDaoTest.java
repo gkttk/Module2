@@ -6,11 +6,9 @@ import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -74,7 +72,7 @@ public class TagDaoTest {
         Map<String, String[]> params = Collections.singletonMap("certificateId", certIds);
         List<Tag> expected = Collections.singletonList(tag1);
         //when
-        List<Tag> result = tagDao.findBy(params);
+        List<Tag> result = tagDao.findBy(params, , );
         //then
         assertEquals(result, expected);
     }
@@ -86,7 +84,7 @@ public class TagDaoTest {
         Map<String, String[]> params = Collections.singletonMap("certificateId", certIds);
         List<Tag> expected = Collections.emptyList();
         //when
-        List<Tag> result = tagDao.findBy(params);
+        List<Tag> result = tagDao.findBy(params, , );
         //then
         assertEquals(result, expected);
     }
@@ -98,7 +96,7 @@ public class TagDaoTest {
         Map<String, String[]> params = Collections.emptyMap();
         List<Tag> expected = Arrays.asList(tag1, tag2, tag3);
         //when
-        List<Tag> result = tagDao.findBy(params);
+        List<Tag> result = tagDao.findBy(params, , );
         //then
         assertEquals(result, expected);
     }

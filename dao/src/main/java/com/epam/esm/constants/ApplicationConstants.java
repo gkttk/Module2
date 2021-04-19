@@ -8,6 +8,10 @@ public final class ApplicationConstants {
     public final static String CERTIFICATE_TAGS_TABLE_NAME = "certificates_tags";
 
     //joins
+
+
+    public final static String TAGS_ATTRIBUTE_NAME = "tags";
+    public final static String GC_ATTRIBUTE_NAME = "giftCertificates";
     public final static String FIND_ALL_GC_BY_TAG_NAMES = "SELECT gc FROM GiftCertificate gc JOIN gc.tags t WHERE t.name =:name";
     public final static String GET_ALL_TAG_BY_CERTIFICATE_ID = "SELECT t FROM Tag t JOIN t.giftCertificates gc WHERE gc.id = :certificateId";
 
@@ -39,6 +43,12 @@ public final class ApplicationConstants {
     public final static String NAMES_PART_KEY = "namesPart";
     public final static String DESCRIPTION_PART_KEY = "descriptionsPart";
     public final static String TAG_NAMES_KEY = "tagNames";
+    public final static String LIMIT_KEY = "limit";
+public final static String OFFSET_KEY = "offset";
+
+
+
+
 
     public final static String NAMES_PART_CRITERIA_BEAN_NAME = "namePartsGCCriteria";
     public final static String DESCRIPTION_PART_CRITERIA_BEAN_NAME = "descriptionPartsGCCriteria";
@@ -79,6 +89,7 @@ public final class ApplicationConstants {
 
     //SortingHelper
     public final static String DESC_ORDER = "desc";
+    public final static String ASC_ORDER = "asc";
 
     //GiftCertificate SortingHelper
     public final static String ID_FIELD = "id";

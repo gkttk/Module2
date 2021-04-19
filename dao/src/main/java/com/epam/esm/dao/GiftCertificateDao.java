@@ -5,7 +5,6 @@ import com.epam.esm.entity.GiftCertificate;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This interface represents an api to interact with the GiftCertificate entity in database.
@@ -20,10 +19,12 @@ public interface GiftCertificateDao {
      *
      * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
      *                           and arrays of params for searching.
+     * @param limit
+     * @param offset
      * @return list of GiftCertificate entities
      * @since 1.0
      */
-    List<GiftCertificate> findBy(Map<String, String[]> reqParams);
+    List<GiftCertificate> findBy(Map<String, String[]> reqParams, int limit, int offset);
 
     /**
      * This method get GiftCertificate entity by name.

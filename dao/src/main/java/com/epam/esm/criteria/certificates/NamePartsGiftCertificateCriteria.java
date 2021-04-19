@@ -27,7 +27,7 @@ public class NamePartsGiftCertificateCriteria extends AbstractCriteria<GiftCerti
     }
 
     @Override
-    public List<GiftCertificate> find(String[] params) {
+    public List<GiftCertificate> find(String[] params, int limit, int offset) {
         Set<GiftCertificate> result = new HashSet<>();
         Arrays.stream(params).forEach(partOfDescription -> {
             List<GiftCertificate> resultList = entityManager.createStoredProcedureQuery(ApplicationConstants.GET_BY_NAME_PART_PROCEDURE_NAME, GiftCertificate.class)

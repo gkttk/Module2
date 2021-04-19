@@ -20,10 +20,12 @@ public interface TagDao {
      *
      * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
      *                           and arrays of params for searching.
+     * @param limit
+     * @param offset
      * @return list of Tag entities
      * @since 1.0
      */
-    List<Tag> findBy(Map<String, String[]> reqParams);
+    List<Tag> findBy(Map<String, String[]> reqParams, int limit, int offset);
 
     /**
      * This method saves Tag entity.

@@ -64,13 +64,13 @@ public class TagControllerTest {
         //given
         List<TagDto> listDto = Arrays.asList(defaultTagDto, defaultTagDto);
         when(webRequestMock.getParameterMap()).thenReturn(new HashMap<>());
-        when(serviceMock.findAllForQuery(anyMap())).thenReturn(listDto);
+        when(serviceMock.findAllForQuery(anyMap(), , )).thenReturn(listDto);
         ResponseEntity<List<TagDto>> expected = ResponseEntity.ok(listDto);
         //when
         ResponseEntity<List<TagDto>> result = tagController.getAll(webRequestMock);
         //then
         assertEquals(result, expected);
-        verify(serviceMock).findAllForQuery(anyMap());
+        verify(serviceMock).findAllForQuery(anyMap(), , );
     }
 
     @Test

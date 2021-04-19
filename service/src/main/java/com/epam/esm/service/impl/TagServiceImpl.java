@@ -45,14 +45,16 @@ public class TagServiceImpl implements TagService {
      * The method uses {@link com.epam.esm.criteria.factory.TagCriteriaFactory} for getting a correct {@link Criteria} which is based on passed request parameters.
      *
      * @param reqParams parameters of a request.
+     * @param limit
+     * @param offset
      * @return List of TagDao.
      * @throws TagException is there are no tags in db.
      * @since 1.0
      */
     @Override
-    public List<TagDto> findAllForQuery(Map<String, String[]> reqParams) {
+    public List<TagDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
 
-        List<Tag> foundTags = tagDao.findBy(reqParams);
+        List<Tag> foundTags = tagDao.findBy(reqParams, limit, offset);
 
         if (!foundTags.isEmpty() && reqParams.containsKey(ApplicationConstants.SORT_FIELDS_KEY)) {
             String[] sortFields = reqParams.get(ApplicationConstants.SORT_FIELDS_KEY);

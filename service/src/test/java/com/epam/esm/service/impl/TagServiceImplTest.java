@@ -86,12 +86,12 @@ public class TagServiceImplTest {
         List<Tag> expectedEntitiesList = Arrays.asList(testEntity, testEntity, testEntity);
         List<TagDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
 
-        when(tagDaoMock.findBy(any())).thenReturn(expectedEntitiesList);
+        when(tagDaoMock.findBy(any(), , )).thenReturn(expectedEntitiesList);
         when(modelMapperMock.map(testEntity, TagDto.class)).thenReturn(testDto);
         //when
-        List<TagDto> result = tagService.findAllForQuery(anyMap());
+        List<TagDto> result = tagService.findAllForQuery(anyMap(), , );
         //then
-        verify(tagDaoMock).findBy(anyMap());
+        verify(tagDaoMock).findBy(anyMap(), , );
         verify(modelMapperMock, times(expectedEntitiesList.size())).map(any(), any());
         assertEquals(result, expectedResult);
     }
@@ -100,13 +100,13 @@ public class TagServiceImplTest {
     public void testFindAll_ThereIsNoEntitiesInDb_ReturnEmptyList() {
         //given
         List<Tag> expectedEntitiesList = Collections.emptyList();
-        when(tagDaoMock.findBy(any())).thenReturn(expectedEntitiesList);
+        when(tagDaoMock.findBy(any(), , )).thenReturn(expectedEntitiesList);
         List<TagDto> expectedResult = Collections.emptyList();
         //when
-        List<TagDto> result = tagService.findAllForQuery(anyMap());
+        List<TagDto> result = tagService.findAllForQuery(anyMap(), , );
         //then
         assertEquals(result, expectedResult);
-        verify(tagDaoMock).findBy(any());
+        verify(tagDaoMock).findBy(any(), , );
     }
 
     @Test

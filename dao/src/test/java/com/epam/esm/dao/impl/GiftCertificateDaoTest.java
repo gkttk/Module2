@@ -5,15 +5,9 @@ import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.entity.GiftCertificate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -80,7 +74,7 @@ public class GiftCertificateDaoTest {
         Map<String, String[]> params = Collections.singletonMap("tagNames", tagNames);
         List<GiftCertificate> expected = Collections.singletonList(certificate1);
         //when
-        List<GiftCertificate> result = giftCertificateDao.findBy(params);
+        List<GiftCertificate> result = giftCertificateDao.findBy(params, , );
         //then
         assertEquals(result, expected);
     }
@@ -91,7 +85,7 @@ public class GiftCertificateDaoTest {
         Map<String, String[]> params = Collections.emptyMap();
         List<GiftCertificate> expected = Arrays.asList(certificate1, certificate2, certificate3);
         //when
-        List<GiftCertificate> result = giftCertificateDao.findBy(params);
+        List<GiftCertificate> result = giftCertificateDao.findBy(params, , );
         //then
         assertEquals(result, expected);
     }

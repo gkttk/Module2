@@ -15,15 +15,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/certificates", produces = "application/json")
+@Validated
 public class GiftCertificateController {
 
     private final GiftCertificateService giftCertificateService;
@@ -34,9 +37,11 @@ public class GiftCertificateController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GiftCertificateDto>> getAllForQuery(WebRequest webRequest) {
+    public ResponseEntity<List<GiftCertificateDto>> getAllForQuery(WebRequest webRequest,
+                                                                   @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                   @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> parameterMap = webRequest.getParameterMap();
-        List<GiftCertificateDto> certificates = giftCertificateService.findAllForQuery(parameterMap);
+        List<GiftCertificateDto> certificates = giftCertificateService.findAllForQuery(parameterMap, limit, offset);
         return ResponseEntity.ok(certificates);
     }
 
@@ -72,9 +77,6 @@ public class GiftCertificateController {
         GiftCertificateDto patchedDto = giftCertificateService.patch(giftCertificateDto, id);
         return ResponseEntity.ok(patchedDto);
     }
-
-
-
 
 
 }

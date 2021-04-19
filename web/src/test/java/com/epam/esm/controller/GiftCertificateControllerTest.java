@@ -11,10 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.context.request.WebRequest;
 
 import java.math.BigDecimal;
@@ -74,7 +72,7 @@ public class GiftCertificateControllerTest {
         Map<String, String[]> paramMap = new HashMap<>();
         List<GiftCertificateDto> listDto = Arrays.asList(defaultCertDto, defaultCertDto);
         when(webRequestMock.getParameterMap()).thenReturn(paramMap);
-        when(serviceMock.findAllForQuery(paramMap)).thenReturn(listDto);
+        when(serviceMock.findAllForQuery(paramMap, , )).thenReturn(listDto);
 
         ResponseEntity<List<GiftCertificateDto>> expected = ResponseEntity.ok(listDto);
         //when
@@ -82,7 +80,7 @@ public class GiftCertificateControllerTest {
         //then
         assertEquals(result, expected);
         verify(webRequestMock).getParameterMap();
-        verify(serviceMock).findAllForQuery(paramMap);
+        verify(serviceMock).findAllForQuery(paramMap, , );
     }
 
     @Test

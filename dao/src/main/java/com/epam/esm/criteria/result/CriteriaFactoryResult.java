@@ -19,6 +19,7 @@ public class CriteriaFactoryResult<T> {
         this.params = null;
     }
 
+
     public CriteriaFactoryResult(Criteria<T> criteria, String[] params) {
         this.criteria = criteria;
         this.params = params;
@@ -31,4 +32,5 @@ public class CriteriaFactoryResult<T> {
     public String[] getParams() {
         return params;
     }
+
 }

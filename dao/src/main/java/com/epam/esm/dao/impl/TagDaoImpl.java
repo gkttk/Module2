@@ -2,7 +2,7 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.criteria.Criteria;
-import com.epam.esm.criteria.factory.CriteriaFactory;
+import com.epam.esm.criteria.querybuilder.QueryBuilder;
 import com.epam.esm.criteria.result.CriteriaFactoryResult;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.Tag;
@@ -14,7 +14,6 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Default implementation of {@link com.epam.esm.dao.TagDao} interface.
@@ -25,12 +24,12 @@ import java.util.stream.Collectors;
 public class TagDaoImpl implements TagDao {
 
     private final EntityManager entityManager;
-    private final CriteriaFactory<Tag> criteriaFactory;
+    private final QueryBuilder<Tag> queryBuilder;
 
     @Autowired
-    public TagDaoImpl(EntityManager entityManager, CriteriaFactory<Tag> criteriaFactory) {
+    public TagDaoImpl(EntityManager entityManager, QueryBuilder<Tag> queryBuilder) {
         this.entityManager = entityManager;
-        this.criteriaFactory = criteriaFactory;
+        this.queryBuilder = queryBuilder;
     }
 
     /**
@@ -58,7 +57,7 @@ public class TagDaoImpl implements TagDao {
     @Override
     public Optional<Tag> findById(long id) {
         Tag result = entityManager.find(Tag.class, id);
-        if(result != null){
+        if (result != null) {
             entityManager.detach(result);
             return Optional.of(result);
         }
@@ -89,21 +88,15 @@ public class TagDaoImpl implements TagDao {
      *
      * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link Criteria}
      *                  and arrays of params for searching.
+     * @param limit
+     * @param offset
      * @return list of Tag entities
      * @since 1.0
      */
     @Override
-    public List<Tag> findBy(Map<String, String[]> reqParams) {
-        List<CriteriaFactoryResult<Tag>> criteriaWithParams = criteriaFactory.getCriteriaWithParams(reqParams);
-
-        return criteriaWithParams.stream()
-                .flatMap(criteriaResult -> {
-                    Criteria<Tag> criteria = criteriaResult.getCriteria();
-                    String[] params = criteriaResult.getParams();
-                    return criteria.find(params).stream();
-                })
-                .distinct()
-                .collect(Collectors.toList());
+    public List<Tag> findBy(Map<String, String[]> reqParams, int limit, int offset) {
+        TypedQuery<Tag> query = queryBuilder.buildQuery(reqParams, limit, offset);
+        return query.getResultList();
     }
 
     /**

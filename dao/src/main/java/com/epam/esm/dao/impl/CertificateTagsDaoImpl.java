@@ -51,6 +51,6 @@ public class CertificateTagsDaoImpl implements CertificateTagsDao {
     public void deleteAllTagsForCertificate(long certificateId) {
         entityManager.createNativeQuery(ApplicationConstants.DELETE_ALL_TAGS_FOR_CERTIFICATE)
                 .setParameter(1, certificateId).executeUpdate();
-        template.update(ApplicationConstants.DELETE_ALL_TAGS_FOR_CERTIFICATE, certificateId);
+        //template.update(ApplicationConstants.DELETE_ALL_TAGS_FOR_CERTIFICATE, certificateId);
     }
 }

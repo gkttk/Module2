@@ -24,7 +24,8 @@ public class AllGiftCertificateCriteria extends AbstractCriteria<GiftCertificate
     }
 
     @Override
-    public List<GiftCertificate> find(String[] params) {
-        return entityManager.createQuery(ApplicationConstants.FIND_ALL_GC_QUERY, GiftCertificate.class).getResultList();
+    public List<GiftCertificate> find(String[] params, int limit, int offset) {
+        return entityManager.createQuery(ApplicationConstants.FIND_ALL_GC_QUERY, GiftCertificate.class)
+                .setMaxResults(limit).setFirstResult(offset).getResultList();
     }
 }

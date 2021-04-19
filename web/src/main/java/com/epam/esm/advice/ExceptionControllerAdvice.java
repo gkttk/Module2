@@ -17,7 +17,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,6 +40,16 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         int errorCode = exception.getErrorCode();
         ResponseError error = getError(errorCode);
         return new ResponseEntity<>(error, error.getStatus());
+    }
+
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResult> handleConstraintViolationException(ConstraintViolationException exception) {
+        Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
+        List<String> messages = constraintViolations.stream()
+                .map(ConstraintViolation::getMessageTemplate)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(new ErrorResult(ApplicationConstants.DEFAULT_VALIDATION_ERROR_CODE, messages), HttpStatus.BAD_REQUEST);
     }
 
 

@@ -29,7 +29,7 @@ public class CertificateIdTagCriteria extends AbstractCriteria<Tag> implements C
     }
 
     @Override
-    public List<Tag> find(String[] params) {
+    public List<Tag> find(String[] params, int limit, int offset) {
         Set<Tag> result = new HashSet<>();
 
         Arrays.stream(params).forEach(certId -> {

@@ -2,6 +2,7 @@ package com.epam.esm.dto;
 
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
@@ -22,7 +23,7 @@ import java.util.StringJoiner;
  *
  * @since 1.0
  */
-public class GiftCertificateDto {
+public class GiftCertificateDto{
 
     @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "GiftCertificate's id value must be null")
     private Long id;

@@ -233,6 +233,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @throws GiftCertificateException if GiftCertificate entity with given id doesn't exist in db.
      * @since 1.0
      */
+    @Transactional
     @Override
     public void delete(long id) {
         boolean isDeleted = giftCertificateDao.delete(id);

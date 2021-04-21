@@ -3,8 +3,6 @@ package com.epam.esm.entity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,8 +20,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, columnDefinition = "varchar(50) default 'USER'")
-   // @Enumerated(value = EnumType.STRING)
+    // @Enumerated(value = EnumType.STRING)
     private String role;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_orders",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),

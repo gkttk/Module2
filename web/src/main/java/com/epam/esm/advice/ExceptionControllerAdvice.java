@@ -4,8 +4,10 @@ import com.epam.esm.advice.error.ResponseError;
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dto.result.ErrorResult;
 import com.epam.esm.exceptions.GiftCertificateException;
+import com.epam.esm.exceptions.OrderException;
 import com.epam.esm.exceptions.ResponseErrorNotFoundException;
 import com.epam.esm.exceptions.TagException;
+import com.epam.esm.exceptions.UserException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,20 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(TagException.class)
     public ResponseEntity<ResponseError> handleTagException(TagException exception) {
+        int errorCode = exception.getErrorCode();
+        ResponseError error = getError(errorCode);
+        return new ResponseEntity<>(error, error.getStatus());
+    }
+
+    @ExceptionHandler(OrderException.class)
+    public ResponseEntity<ResponseError> handleOrderException(OrderException exception) {
+        int errorCode = exception.getErrorCode();
+        ResponseError error = getError(errorCode);
+        return new ResponseEntity<>(error, error.getStatus());
+    }
+
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<ResponseError> handleUserException(UserException exception) {
         int errorCode = exception.getErrorCode();
         ResponseError error = getError(errorCode);
         return new ResponseEntity<>(error, error.getStatus());

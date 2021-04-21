@@ -1,9 +1,11 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +17,9 @@ import org.springframework.web.context.request.WebRequest;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(path = "/users", produces = "application/json")
@@ -28,9 +33,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getById(@PathVariable long id) {
+    public ResponseEntity<EntityModel<UserDto>> getById(@PathVariable long id) {
         UserDto foundUser = userService.findById(id);
-        return ResponseEntity.ok(foundUser);
+        return ResponseEntity.ok(getEntityModel(foundUser));
     }
 
     @GetMapping
@@ -42,6 +47,11 @@ public class UserController {
         return ResponseEntity.ok(tags);
     }
 
-
+    private EntityModel<UserDto> getEntityModel(UserDto userDto) {
+        Long id = userDto.getId();
+        return EntityModel.of(userDto,
+                linkTo(methodOn(UserController.class).getById(id)).withSelfRel(),
+                linkTo(methodOn(OrderController.class).createOrder(id,null)).withRel("make_an_order"));
+    }
 
 }

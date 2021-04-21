@@ -1,9 +1,7 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.criteria.Criteria;
-import com.epam.esm.criteria.result.CriteriaFactoryResult;
-import com.epam.esm.criteria.querybuilder.QueryBuilder;
+import com.epam.esm.querybuilder.QueryBuilder;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.beans.factory.annotation.Autowired;

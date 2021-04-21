@@ -1,8 +1,8 @@
 package com.epam.esm.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,21 +27,30 @@ public class Order {
     @Column(nullable = false)
     private BigDecimal cost;
     @CreationTimestamp
-    @Column(name = "creation_date", columnDefinition = "DATETIME", nullable = false, updatable = false)
+    @Column(name = "creation_date", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", nullable = false, updatable = false)
     private LocalDateTime creationDate;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "orders_certificates",
             joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "certificate_id", referencedColumnName = "id"))
     private List<GiftCertificate> giftCertificates;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(name = "users_orders",
             joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private User user;
 
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Long getId() {
         return id;
@@ -74,4 +83,5 @@ public class Order {
     public void setGiftCertificates(List<GiftCertificate> giftCertificates) {
         this.giftCertificates = giftCertificates;
     }
+
 }

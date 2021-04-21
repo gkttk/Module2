@@ -1,4 +1,4 @@
-package com.epam.esm.criteria.querybuilder;
+package com.epam.esm.querybuilder;
 
 import javax.persistence.TypedQuery;
 import java.util.Map;

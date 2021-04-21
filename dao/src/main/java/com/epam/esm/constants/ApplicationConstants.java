@@ -6,6 +6,7 @@ public final class ApplicationConstants {
 
     //table names
     public final static String CERTIFICATE_TAGS_TABLE_NAME = "certificates_tags";
+    public final static String USERS_ORDERS_TABLE_NAME = "users_orders";
 
     //joins
 
@@ -26,6 +27,9 @@ public final class ApplicationConstants {
 
     //certificate_tags table
     public final static String SAVE_CERTIFICATE_TAGS_QUERY = "INSERT INTO " + CERTIFICATE_TAGS_TABLE_NAME  + " VALUES (?,?)";
+    public final static String SAVE_USER_ORDER_QUERY = "INSERT INTO " + USERS_ORDERS_TABLE_NAME  + " VALUES (?,?)";
+
+
     public final static String DELETE_ALL_TAGS_FOR_CERTIFICATE = "DELETE FROM " + CERTIFICATE_TAGS_TABLE_NAME +
             " WHERE certificate_id = ?";
 
@@ -43,41 +47,19 @@ public final class ApplicationConstants {
     public final static String NAMES_PART_KEY = "namesPart";
     public final static String DESCRIPTION_PART_KEY = "descriptionsPart";
     public final static String TAG_NAMES_KEY = "tagNames";
-    public final static String LIMIT_KEY = "limit";
-public final static String OFFSET_KEY = "offset";
 
 
 
 
-
-    public final static String NAMES_PART_CRITERIA_BEAN_NAME = "namePartsGCCriteria";
-    public final static String DESCRIPTION_PART_CRITERIA_BEAN_NAME = "descriptionPartsGCCriteria";
-    public final static String TAG_NAMES_CRITERIA_BEAN_NAME = "tagNamesGCCriteria";
-    public final static String ALL_CRITERIA_BEAN_NAME = "allGCCriteria";
 
     //Tag factory
-    public final static String ALL_CRITERIA_TAG_BEAN_NAME = "allTagCriteria";
-    public final static String CERTIFICATE_ID_TAG_BEAN_NAME = "certificateIdTagCriteria";
     public final static String CERTIFICATE_ID_KEY = "certificateId";
 
     //User QueryBuilder
     public final static String ROLE_KEY = "role";
 
 
-    //Mappers
-    public final static String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    public final static String ID_RS_KEY = "id";
 
-    //GiftCertificate mapper
-    public final static String NAME_GC_RS_KEY = "name";
-    public final static String DESCRIPTION_GC_RS_KEY = "description";
-    public final static String PRICE_GC_RS_KEY = "price";
-    public final static String DURATION_GC_RS_KEY = "duration";
-    public final static String CREATE_DATE_GC_RS_KEY = "create_date";
-    public final static String LAST_UPDATE_DATE_GC_RS_KEY = "last_update_date";
-
-    //Tag mapper
-    public final static String NAME_TAG_RS_KEY = "name";
 
     //Services
     public final static String SORT_FIELDS_KEY = "sortFields";
@@ -86,8 +68,8 @@ public final static String OFFSET_KEY = "offset";
     //Codes
     public final static int CERTIFICATE_NOT_FOUND_CODE = 40401;
     public final static int TAG_NOT_FOUND_ERROR_CODE = 40402;
-    public final static int USER_FOUND_ERROR_CODE = 40403;
-    public final static int INVALID_SORT_FIELD_ERROR_CODE = 44601;
+    public final static int USER_NOT_FOUND_ERROR_CODE = 40403;
+    public final static int ORDER_NOT_FOUND_ERROR_CODE = 40404;
     public final static int CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE = 42010;
     public final static int TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE = 42000;
     public final static int DEFAULT_VALIDATION_ERROR_CODE = 50000;

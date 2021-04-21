@@ -5,6 +5,7 @@ import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -54,6 +55,7 @@ public class TagController {
         List<EntityModel<TagDto>> result = tags.stream()
                 .map(this::getEntityModel)
                 .collect(Collectors.toList());
+
 
         return ResponseEntity.ok(result);
     }

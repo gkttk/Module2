@@ -1,15 +1,11 @@
 package com.epam.esm.validator;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.UserDao;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
-import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.exceptions.TagException;
+import com.epam.esm.exceptions.UserException;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 /**
  * Implementation of {@link EntityValidator} for TagEntity.
@@ -25,21 +21,21 @@ public class UserValidator implements EntityValidator<User> {
         this.userDao = userDao;
     }
 
-    public User validateAndFindByIdIfExist(long tagId) {
-      User foundUser = userDao.findById(tagId);
+    public User validateAndFindByIdIfExist(long userId) {
+      User foundUser = userDao.findById(userId);
       if (foundUser == null){
-          throw  new TagException(ApplicationConstants.USER_FOUND_ERROR_CODE, String.format("Can't find an user with id: %d", tagId));
+          throw  new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, String.format("Can't find an user with id: %d", userId));
       }
       return foundUser;
 
     }
 
-    public void validateIfEntityWithGivenNameExist(String tagName) {
+    public void validateIfEntityWithGivenNameExist(String userName) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void validateIfAnotherEntityWithGivenNameExist(String tagName, long tagId) {
+    public void validateIfAnotherEntityWithGivenNameExist(String userName, long taguserIdId) {
         throw new UnsupportedOperationException();
     }
 

@@ -1,4 +1,4 @@
-package com.epam.esm.criteria.querybuilder;
+package com.epam.esm.querybuilder;
 
 import com.epam.esm.constants.ApplicationConstants;
 

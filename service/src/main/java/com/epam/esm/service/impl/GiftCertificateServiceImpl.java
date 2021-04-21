@@ -1,8 +1,6 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.criteria.Criteria;
-import com.epam.esm.criteria.factory.GiftCertificateCriteriaFactory;
 import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;

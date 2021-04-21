@@ -1,4 +1,4 @@
-package com.epam.esm.criteria.querybuilder;
+package com.epam.esm.querybuilder;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.entity.GiftCertificate;
@@ -61,7 +61,7 @@ public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertif
         return Stream.of(params)
                 .map(param -> {
                     Join<GiftCertificate, Tag> join = root.join(attributeName);
-                    return criteriaBuilder.equal(join.get(fieldName), param);  //todo like
+                    return criteriaBuilder.equal(join.get(fieldName), param);
 
                 }).reduce(criteriaBuilder::or).orElse(null);
     }

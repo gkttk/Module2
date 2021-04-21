@@ -1,6 +1,7 @@
 package com.epam.esm.dto;
 
 import com.epam.esm.dto.groups.PatchGroup;
+import com.epam.esm.dto.groups.SaveOrderGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -26,6 +27,7 @@ import java.util.StringJoiner;
 public class GiftCertificateDto{
 
     @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "GiftCertificate's id value must be null")
+    @NotNull(groups = {SaveOrderGroup.class}, message = "GiftCertificate's id value must not be null")
     private Long id;
     @NotBlank(groups = UpdateGroup.class, message = "GiftCertificate's name value must contain 2-35 characters and not be null")
     @Size(min = 2, max = 35, message = "GiftCertificate's name value must contain 2-35 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})

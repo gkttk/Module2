@@ -1,13 +1,11 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.criteria.Criteria;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.TagException;
 import com.epam.esm.service.TagService;
-import com.epam.esm.sorting.SortingHelper;
 import com.epam.esm.validator.EntityValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +27,12 @@ public class TagServiceImpl implements TagService {
 
     private final TagDao tagDao;
     private final ModelMapper modelMapper;
-    private final SortingHelper<Tag> sortingHelper;
     private final EntityValidator<Tag> validator;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, SortingHelper<Tag> sortingHelper, EntityValidator<Tag> validator) {
+    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, EntityValidator<Tag> validator) {
         this.tagDao = tagDao;
         this.modelMapper = modelMapper;
-        this.sortingHelper = sortingHelper;
         this.validator = validator;
     }
 

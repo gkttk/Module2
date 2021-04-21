@@ -56,16 +56,6 @@ public class GiftCertificateController {
         return ResponseEntity.ok(result);
     }
 
-    private EntityModel<GiftCertificateDto> getEntityModel(GiftCertificateDto certificate) {
-        Long id = certificate.getId();
-        return EntityModel.of(certificate,
-                linkTo(methodOn(GiftCertificateController.class).getById(id)).withSelfRel(),
-                linkTo(methodOn(GiftCertificateController.class).updateCertificate(null, id)).withRel("update"),
-                linkTo(methodOn(GiftCertificateController.class).patchCertificate(null, id)).withRel("partial_update"),
-                linkTo(methodOn(GiftCertificateController.class).deleteById(id)).withRel("delete"));
-    }
-
-
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<GiftCertificateDto>> getById(@PathVariable long id) {
         GiftCertificateDto certificate = giftCertificateService.findById(id);
@@ -98,6 +88,16 @@ public class GiftCertificateController {
         GiftCertificateDto certificate = giftCertificateService.patch(giftCertificateDto, id);
         return ResponseEntity.ok(getEntityModel(certificate));
     }
+
+    private EntityModel<GiftCertificateDto> getEntityModel(GiftCertificateDto certificate) {
+        Long id = certificate.getId();
+        return EntityModel.of(certificate,
+                linkTo(methodOn(GiftCertificateController.class).getById(id)).withSelfRel(),
+                linkTo(methodOn(GiftCertificateController.class).updateCertificate(null, id)).withRel("update"),
+                linkTo(methodOn(GiftCertificateController.class).patchCertificate(null, id)).withRel("partial_update"),
+                linkTo(methodOn(GiftCertificateController.class).deleteById(id)).withRel("delete"));
+    }
+
 
 
 }

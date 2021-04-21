@@ -5,6 +5,7 @@ import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,9 +22,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(path = "/tags", produces = "application/json")
+@RequestMapping(path = "/tags", produces = "application/hal+json")
 public class TagController {
 
     private final TagService tagService;
@@ -40,18 +45,30 @@ public class TagController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TagDto>> getAll(WebRequest request,
-                                               @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
-                                               @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+    public ResponseEntity<List<EntityModel<TagDto>>> getAll(WebRequest request,
+                                                            @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                            @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
         List<TagDto> tags = tagService.findAllForQuery(reqParams, limit, offset);
-        return ResponseEntity.ok(tags);
+
+        List<EntityModel<TagDto>> result = tags.stream()
+                .map(this::getEntityModel)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TagDto> getById(@PathVariable long id) {
+    public ResponseEntity<EntityModel<TagDto>> getById(@PathVariable long id) {
         TagDto tag = tagService.findById(id);
-        return ResponseEntity.ok(tag);
+        return ResponseEntity.ok(getEntityModel(tag));
+    }
+
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<EntityModel<TagDto>> createTag(@RequestBody @Validated({PatchGroup.class, UpdateGroup.class}) @Valid TagDto tagDto) {
+        TagDto tag = tagService.save(tagDto);
+        return ResponseEntity.ok(getEntityModel(tag));
+
     }
 
     @DeleteMapping("/{id}")
@@ -60,11 +77,11 @@ public class TagController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping(consumes = "application/json")
-    public ResponseEntity<TagDto> createTag(@RequestBody @Validated({PatchGroup.class, UpdateGroup.class}) @Valid TagDto tagDto) {
-        TagDto savedTag = tagService.save(tagDto);
-        return ResponseEntity.ok(savedTag);
-
+    private EntityModel<TagDto> getEntityModel(TagDto tag) {
+        Long id = tag.getId();
+        return EntityModel.of(tag,
+                linkTo(methodOn(TagController.class).getById(id)).withSelfRel(),
+                linkTo(methodOn(TagController.class).deleteById(id)).withRel("delete"));
     }
 
 

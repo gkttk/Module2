@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.groups.SaveOrderGroup;
 import com.epam.esm.service.OrderService;
@@ -12,10 +13,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/users/{userId}/orders", produces = "application/hal+json")
@@ -35,8 +41,12 @@ public class OrderController {
     }
 
    @GetMapping
-    public ResponseEntity<List<OrderDto>> getAll(@PathVariable Long userId) {
-        List<OrderDto> orders = orderService.findAll(userId);
+    public ResponseEntity<List<OrderDto>> getAll(WebRequest webRequest, @PathVariable Long userId,
+                                                 @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                 @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+       Map<String, String[]> reqParamMap =new HashMap<>(webRequest.getParameterMap());
+       reqParamMap.put(ApplicationConstants.USER_ID_KEY, new String[]{String.valueOf(userId)});
+       List<OrderDto> orders = orderService.findAllForQuery(reqParamMap, limit, offset);
         return ResponseEntity.ok(orders);
     }
 

@@ -6,6 +6,7 @@ import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dao.UsersOrdersDao;
 import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,14 +28,12 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderDao orderDao;
     private final UserDao userDao;
-    private final UsersOrdersDao usersOrdersDao;
     private final GiftCertificateDao giftCertificateDao;
     private final ModelMapper modelMapper;
 
-    public OrderServiceImpl(OrderDao orderDao, UserDao userDao, UsersOrdersDao usersOrdersDao, GiftCertificateDao giftCertificateDao, ModelMapper modelMapper) {
+    public OrderServiceImpl(OrderDao orderDao, UserDao userDao, GiftCertificateDao giftCertificateDao, ModelMapper modelMapper) {
         this.orderDao = orderDao;
         this.userDao = userDao;
-        this.usersOrdersDao = usersOrdersDao;
         this.giftCertificateDao = giftCertificateDao;
         this.modelMapper = modelMapper;
     }
@@ -66,9 +66,6 @@ public class OrderServiceImpl implements OrderService {
         order.setUser(user);
         Order savedOrder = orderDao.save(order);
 
-
-        //  usersOrdersDao.save(userId, savedOrder.getId());
-
         return modelMapper.map(savedOrder, OrderDto.class);
     }
 
@@ -83,16 +80,10 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public List<OrderDto> findAll(Long userId) {
-        User user = userDao.findById(userId);
-        if (user == null) {
-            throw new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, String.format("Can't find an user with id: %d", userId));
-        }
-
-        List<Order> orders = orderDao.findAll(userId);
-
-        return orders.stream()
-                .map(order -> modelMapper.map(order, OrderDto.class))
+    public List<OrderDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
+        List<Order> foundOrders = orderDao.findBy(reqParams, limit, offset);
+        return foundOrders.stream()
+                .map(entity -> modelMapper.map(entity, OrderDto.class))
                 .collect(Collectors.toList());
     }
 }

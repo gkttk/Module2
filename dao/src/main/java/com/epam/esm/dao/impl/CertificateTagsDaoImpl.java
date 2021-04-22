@@ -3,7 +3,6 @@ package com.epam.esm.dao.impl;
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.CertificateTagsDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -18,12 +17,10 @@ import javax.persistence.Query;
 public class CertificateTagsDaoImpl implements CertificateTagsDao {
 
     private final EntityManager entityManager;
-    private final JdbcTemplate template;
 
     @Autowired
-    public CertificateTagsDaoImpl(EntityManager entityManager, JdbcTemplate template) {
+    public CertificateTagsDaoImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.template = template;
     }
 
     /**
@@ -51,6 +48,5 @@ public class CertificateTagsDaoImpl implements CertificateTagsDao {
     public void deleteAllTagsForCertificate(long certificateId) {
         entityManager.createNativeQuery(ApplicationConstants.DELETE_ALL_TAGS_FOR_CERTIFICATE)
                 .setParameter(1, certificateId).executeUpdate();
-        //template.update(ApplicationConstants.DELETE_ALL_TAGS_FOR_CERTIFICATE, certificateId);
     }
 }

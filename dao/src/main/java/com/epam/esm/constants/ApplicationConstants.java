@@ -13,6 +13,7 @@ public final class ApplicationConstants {
 
     public final static String TAGS_ATTRIBUTE_NAME = "tags";
     public final static String GC_ATTRIBUTE_NAME = "giftCertificates";
+    public final static String USER_ATTRIBUTE_NAME = "user";
     public final static String FIND_ALL_GC_BY_TAG_NAMES = "SELECT gc FROM GiftCertificate gc JOIN gc.tags t WHERE t.name =:name";
     public final static String GET_ALL_TAG_BY_CERTIFICATE_ID = "SELECT t FROM Tag t JOIN t.giftCertificates gc WHERE gc.id = :certificateId";
 
@@ -54,6 +55,7 @@ public final class ApplicationConstants {
 
     //Tag factory
     public final static String CERTIFICATE_ID_KEY = "certificateId";
+    public final static String USER_ID_KEY = "userId";
 
     //User QueryBuilder
     public final static String ROLE_KEY = "role";
@@ -77,6 +79,12 @@ public final class ApplicationConstants {
     //SortingHelper
     public final static String DESC_ORDER = "desc";
     public final static String ASC_ORDER = "asc";
+
+
+    //Order
+    public final static String ORDER_ID_FIELD = "id";
+    public final static String ORDER_COST_FIELD = "cost";
+    public final static String ORDER_CREATION_DATE_FIELD = "creationDate";
 
     //User
     public final static String USER_ID_FIELD = "id";

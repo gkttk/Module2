@@ -3,6 +3,8 @@ package com.epam.esm.dto;
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.SaveOrderGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
+import com.epam.esm.entity.GiftCertificate;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.Valid;
@@ -18,6 +20,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * This DTO is validated to fully update a GiftCertificate entity.

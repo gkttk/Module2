@@ -2,15 +2,11 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
+import com.epam.esm.querybuilder.QueryBuilder;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,12 +15,14 @@ import java.util.Optional;
 public class OrderDaoImpl implements OrderDao {
 
     private final EntityManager entityManager;
+    private final QueryBuilder<Order> queryBuilder;
 
-    public OrderDaoImpl(EntityManager entityManager) {
+
+    public OrderDaoImpl(EntityManager entityManager, QueryBuilder<Order> queryBuilder) {
         this.entityManager = entityManager;
+        this.queryBuilder = queryBuilder;
     }
 
-    @Transactional
     @Override
     public Order save(Order order) {
         entityManager.persist(order);
@@ -39,7 +37,6 @@ public class OrderDaoImpl implements OrderDao {
         return Optional.ofNullable(order);
     }
 
-    @Transactional
     @Override
     public boolean delete(long id) {
         Order order = entityManager.find(Order.class, id);
@@ -51,22 +48,10 @@ public class OrderDaoImpl implements OrderDao {
     }
 
 
-
     @Override
-    public List<Order> findAll(Long userId) {
-
-        List<Order> result = new ArrayList<>();
-
-        User user = entityManager.find(User.class, userId);
-        if (user != null){
-            return user.getOrders();
-        }
-        return result;
-        /*String hql = "SELECT o from Order o JOIN o.user ou WHERE ou.id = :userId";
-        TypedQuery<Order> query = entityManager.createQuery(hql, Order.class);
-        query.setParameter("userId", userId);
-        return query.getResultList();*/
-
+    public List<Order> findBy(Map<String, String[]> reqParams, int limit, int offset) {
+        TypedQuery<Order> query = queryBuilder.buildQuery(reqParams, limit, offset);
+        return query.getResultList();
     }
 
 

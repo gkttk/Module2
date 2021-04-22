@@ -1,8 +1,10 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.TagDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrderService {
 
@@ -12,5 +14,5 @@ public interface OrderService {
 
     void delete(long id);
 
-    List<OrderDto> findAll(Long userId);
+    List<OrderDto> findAllForQuery(Map<String, String[]> reqParams,int limit, int offset);
 }

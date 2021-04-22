@@ -1,11 +1,10 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dao.UserDao;
-import com.epam.esm.dto.TagDto;
+import com.epam.esm.assemblers.ModelAssembler;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,40 +17,32 @@ import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 @RestController
 @RequestMapping(path = "/users", produces = "application/json")
 public class UserController {
 
     private final UserService userService;
+    private final ModelAssembler<UserDto> assembler;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ModelAssembler<UserDto> assembler) {
         this.userService = userService;
+        this.assembler = assembler;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<UserDto>> getById(@PathVariable long id) {
+    public ResponseEntity<UserDto> getById(@PathVariable long id) {
         UserDto foundUser = userService.findById(id);
-        return ResponseEntity.ok(getEntityModel(foundUser));
+        return ResponseEntity.ok(assembler.toModel(foundUser));
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAll(WebRequest request,
-                                               @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
-                                               @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+    public ResponseEntity<CollectionModel<UserDto>> getAllForQuery(WebRequest request,
+                                                                   @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                   @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
-        List<UserDto> tags = userService.findAllForQuery(reqParams, limit, offset);
-        return ResponseEntity.ok(tags);
-    }
-
-    private EntityModel<UserDto> getEntityModel(UserDto userDto) {
-        Long id = userDto.getId();
-        return EntityModel.of(userDto,
-                linkTo(methodOn(UserController.class).getById(id)).withSelfRel(),
-                linkTo(methodOn(OrderController.class).createOrder(id,null)).withRel("make_an_order"));
+        List<UserDto> users = userService.findAllForQuery(reqParams, limit, offset);
+        return ResponseEntity.ok(assembler.toCollectionModel(users, offset));
     }
 
 }

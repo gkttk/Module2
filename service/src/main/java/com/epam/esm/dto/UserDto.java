@@ -4,6 +4,8 @@ import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.SaveOrderGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.entity.Order;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -17,7 +19,8 @@ import java.util.List;
  *
  * @since 1.0
  */
-public class UserDto {
+@Relation(itemRelation = "user", collectionRelation = "users")
+public class UserDto extends RepresentationModel<TagDto> {
 
     @Null(message = "User's id value must be null", groups = {UpdateGroup.class, PatchGroup.class})
     @NotNull(groups = {SaveOrderGroup.class}, message = "User's id value must not be null")

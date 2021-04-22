@@ -6,6 +6,7 @@ import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
@@ -29,7 +30,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  *
  * @since 1.0
  */
-public class GiftCertificateDto{
+@Relation(itemRelation = "gift_certificate", collectionRelation = "gift_certificates")
+public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto>  {
 
     @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "GiftCertificate's id value must be null")
     @NotNull(groups = {SaveOrderGroup.class}, message = "GiftCertificate's id value must not be null")

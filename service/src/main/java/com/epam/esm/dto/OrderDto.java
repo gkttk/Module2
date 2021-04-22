@@ -1,6 +1,8 @@
 package com.epam.esm.dto;
 
 import com.epam.esm.dto.groups.SaveOrderGroup;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
@@ -10,8 +12,8 @@ import javax.validation.constraints.Null;
 import java.math.BigDecimal;
 import java.util.List;
 
-
-public class OrderDto {
+@Relation(itemRelation = "order", collectionRelation = "orders")
+public class OrderDto extends RepresentationModel<OrderDto> {
 
     @Null(message = "Order's id value must be null", groups = {SaveOrderGroup.class})
     private Long id;

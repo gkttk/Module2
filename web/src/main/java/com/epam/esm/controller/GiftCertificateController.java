@@ -1,11 +1,16 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.assemblers.GiftCertificateModelAssembler;
+import com.epam.esm.assemblers.ModelAssembler;
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,31 +40,27 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class GiftCertificateController {
 
     private final GiftCertificateService giftCertificateService;
+    private final ModelAssembler<GiftCertificateDto> assembler;
 
     @Autowired
-    public GiftCertificateController(GiftCertificateService giftCertificateService) {
+    public GiftCertificateController(GiftCertificateService giftCertificateService, GiftCertificateModelAssembler assembler) {
         this.giftCertificateService = giftCertificateService;
+        this.assembler = assembler;
     }
 
     @GetMapping
-    public ResponseEntity<List<EntityModel<GiftCertificateDto>>> getAllForQuery(WebRequest webRequest,
+    public ResponseEntity<CollectionModel<GiftCertificateDto>> getAllForQuery(WebRequest webRequest,
                                                                                 @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
                                                                                 @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> parameterMap = webRequest.getParameterMap();
-
         List<GiftCertificateDto> certificates = giftCertificateService.findAllForQuery(parameterMap, limit, offset);
-
-        List<EntityModel<GiftCertificateDto>> result = certificates.stream()
-                .map(this::getEntityModel)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(assembler.toCollectionModel(certificates, offset));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<GiftCertificateDto>> getById(@PathVariable long id) {
+    public ResponseEntity<GiftCertificateDto> getById(@PathVariable long id) {
         GiftCertificateDto certificate = giftCertificateService.findById(id);
-        return ResponseEntity.ok(getEntityModel(certificate));
+        return ResponseEntity.ok(assembler.toModel(certificate));
     }
 
     @DeleteMapping("/{id}")
@@ -68,36 +69,25 @@ public class GiftCertificateController {
         return ResponseEntity.noContent().build();
     }
 
-
     @PostMapping
-    public ResponseEntity<EntityModel<GiftCertificateDto>> createCertificate(@RequestBody @Validated(UpdateGroup.class) @Valid GiftCertificateDto certificateDto) {
+    public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody @Validated(UpdateGroup.class) @Valid GiftCertificateDto certificateDto) {
         GiftCertificateDto certificate = giftCertificateService.save(certificateDto);
-        return ResponseEntity.ok(getEntityModel(certificate));
+        return ResponseEntity.ok(assembler.toModel(certificate));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EntityModel<GiftCertificateDto>> updateCertificate(@RequestBody @Validated(UpdateGroup.class) @Valid GiftCertificateDto giftCertificateDto,
+    public ResponseEntity<GiftCertificateDto> updateCertificate(@RequestBody @Validated(UpdateGroup.class) @Valid GiftCertificateDto giftCertificateDto,
                                                                              @PathVariable long id) {
         GiftCertificateDto certificate = giftCertificateService.update(giftCertificateDto, id);
-        return ResponseEntity.ok(getEntityModel(certificate));
+        return ResponseEntity.ok(assembler.toModel(certificate));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<EntityModel<GiftCertificateDto>> patchCertificate(@RequestBody @Validated(PatchGroup.class) @Valid GiftCertificateDto giftCertificateDto,
+    public ResponseEntity<GiftCertificateDto> patchCertificate(@RequestBody @Validated(PatchGroup.class) @Valid GiftCertificateDto giftCertificateDto,
                                                                             @PathVariable long id) {
         GiftCertificateDto certificate = giftCertificateService.patch(giftCertificateDto, id);
-        return ResponseEntity.ok(getEntityModel(certificate));
+        return ResponseEntity.ok(assembler.toModel(certificate));
     }
-
-    private EntityModel<GiftCertificateDto> getEntityModel(GiftCertificateDto certificate) {
-        Long id = certificate.getId();
-        return EntityModel.of(certificate,
-                linkTo(methodOn(GiftCertificateController.class).getById(id)).withSelfRel(),
-                linkTo(methodOn(GiftCertificateController.class).updateCertificate(null, id)).withRel("update"),
-                linkTo(methodOn(GiftCertificateController.class).patchCertificate(null, id)).withRel("partial_update"),
-                linkTo(methodOn(GiftCertificateController.class).deleteById(id)).withRel("delete"));
-    }
-
 
 
 }

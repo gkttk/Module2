@@ -2,6 +2,8 @@ package com.epam.esm.dto;
 
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
@@ -14,7 +16,8 @@ import java.util.StringJoiner;
  *
  * @since 1.0
  */
-public class TagDto {
+@Relation(itemRelation = "tag", collectionRelation = "tags")
+public class TagDto extends RepresentationModel<TagDto> {
 
     @Null(message = "Tag's id value must be null", groups = {UpdateGroup.class, PatchGroup.class})
     private Long id;

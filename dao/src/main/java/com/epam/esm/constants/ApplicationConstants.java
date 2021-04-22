@@ -4,6 +4,18 @@ public final class ApplicationConstants {
 
     private ApplicationConstants() {}
 
+    //defaults
+    public final static int DEFAULT_LIMIT = 5;
+
+    //hateoas
+    public final static String UPDATE = "update";
+    public final static String PARTIAL_UPDATE = "partial_update";
+    public final static String DELETE = "delete";
+    public final static String FIRST_PAGE = "firstPage";
+    public final static String NEXT_PAGE = "nextPage";
+    public final static String MAKE_ORDER = "make_an_order";
+
+
     //table names
     public final static String CERTIFICATE_TAGS_TABLE_NAME = "certificates_tags";
     public final static String USERS_ORDERS_TABLE_NAME = "users_orders";

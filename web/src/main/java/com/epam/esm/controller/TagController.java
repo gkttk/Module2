@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.assemblers.ModelAssembler;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
@@ -23,7 +24,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -33,44 +33,40 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class TagController {
 
     private final TagService tagService;
+    private final ModelAssembler<TagDto> assembler;
 
     @Autowired
-    public TagController(TagService tagService) {
+    public TagController(TagService tagService, ModelAssembler<TagDto> assembler) {
         this.tagService = tagService;
+        this.assembler = assembler;
     }
 
     @GetMapping(params = "tagName")
     public ResponseEntity<TagDto> getByName(@RequestParam String tagName) {
         TagDto tag = tagService.findByName(tagName);
-        return ResponseEntity.ok(tag);
+        return ResponseEntity.ok(assembler.toModel(tag));
     }
 
     @GetMapping
-    public ResponseEntity<List<EntityModel<TagDto>>> getAll(WebRequest request,
-                                                            @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
-                                                            @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+    public ResponseEntity<CollectionModel<TagDto>> getAllForQuery(WebRequest request,
+                                                                  @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                  @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
         List<TagDto> tags = tagService.findAllForQuery(reqParams, limit, offset);
 
-        List<EntityModel<TagDto>> result = tags.stream()
-                .map(this::getEntityModel)
-                .collect(Collectors.toList());
-
-
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(assembler.toCollectionModel(tags, offset));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<TagDto>> getById(@PathVariable long id) {
+    public ResponseEntity<TagDto> getById(@PathVariable long id) {
         TagDto tag = tagService.findById(id);
-        return ResponseEntity.ok(getEntityModel(tag));
+        return ResponseEntity.ok(assembler.toModel(tag));
     }
 
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<EntityModel<TagDto>> createTag(@RequestBody @Validated({PatchGroup.class, UpdateGroup.class}) @Valid TagDto tagDto) {
+    public ResponseEntity<TagDto> createTag(@RequestBody @Validated({PatchGroup.class, UpdateGroup.class}) @Valid TagDto tagDto) {
         TagDto tag = tagService.save(tagDto);
-        return ResponseEntity.ok(getEntityModel(tag));
-
+        return ResponseEntity.ok(assembler.toModel(tag));
     }
 
     @DeleteMapping("/{id}")
@@ -78,13 +74,5 @@ public class TagController {
         tagService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-    private EntityModel<TagDto> getEntityModel(TagDto tag) {
-        Long id = tag.getId();
-        return EntityModel.of(tag,
-                linkTo(methodOn(TagController.class).getById(id)).withSelfRel(),
-                linkTo(methodOn(TagController.class).deleteById(id)).withRel("delete"));
-    }
-
 
 }

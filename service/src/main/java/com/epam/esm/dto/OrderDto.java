@@ -5,8 +5,6 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.Valid;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.math.BigDecimal;
@@ -17,12 +15,11 @@ public class OrderDto extends RepresentationModel<OrderDto> {
 
     @Null(message = "Order's id value must be null", groups = {SaveOrderGroup.class})
     private Long id;
-    @NotNull(groups = SaveOrderGroup.class, message = "Order's cost value must be 0.1-10000 and not null")
-    @DecimalMin(value = "0.1", message = "Order's cost value must be 0.1-10000 and not null", groups = {SaveOrderGroup.class})
-    @DecimalMax(value = "10000", message = "Order's cost value must be 0.1-10000 and not null", groups = {SaveOrderGroup.class})
+    @Null(groups = SaveOrderGroup.class, message = "Order's cost must be null")
     private BigDecimal cost;
     @Null(groups = {SaveOrderGroup.class}, message = "Order's creation date value must be null")
     private String creationDate;
+    @NotNull(groups = SaveOrderGroup.class, message = "Order's gift certificates value must be not null")
     @Valid
     private List<GiftCertificateDto> giftCertificates;
 

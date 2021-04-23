@@ -4,6 +4,7 @@ import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.SaveOrderDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
@@ -15,9 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,15 +26,15 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderDao orderDao;
-    private final GiftCertificateDao giftCertificateDao;
     private final ModelMapper modelMapper;
     private final EntityValidator<User> userValidator;
+    private final EntityValidator<GiftCertificate> giftCertificateValidator;
 
-    public OrderServiceImpl(OrderDao orderDao, GiftCertificateDao giftCertificateDao, ModelMapper modelMapper, EntityValidator<User> userValidator) {
+    public OrderServiceImpl(OrderDao orderDao, ModelMapper modelMapper, EntityValidator<User> userValidator, EntityValidator<GiftCertificate> giftCertificateValidator) {
         this.orderDao = orderDao;
-        this.giftCertificateDao = giftCertificateDao;
         this.modelMapper = modelMapper;
         this.userValidator = userValidator;
+        this.giftCertificateValidator = giftCertificateValidator;
     }
 
     @Override
@@ -45,31 +46,39 @@ public class OrderServiceImpl implements OrderService {
         return modelMapper.map(order, OrderDto.class);
     }
 
-    @Transactional
+
     @Override
-    public OrderDto save(OrderDto orderDto, Long userId) {
+    @Transactional
+    public OrderDto save(List<SaveOrderDto> saveOrderDtoList, Long userId) {
         User user = userValidator.validateAndFindByIdIfExist(userId);
 
-        List<GiftCertificate> foundCertificates = orderDto.getGiftCertificates().stream()
-                .map(giftCertificate -> giftCertificateDao.findById(giftCertificate.getId()))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<GiftCertificate> certificatesForOrder = new ArrayList<>();
+        saveOrderDtoList
+                .forEach(saveOrderDto -> {
+                    long certificateId = saveOrderDto.getCertificateId();
+                    GiftCertificate foundCertificate = giftCertificateValidator.validateAndFindByIdIfExist(certificateId);
+                    int count = saveOrderDto.getCount();
+                    for (int i = 0; i < count; i++) {
+                        certificatesForOrder.add(foundCertificate);
+                    }
+                });
 
-        BigDecimal orderPrice = foundCertificates.stream()
+        BigDecimal orderPrice = certificatesForOrder.stream()
                 .map(GiftCertificate::getPrice)
                 .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
 
         Order order = new Order();
         order.setCost(orderPrice);
-        order.setGiftCertificates(foundCertificates);
+        order.setGiftCertificates(certificatesForOrder);
         order.setUser(user);
         Order savedOrder = orderDao.save(order);
 
         return modelMapper.map(savedOrder, OrderDto.class);
     }
 
-    @Transactional
+
     @Override
+    @Transactional
     public void delete(long id) {
         boolean isDeleted = orderDao.delete(id);
         if (!isDeleted) {

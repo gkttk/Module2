@@ -43,15 +43,6 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements Quer
         return predicates;
     }
 
-    private Predicate getJoinPredicate(String[] params, String attributeName, String fieldName, CriteriaBuilder criteriaBuilder, Root<User> root) {
-        return Stream.of(params)
-                .map(param -> {
-                    Join<Tag, GiftCertificate> join = root.join(attributeName);
-                    return criteriaBuilder.equal(join.get(fieldName), param);
-
-                }).reduce(criteriaBuilder::or).orElse(null);
-    }
-
 
     protected void setOrder(String field, String order, CriteriaQuery<User> query, Root<User> root,
                             CriteriaBuilder criteriaBuilder) {

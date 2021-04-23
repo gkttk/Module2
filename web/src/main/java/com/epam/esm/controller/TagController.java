@@ -75,4 +75,10 @@ public class TagController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/max")
+    public ResponseEntity<TagDto> getUserWithMaxOrderCost() {
+        TagDto tagDto = tagService.findMostWidelyUsed();
+        return ResponseEntity.ok(assembler.toModel(tagDto));
+    }
+
 }

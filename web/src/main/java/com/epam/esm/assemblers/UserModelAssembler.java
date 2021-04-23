@@ -27,7 +27,7 @@ public class UserModelAssembler extends RepresentationModelAssemblerSupport<User
     public UserDto toModel(UserDto entity) {
         Long id = entity.getId();
         entity.add(linkTo(methodOn(UserController.class).getById(id)).withSelfRel());
-        entity.add(linkTo(methodOn(OrderController.class).createOrder(id,null)).withRel(ApplicationConstants.MAKE_ORDER));
+        entity.add(linkTo(methodOn(UserController.class).createOrder(id,null)).withRel(ApplicationConstants.MAKE_ORDER));
         return entity;
     }
 

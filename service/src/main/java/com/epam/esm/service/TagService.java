@@ -23,4 +23,6 @@ public interface TagService {
     void delete(long id);
 
     TagDto findByName(String tagName);
+
+    TagDto findMostWidelyUsed();
 }

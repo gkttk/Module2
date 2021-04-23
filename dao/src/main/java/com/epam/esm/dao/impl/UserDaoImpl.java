@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,21 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User findById(long id) {
         return entityManager.find(User.class, id);
+    }
+
+    @Override
+    public List<User> findWithMaxOrderCost() {
+        String hqlMaxOrdersCost = "SELECT sum(o.cost) FROM Order o JOIN o.user u GROUP BY u.id ";
+        TypedQuery<BigDecimal> query = entityManager.createQuery(hqlMaxOrdersCost, BigDecimal.class);
+        query.setMaxResults(1);
+        BigDecimal maxCost = query.getSingleResult();
+
+
+        String hql = "SELECT u FROM User u JOIN u.orders uo GROUP BY u.id HAVING sum(uo.cost) = :maxCost";
+        TypedQuery<User> userTypedQuery = entityManager.createQuery(hql, User.class);
+        userTypedQuery.setParameter("maxCost", maxCost);
+
+        return userTypedQuery.getResultList();
     }
 
 }

@@ -1,0 +1,19 @@
+package com.epam.esm.dto;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+@Data
+@NoArgsConstructor
+public class SaveOrderDto {
+
+    @NotNull(message = "CertificateId value must be not null")
+    private Long certificateId;
+
+    @NotNull(message = "Count value must be greater than 0 and not null")
+    @Min(value = 1, message = "Count value must be greater than 0 and not null")
+    private Integer count;
+}

@@ -41,4 +41,5 @@ public class UserServiceImpl implements UserService {
                 .map(entity -> modelMapper.map(entity, UserDto.class))
                 .collect(Collectors.toList());
     }
+
 }

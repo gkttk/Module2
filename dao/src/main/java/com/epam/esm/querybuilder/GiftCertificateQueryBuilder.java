@@ -52,6 +52,13 @@ public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertif
             criteriaBuilder.or(predicate);
             predicates.add(criteriaBuilder.or(predicate));
         }
+        params = reqParams.get(ApplicationConstants.TAG_AND_NAMES_KEY);
+        if (params != null) {
+            Predicate predicate = getJoinAndPredicate(params, ApplicationConstants.TAGS_ATTRIBUTE_NAME,
+                    ApplicationConstants.TAG_NAME_FIELD, criteriaBuilder, root);//todo
+            criteriaBuilder.and(predicate);
+            predicates.add(criteriaBuilder.or(predicate));
+        }
 
         return predicates;
     }
@@ -64,6 +71,15 @@ public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertif
                     return criteriaBuilder.equal(join.get(fieldName), param);
 
                 }).reduce(criteriaBuilder::or).orElse(null);
+    }
+
+    private Predicate getJoinAndPredicate(String[] params, String attributeName, String fieldName, CriteriaBuilder criteriaBuilder, Root<GiftCertificate> root) {
+        return Stream.of(params)
+                .map(param -> {
+                    Join<GiftCertificate, Tag> join = root.join(attributeName);
+                    return criteriaBuilder.equal(join.get(fieldName), param);
+
+                }).reduce(criteriaBuilder::and).orElse(null);
     }
 
 

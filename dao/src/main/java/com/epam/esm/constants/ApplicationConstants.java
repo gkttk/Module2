@@ -60,6 +60,7 @@ public final class ApplicationConstants {
     public final static String NAMES_PART_KEY = "namesPart";
     public final static String DESCRIPTION_PART_KEY = "descriptionsPart";
     public final static String TAG_NAMES_KEY = "tagNames";
+    public final static String TAG_AND_NAMES_KEY = "tagNames(and)";
 
 
 

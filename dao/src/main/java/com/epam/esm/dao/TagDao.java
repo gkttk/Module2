@@ -18,7 +18,7 @@ public interface TagDao {
      * This method combines all getList queries.
      *
      * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
-     *                           and arrays of params for searching.
+     *                  and arrays of params for searching.
      * @param limit
      * @param offset
      * @return list of Tag entities

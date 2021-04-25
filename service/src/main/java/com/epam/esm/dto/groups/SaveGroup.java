@@ -1,4 +1,4 @@
 package com.epam.esm.dto.groups;
 
-public interface SaveOrderGroup {
+public interface SaveGroup {
 }

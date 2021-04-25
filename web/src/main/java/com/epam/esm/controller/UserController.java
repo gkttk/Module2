@@ -5,7 +5,8 @@ import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.SaveOrderDto;
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.dto.groups.SaveOrderGroup;
+import com.epam.esm.dto.groups.SaveGroup;
+import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +89,12 @@ public class UserController {
                                                 @RequestBody @Valid List<SaveOrderDto> saveOrderDtoList) {
         OrderDto order = orderService.save(saveOrderDtoList, userId);
         return ResponseEntity.ok(orderAssembler.toModel(order));
+    }
+
+    @PostMapping
+    public ResponseEntity<UserDto> saveUser(@RequestBody @Validated(SaveGroup.class) @Valid UserDto user) {
+        UserDto savedUser = userService.save(user);
+        return ResponseEntity.ok(userAssembler.toModel(savedUser));
     }
 
 

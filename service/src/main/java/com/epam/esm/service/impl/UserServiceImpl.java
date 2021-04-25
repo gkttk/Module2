@@ -1,14 +1,13 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.UserDao;
-import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.service.UserService;
 import com.epam.esm.validator.EntityValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,6 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final ModelMapper modelMapper;
     private final EntityValidator<User> validator;
-
 
     public UserServiceImpl(UserDao userDao, ModelMapper modelMapper, EntityValidator<User> validator) {
         this.userDao = userDao;
@@ -42,4 +40,13 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public UserDto save(UserDto user) {
+        validator.validateIfEntityWithGivenNameExist(user.getLogin());
+
+        User userEntity = modelMapper.map(user, User.class);
+        User savedUser = userDao.save(userEntity);
+        return modelMapper.map(savedUser, UserDto.class);
+    }
 }

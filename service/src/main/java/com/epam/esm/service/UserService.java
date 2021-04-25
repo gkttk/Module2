@@ -1,5 +1,6 @@
 package com.epam.esm.service;
 
+import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.UserDto;
 
 import java.util.List;
@@ -11,5 +12,6 @@ public interface UserService {
 
     List<UserDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
 
+    UserDto save(UserDto user);
 
 }

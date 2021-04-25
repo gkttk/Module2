@@ -4,6 +4,7 @@ import com.epam.esm.entity.User;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface UserDao {
 
@@ -12,5 +13,9 @@ public interface UserDao {
     User findById(long id);
 
     List<User> findWithMaxOrderCost();
+
+    User save(User user);
+
+    Optional<User> findByLogin(String login);
 
 }

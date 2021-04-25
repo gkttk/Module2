@@ -21,7 +21,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -67,7 +66,6 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
                 .collect(Collectors.toList());
         return new ResponseEntity<>(new ErrorResult(ApplicationConstants.DEFAULT_VALIDATION_ERROR_CODE, messages), HttpStatus.BAD_REQUEST);
     }
-
 
 
     @Override

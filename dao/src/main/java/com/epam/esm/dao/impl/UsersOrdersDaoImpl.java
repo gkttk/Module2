@@ -16,7 +16,6 @@ public class UsersOrdersDaoImpl implements UsersOrdersDao {
         this.entityManager = entityManager;
     }
 
-
     @Override
     public void save(long userId, long orderId) {
         Query nativeQuery = entityManager.createNativeQuery(ApplicationConstants.SAVE_USER_ORDER_QUERY);

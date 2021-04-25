@@ -1,16 +1,11 @@
 package com.epam.esm.dto;
 
 import com.epam.esm.dto.groups.PatchGroup;
-import com.epam.esm.dto.groups.SaveOrderGroup;
+import com.epam.esm.dto.groups.SaveGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
-import com.epam.esm.entity.GiftCertificate;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
@@ -25,11 +20,8 @@ import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
-import java.util.StringJoiner;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * This DTO is validated to fully update a GiftCertificate entity.
@@ -44,7 +36,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto>  {
 
     @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "GiftCertificate's id value must be null")
-    @NotNull(groups = {SaveOrderGroup.class}, message = "GiftCertificate's id value must not be null")
+    @NotNull(groups = {SaveGroup.class}, message = "GiftCertificate's id value must not be null")
     private Long id;
     @NotBlank(groups = UpdateGroup.class, message = "GiftCertificate's name value must contain 2-35 characters and not be null")
     @Size(min = 2, max = 35, message = "GiftCertificate's name value must contain 2-35 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})

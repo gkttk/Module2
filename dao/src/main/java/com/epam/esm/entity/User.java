@@ -1,11 +1,16 @@
 package com.epam.esm.entity;
 
+import com.epam.esm.entity.enums.UserRole;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,16 +31,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "varchar(150)")
-    private String name;
+    @Column(nullable = false, unique = true, columnDefinition = "varchar(150)")
+    private String login;
     @Column(nullable = false, columnDefinition = "varchar(150)")
     private String password;
 
     @Column(nullable = false, columnDefinition = "varchar(50) default 'USER'")
-    // @Enumerated(value = EnumType.STRING)
-    private String role;
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinTable(name = "users_orders",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"))

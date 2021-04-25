@@ -38,7 +38,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public boolean delete(long id) {
+    public boolean deleteById(long id) {
         Order order = entityManager.find(Order.class, id);
         if (order != null) {
             entityManager.remove(order);

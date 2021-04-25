@@ -1,7 +1,6 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.SaveOrderDto;
@@ -80,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void delete(long id) {
-        boolean isDeleted = orderDao.delete(id);
+        boolean isDeleted = orderDao.deleteById(id);
         if (!isDeleted) {
             throw new OrderException(ApplicationConstants.ORDER_NOT_FOUND_ERROR_CODE, String.format("Order with id: %d doesn't exist in DB", id));
         }

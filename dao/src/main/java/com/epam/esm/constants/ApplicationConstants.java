@@ -34,9 +34,6 @@ public final class ApplicationConstants {
     public final static String DELETE_ALL_TAGS_FOR_CERTIFICATE = "DELETE FROM " + CERTIFICATE_TAGS_TABLE_NAME +
             " WHERE certificate_id = ?";
 
-    //DaoConfig
-    public final static String HIKARI_PROPERTIES_TEST_PATH = "/hikari-test.properties";
-
     //QueryBuilders
     public final static String USER_ID_KEY = "userId";
     public final static String USER_ID_FIELD = "id";

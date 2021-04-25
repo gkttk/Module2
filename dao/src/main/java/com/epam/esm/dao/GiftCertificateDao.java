@@ -4,6 +4,7 @@ import com.epam.esm.entity.GiftCertificate;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This interface represents an api to interact with the GiftCertificate entity in database.
@@ -32,7 +33,7 @@ public interface GiftCertificateDao {
      * @return Optional of GiftCertificate entity.
      * @since 1.0
      */
-    GiftCertificate findByName(String name);
+    Optional<GiftCertificate> findByName(String name);
 
     /**
      * This method saves GiftCertificate entity.
@@ -50,7 +51,7 @@ public interface GiftCertificateDao {
      * @return Optional of GiftCertificate entity.
      * @since 1.0
      */
-    GiftCertificate findById(long id);
+    Optional<GiftCertificate> findById(long id);
 
     /**
      * This method updates all updatable fields for GiftCertificate entity.

@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -54,12 +55,10 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @since 1.0
      */
     @Override
-    public GiftCertificate findByName(String name) {
+    public Optional<GiftCertificate> findByName(String name) {
         TypedQuery<GiftCertificate> query = entityManager.createQuery(ApplicationConstants.FIND_GC_BY_NAME_QUERY, GiftCertificate.class)
-                .setParameter("name", name);
-        return query.getResultStream()
-                .findFirst()
-                .orElse(null);
+                .setParameter(ApplicationConstants.NAME_FIELD, name);
+        return query.getResultStream().findFirst();
     }
 
     /**
@@ -87,8 +86,15 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @since 1.0
      */
     @Override
-    public GiftCertificate findById(long id) {
-        return entityManager.find(GiftCertificate.class, id);
+    public Optional<GiftCertificate> findById(long id) {
+
+        GiftCertificate result = entityManager.find(GiftCertificate.class, id);
+        if (result != null){
+            entityManager.detach(result);
+            return Optional.of(result);
+        }
+
+        return Optional.empty();
     }
 
 

@@ -82,10 +82,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     public GiftCertificateDto findById(long id) {
-        GiftCertificate foundCertificate = giftCertificateDao.findById(id);
-        if (foundCertificate == null) {
-            throw new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("Can't find a certificate with id: %d", id));
-        }
+        Optional<GiftCertificate> certificateOpt = giftCertificateDao.findById(id);
+
+        GiftCertificate foundCertificate = certificateOpt.orElseThrow(() -> new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("Can't find a certificate with id: %d", id)));
 
         return modelMapper.map(foundCertificate, GiftCertificateDto.class);
     }

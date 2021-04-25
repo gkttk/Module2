@@ -15,7 +15,7 @@ public interface OrderDao {
 
     Optional<Order> findById(long id);
 
-    boolean delete(long id);
+    boolean deleteById(long id);
 
     List<Order> findBy(Map<String, String[]> reqParams, int limit, int offset);
 }

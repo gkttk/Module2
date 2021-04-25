@@ -34,8 +34,7 @@ public class UserDaoTest {
 
     private static User user3;
     private static User savingUser;
-    private final static int DEFAULT_LIMIT = Integer.MAX_VALUE;
-    private final static int DEFAULT_OFFSET = 0;
+
 
     @BeforeAll
     static void init() {
@@ -58,7 +57,7 @@ public class UserDaoTest {
         Map<String, String[]> reqParams = new HashMap<>();
         int expectedListSize = 3;
         //when
-        List<User> results = userDao.findBy(reqParams, DEFAULT_LIMIT, DEFAULT_OFFSET);
+        List<User> results = userDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertFalse(results.isEmpty());
         assertEquals(results.size(), expectedListSize);
@@ -71,7 +70,7 @@ public class UserDaoTest {
         reqParams.put(ApplicationConstants.ROLE_KEY, new String[]{"NewRole"});
 
         //when
-        List<User> results = userDao.findBy(reqParams, DEFAULT_LIMIT, DEFAULT_OFFSET);
+        List<User> results = userDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertTrue(results.isEmpty());
     }
@@ -83,7 +82,7 @@ public class UserDaoTest {
         reqParams.put(ApplicationConstants.ROLE_KEY, new String[]{"USER"});
         int expectedListSize = 2;
         //when
-        List<User> results = userDao.findBy(reqParams, DEFAULT_LIMIT, DEFAULT_OFFSET);
+        List<User> results = userDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertFalse(results.isEmpty());
         assertEquals(results.size(), expectedListSize);
@@ -105,7 +104,6 @@ public class UserDaoTest {
 
 
     @Test
-    @Transactional
     @Rollback
     public void testSave_Entity() {
         //given

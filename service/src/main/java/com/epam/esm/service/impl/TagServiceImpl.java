@@ -104,7 +104,7 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public void delete(long id) {
-        boolean isDeleted = tagDao.delete(id);
+        boolean isDeleted = tagDao.deleteById(id);
         if (!isDeleted) {
             throw new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with id: %d is not found in DB", id));
         }

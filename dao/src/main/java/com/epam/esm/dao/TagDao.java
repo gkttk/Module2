@@ -60,7 +60,7 @@ public interface TagDao {
      * @return a boolean which shows if in db was changed any row or not
      * @since 1.0
      */
-    boolean delete(long id);
+    boolean deleteById(long id);
 
 
 }

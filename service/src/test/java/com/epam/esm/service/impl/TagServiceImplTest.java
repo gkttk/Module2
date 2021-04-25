@@ -140,22 +140,22 @@ public class TagServiceImplTest {
     public void testDelete_EntityWithSuchIdIsPresentInDb_DeleteEntity() {
         //given
         long tagId = testDto.getId();
-        when(tagDaoMock.delete(tagId)).thenReturn(true);
+        when(tagDaoMock.deleteById(tagId)).thenReturn(true);
         //when
         tagService.delete(tagId);
         //then
-        verify(tagDaoMock).delete(tagId);
+        verify(tagDaoMock).deleteById(tagId);
     }
 
     @Test
     public void testDelete_EntityWithSuchIdIsNotPresentInDb_ThrowException() {
         //given
         long tagId = testDto.getId();
-        when(tagDaoMock.delete(tagId)).thenReturn(false);
+        when(tagDaoMock.deleteById(tagId)).thenReturn(false);
         //when
         //then
         assertThrows(TagException.class, () -> tagService.delete(tagId));
-        verify(tagDaoMock).delete(tagId);
+        verify(tagDaoMock).deleteById(tagId);
     }
 
     @Test

@@ -1,7 +1,9 @@
 package com.epam.esm.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
@@ -37,12 +39,16 @@ public class Order {
             nullable = false, updatable = false)
     private LocalDateTime creationDate;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "orders_certificates",
             joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "certificate_id", referencedColumnName = "id"))
     private List<GiftCertificate> giftCertificates;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(name = "users_orders",
             joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),

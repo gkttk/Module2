@@ -71,7 +71,7 @@ public class TagDaoImpl implements TagDao {
      * @since 1.0
      */
     @Override
-    public Optional<Tag> findByName(String tagName) {//todo return opt
+    public Optional<Tag> findByName(String tagName) {
         TypedQuery<Tag> query = entityManager.createQuery(ApplicationConstants.GET_TAG_BY_NAME, Tag.class);
         Tag tag = query.setParameter(ApplicationConstants.TAG_NAME_FIELD, tagName)
                 .getResultStream()
@@ -105,7 +105,7 @@ public class TagDaoImpl implements TagDao {
      * @since 1.0
      */
     @Override
-    public boolean delete(long id) {
+    public boolean deleteById(long id) {
         Tag tag = entityManager.find(Tag.class, id);
         if (tag != null) {
             entityManager.remove(tag);

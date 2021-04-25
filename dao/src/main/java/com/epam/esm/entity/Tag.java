@@ -1,7 +1,10 @@
 package com.epam.esm.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,6 +36,8 @@ public class Tag {
     @Column(unique = true, nullable = false)
     private String name;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "certificates_tags",
             joinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"),

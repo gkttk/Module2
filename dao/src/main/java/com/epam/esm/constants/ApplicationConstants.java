@@ -3,7 +3,9 @@ package com.epam.esm.constants;
 public final class ApplicationConstants {
 
     //defaults
+    public final static int MAX_LIMIT = Integer.MAX_VALUE;
     public final static int DEFAULT_LIMIT = 5;
+    public final static int DEFAULT_OFFSET = 0;
 
     //hateoas
     public final static String UPDATE = "update";

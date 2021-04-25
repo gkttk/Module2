@@ -4,6 +4,7 @@ import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
+import com.epam.esm.entity.enums.UserRole;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -36,8 +37,13 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements Quer
         String[] params;
         params = reqParams.get(ApplicationConstants.ROLE_KEY);
         if (params != null) {
-            Predicate predicate = getEqualsPredicate(params, ApplicationConstants.USER_ROLE_FIELD, criteriaBuilder, root);
-            predicates.add(criteriaBuilder.or(predicate));
+          /*  UserRole[] roles = Stream.of(params)
+                    .filter(param -> UserRole.searchRole(param) != null)
+                    .map(UserRole::valueOf)
+                    .toArray(UserRole[]::new);*/
+                Predicate predicate = getEqualsPredicate(params, ApplicationConstants.USER_ROLE_FIELD, criteriaBuilder, root);
+                predicates.add(criteriaBuilder.or(predicate));
+
         }
 
         return predicates;

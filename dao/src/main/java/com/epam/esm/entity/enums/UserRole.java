@@ -10,7 +10,7 @@ public enum UserRole {
         return Stream.of(UserRole.values())
                 .filter(role -> role.name().equalsIgnoreCase(roleStr))
                 .findFirst()
-                .orElseThrow(() -> new EnumConstantNotPresentException(UserRole.class, roleStr));//todo
+                .orElse(null);
     }
 
 

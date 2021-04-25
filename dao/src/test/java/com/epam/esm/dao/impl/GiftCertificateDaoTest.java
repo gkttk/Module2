@@ -1,3 +1,4 @@
+/*
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
@@ -23,9 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-//@TestPropertySource(locations = "classpath:application-integrationtest.properties")
+//@TestPropertySource(locations = "classpath:application-test.properties")
 //@ContextConfiguration(classes = {DaoTestConfig.class})
-@SpringBootTest(classes = DaoTestConfig.class/*, properties = "classpath:application-integrationtest.properties"*/)
+@SpringBootTest(classes = DaoTestConfig.class*/
+/*, properties = "classpath:application-test.properties"*//*
+)
 //@ActiveProfiles("test")
 public class GiftCertificateDaoTest {
 
@@ -191,3 +194,4 @@ public class GiftCertificateDaoTest {
 
 
 }
+*/

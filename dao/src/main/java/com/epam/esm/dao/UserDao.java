@@ -8,14 +8,23 @@ import java.util.Optional;
 
 public interface UserDao {
 
-    List<User> findBy(Map<String, String[]> reqParams, int limit, int offset);
+    Optional<User> findById(long id);
 
-    User findById(long id);
-
-    List<User> findWithMaxOrderCost();
+    Optional<User> findByLogin(String login);
 
     User save(User user);
 
-    Optional<User> findByLogin(String login);
+    List<User> findWithMaxOrderCost();
+
+
+    List<User> findBy(Map<String, String[]> reqParams, int limit, int offset);
+
+
+
+
+
+
+
+
 
 }

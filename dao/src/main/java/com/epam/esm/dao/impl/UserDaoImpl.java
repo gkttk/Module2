@@ -31,13 +31,26 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User findById(long id) {
-        return entityManager.find(User.class, id);
+    public Optional<User> findById(long id) {
+        User user = entityManager.find(User.class, id);
+        return user != null ? Optional.of(user) : Optional.empty();
     }
 
     @Override
     public List<User> findWithMaxOrderCost() {
-        String hqlMaxOrdersCost = "SELECT sum(o.cost) FROM Order o JOIN o.user u GROUP BY u.id ";
+
+      /*  String sql = "SELECT u.id, u.login, u.role, sum(o.cost) FROM user u " +
+                "JOIN users_orders uo on u.id = uo.user_id " +
+                "JOIN orders o on uo.order_id = o.id " +
+                "GROUP BY u.id " +
+                "having sum(o.cost) = (SELECT sum(o.cost) FROM user u " +
+                "JOIN users_orders uo on u.id = uo.user_id " +
+                "JOIN orders o on uo.order_id = o.id " +
+                "GROUP BY u.id " +
+                "ORDER BY sum(o.cost) desc limit 1)";*/
+
+        String hqlMaxOrdersCost = "SELECT sum(o.cost) FROM User u JOIN u.orders o GROUP BY u.id" +
+                " order by sum(o.cost) desc";
         TypedQuery<BigDecimal> query = entityManager.createQuery(hqlMaxOrdersCost, BigDecimal.class);
         query.setMaxResults(1);
         BigDecimal maxCost = query.getSingleResult();

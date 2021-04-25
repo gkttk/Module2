@@ -1,3 +1,4 @@
+/*
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.TagDao;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {DaoTestConfig.class})
-@TestPropertySource(locations = "classpath:application-integrationtest.properties")
+@TestPropertySource(locations = "classpath:application-test.properties")
 //@ContextConfiguration(classes = {DaoTestConfig.class})
 //@ActiveProfiles("test")
 public class TagDaoTest {
@@ -162,3 +163,4 @@ public class TagDaoTest {
 
 
 }
+*/

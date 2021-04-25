@@ -23,11 +23,9 @@ public class UserValidator implements EntityValidator<User> {
     }
 
     public User validateAndFindByIdIfExist(long userId) {
-        User foundUser = userDao.findById(userId);
-        if (foundUser == null) {
-            throw new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, String.format("Can't find an user with id: %d", userId));
-        }
-        return foundUser;
+        return userDao.findById(userId)
+                .orElseThrow(()->new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE,
+                        String.format("Can't find an user with id: %d", userId)));
 
     }
 

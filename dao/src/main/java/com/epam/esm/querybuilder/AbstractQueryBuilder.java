@@ -52,7 +52,7 @@ public abstract class AbstractQueryBuilder<T>{
         return query;
     }
 
-    protected  Predicate getEqualsPredicate(String[] params, String fieldName, CriteriaBuilder criteriaBuilder, Root<T> root) {
+    protected  Predicate getEqualsPredicate(Object[] params, String fieldName, CriteriaBuilder criteriaBuilder, Root<T> root) {
         return Stream.of(params)
                 .map(param -> criteriaBuilder.equal(root.get(fieldName), param))
                 .reduce(criteriaBuilder::or).orElse(null);

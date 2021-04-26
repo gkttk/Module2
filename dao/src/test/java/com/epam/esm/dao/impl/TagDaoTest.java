@@ -1,8 +1,8 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.ApplicationRunner;
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = ApplicationRunner.class)
+@SpringBootTest(classes = DaoTestConfig.class)
 @ActiveProfiles("test")
 @Transactional
 public class TagDaoTest {

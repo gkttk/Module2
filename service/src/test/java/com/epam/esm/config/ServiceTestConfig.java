@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-@TestConfiguration
+@Configuration
 @ComponentScan(basePackages = {"com.epam.esm"})
 public class ServiceTestConfig {
 

@@ -2,6 +2,7 @@
 package com.epam.esm.controller;
 
 
+import com.epam.esm.ApplicationRunner;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.service.GiftCertificateService;
@@ -12,8 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.context.request.WebRequest;
 
 import java.math.BigDecimal;
@@ -25,6 +28,8 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+//\test\gifts.web
 
 @ExtendWith(MockitoExtension.class)
 public class GiftCertificateControllerTest {
@@ -45,7 +50,9 @@ public class GiftCertificateControllerTest {
     @BeforeAll
     static void init() {
 
-        TagDto defaultTagDto = new TagDto(100L, "testTag");
+        TagDto defaultTagDto = new TagDto();
+        defaultTagDto.setId(100L);
+        defaultTagDto.setName("testTag");
 
         defaultCertDto = new GiftCertificateDto();
         defaultCertDto.setId(100L);
@@ -65,8 +72,12 @@ public class GiftCertificateControllerTest {
 
     }
 
-
     @Test
+    public void dos(){}
+
+
+   */
+/* @Test
     public void testGetAllForQuery_ReturnHttpStatusOkWithDtoList() {
         //given
 
@@ -147,6 +158,7 @@ public class GiftCertificateControllerTest {
         assertEquals(result, expected);
         verify(serviceMock).update(testDto, certId);
     }
+*//*
 
 }
 */

@@ -7,7 +7,7 @@ plugins {
 
 
 subprojects {
-    test.enabled = false
+   // test.enabled = false
 
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
@@ -24,7 +24,6 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-hateoas'
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
-
     }
 
     dependencyManagement {

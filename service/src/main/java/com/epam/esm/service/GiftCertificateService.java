@@ -14,9 +14,11 @@ import java.util.Map;
  */
 public interface GiftCertificateService {
 
+    GiftCertificateDto findById(long id);
+
     GiftCertificateDto save(GiftCertificateDto certificate);
 
-    GiftCertificateDto findById(long id);
+
 
     List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
 

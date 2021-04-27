@@ -44,8 +44,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto save(UserDto user) {
+        user.setRole(user.getRole().toUpperCase());//todo
         validator.validateIfEntityWithGivenNameExist(user.getLogin());
-
         User userEntity = modelMapper.map(user, User.class);
         User savedUser = userDao.save(userEntity);
         return modelMapper.map(savedUser, UserDto.class);

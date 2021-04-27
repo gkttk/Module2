@@ -92,18 +92,20 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private void fillTagLists(List<Tag> tagsForSaving, List<Tag> tagsForLinking, List<TagDto> passedDtoTags) {
         //filling previous lists
-        passedDtoTags.stream()
-                .distinct()
-                .map(tagDto -> modelMapper.map(tagDto, Tag.class))
-                .forEach(tag -> {
-                    Optional<Tag> foundTagOpt = tagDao.findByName(tag.getName());
-                    if (!foundTagOpt.isPresent()) {
-                        tagsForSaving.add(tag);
-                    } else {
-                        Tag foundTag = foundTagOpt.get();
-                        tagsForLinking.add(foundTag);
-                    }
-                });
+        if (passedDtoTags != null) {
+            passedDtoTags.stream()
+                    .distinct()
+                    .map(tagDto -> modelMapper.map(tagDto, Tag.class))
+                    .forEach(tag -> {
+                        Optional<Tag> foundTagOpt = tagDao.findByName(tag.getName());
+                        if (!foundTagOpt.isPresent()) {
+                            tagsForSaving.add(tag);
+                        } else {
+                            Tag foundTag = foundTagOpt.get();
+                            tagsForLinking.add(foundTag);
+                        }
+                    });
+        }
     }
 
     /**

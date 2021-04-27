@@ -18,15 +18,16 @@ public interface GiftCertificateService {
 
     GiftCertificateDto save(GiftCertificateDto certificate);
 
-
-
-    List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
-
     GiftCertificateDto update(GiftCertificateDto certificate, long id);
 
     GiftCertificateDto patch(GiftCertificateDto giftCertificatePatchDto, long id);
 
     void delete(long id);
+
+    List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
+
+
+
 
 
 }

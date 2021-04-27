@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -43,7 +44,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     public List<GiftCertificate> findBy(Map<String, String[]> reqParams, int limit, int offset) {
         TypedQuery<GiftCertificate> query = queryBuilder.buildQuery(reqParams, limit, offset);
-        return query.getResultList();
+        return query.getResultList().stream().distinct().collect(Collectors.toList());
     }
 
 
@@ -106,11 +107,12 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public GiftCertificate update(GiftCertificate certificate) {
-
         GiftCertificate reference = entityManager.getReference(GiftCertificate.class, certificate.getId());
         certificate.setCreateDate(reference.getCreateDate());
 
         GiftCertificate giftCertificate = entityManager.merge(certificate);
+        giftCertificate.setTags(certificate.getTags());
+
         entityManager.flush();
         entityManager.detach(giftCertificate);
         return giftCertificate;

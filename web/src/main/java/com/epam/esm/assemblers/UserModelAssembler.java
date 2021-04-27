@@ -1,13 +1,9 @@
 package com.epam.esm.assemblers;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.controller.GiftCertificateController;
-import com.epam.esm.controller.OrderController;
 import com.epam.esm.controller.TagController;
 import com.epam.esm.controller.UserController;
-import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.entity.User;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
@@ -15,6 +11,9 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Implementation of {@link com.epam.esm.assemblers.ModelAssembler} for UserDto.
+ */
 @Component
 public class UserModelAssembler extends RepresentationModelAssemblerSupport<UserDto, UserDto>
         implements ModelAssembler<UserDto> {
@@ -23,14 +22,26 @@ public class UserModelAssembler extends RepresentationModelAssemblerSupport<User
         super(TagController.class, UserDto.class);
     }
 
+    /**
+     * {@link com.epam.esm.assemblers.ModelAssembler#toModel(Object)}
+     *
+     * @param entity UserDto.
+     * @return UserDto with links.
+     */
     @Override
     public UserDto toModel(UserDto entity) {
         Long id = entity.getId();
         entity.add(linkTo(methodOn(UserController.class).getById(id)).withSelfRel());
-        entity.add(linkTo(methodOn(UserController.class).createOrder(id,null)).withRel(ApplicationConstants.MAKE_ORDER));
+        entity.add(linkTo(methodOn(UserController.class).createOrder(id, null)).withRel(ApplicationConstants.MAKE_ORDER));
         return entity;
     }
 
+    /**
+     * {@link com.epam.esm.assemblers.ModelAssembler#toCollectionModel(Iterable, Integer)} (Object)}
+     *
+     * @param entities list of UserDto.
+     * @return list of UserDto with links.
+     */
     public CollectionModel<UserDto> toCollectionModel(Iterable<? extends UserDto> entities, Integer offset) {
         CollectionModel<UserDto> collectionModel = super.toCollectionModel(entities);
         collectionModel.add(linkTo(methodOn(UserController.class)

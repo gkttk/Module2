@@ -9,7 +9,6 @@ import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,10 +27,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(path = "/certificates", produces = "application/hal+json")
@@ -76,14 +71,14 @@ public class GiftCertificateController {
 
     @PutMapping("/{id}")
     public ResponseEntity<GiftCertificateDto> updateCertificate(@RequestBody @Validated(UpdateGroup.class) @Valid GiftCertificateDto giftCertificateDto,
-                                                                             @PathVariable long id) {
+                                                                @PathVariable long id) {
         GiftCertificateDto certificate = giftCertificateService.update(giftCertificateDto, id);
         return ResponseEntity.ok(assembler.toModel(certificate));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<GiftCertificateDto> patchCertificate(@RequestBody @Validated(PatchGroup.class) @Valid GiftCertificateDto giftCertificateDto,
-                                                                            @PathVariable long id) {
+                                                               @PathVariable long id) {
         GiftCertificateDto certificate = giftCertificateService.patch(giftCertificateDto, id);
         return ResponseEntity.ok(assembler.toModel(certificate));
     }

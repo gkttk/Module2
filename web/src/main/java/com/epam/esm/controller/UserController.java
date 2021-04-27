@@ -6,7 +6,6 @@ import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.SaveOrderDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.groups.SaveGroup;
-import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,9 +66,9 @@ public class UserController {
 
     @GetMapping(path = "/{userId}/orders")
     public ResponseEntity<CollectionModel<OrderDto>> getAllOrdersForUser(WebRequest webRequest, @PathVariable Long userId,
-                                                                    @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
-                                                                    @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
-        Map<String, String[]> reqParamMap =new HashMap<>(webRequest.getParameterMap());
+                                                                         @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                         @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+        Map<String, String[]> reqParamMap = new HashMap<>(webRequest.getParameterMap());
         reqParamMap.put(ApplicationConstants.USER_ID_KEY, new String[]{String.valueOf(userId)});
         List<OrderDto> orders = orderService.findAllForQuery(reqParamMap, limit, offset);
 
@@ -96,7 +95,6 @@ public class UserController {
         UserDto savedUser = userService.save(user);
         return ResponseEntity.ok(userAssembler.toModel(savedUser));
     }
-
 
 
 }

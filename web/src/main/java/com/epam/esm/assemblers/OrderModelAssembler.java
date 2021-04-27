@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Implementation of {@link com.epam.esm.assemblers.ModelAssembler} for OrderDto.
+ */
 @Component
 public class OrderModelAssembler extends RepresentationModelAssemblerSupport<OrderDto, OrderDto>
         implements ModelAssembler<OrderDto> {
@@ -20,6 +23,12 @@ public class OrderModelAssembler extends RepresentationModelAssemblerSupport<Ord
         super(TagController.class, OrderDto.class);
     }
 
+    /**
+     * {@link com.epam.esm.assemblers.ModelAssembler#toModel(Object)}
+     *
+     * @param entity OrderDto.
+     * @return OrderDto with links.
+     */
     @Override
     public OrderDto toModel(OrderDto entity) {
         Long id = entity.getId();
@@ -28,6 +37,12 @@ public class OrderModelAssembler extends RepresentationModelAssemblerSupport<Ord
         return entity;
     }
 
+    /**
+     * {@link com.epam.esm.assemblers.ModelAssembler#toCollectionModel(Iterable, Integer)} (Object)}
+     *
+     * @param entities list of OrderDto.
+     * @return list of OrderDto with links.
+     */
     public CollectionModel<OrderDto> toCollectionModel(Iterable<? extends OrderDto> entities, Integer offset) {
         CollectionModel<OrderDto> collectionModel = super.toCollectionModel(entities);
 

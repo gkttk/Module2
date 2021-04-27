@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Implementation of {@link com.epam.esm.assemblers.ModelAssembler} for TagDto.
+ */
 @Component
 public class TagModelAssembler extends RepresentationModelAssemblerSupport<TagDto, TagDto>
         implements ModelAssembler<TagDto> {
@@ -19,6 +22,12 @@ public class TagModelAssembler extends RepresentationModelAssemblerSupport<TagDt
         super(TagController.class, TagDto.class);
     }
 
+    /**
+     * {@link com.epam.esm.assemblers.ModelAssembler#toModel(Object)}
+     *
+     * @param entity TagDto.
+     * @return TagDto with links.
+     */
     @Override
     public TagDto toModel(TagDto entity) {
         Long id = entity.getId();
@@ -28,6 +37,12 @@ public class TagModelAssembler extends RepresentationModelAssemblerSupport<TagDt
         return entity;
     }
 
+    /**
+     * {@link com.epam.esm.assemblers.ModelAssembler#toCollectionModel(Iterable, Integer)} (Object)}
+     *
+     * @param entities list of TagDto.
+     * @return list of TagDto with links.
+     */
     public CollectionModel<TagDto> toCollectionModel(Iterable<? extends TagDto> entities, Integer offset) {
         CollectionModel<TagDto> collectionModel = super.toCollectionModel(entities);
         collectionModel.add(linkTo(methodOn(TagController.class)

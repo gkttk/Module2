@@ -49,8 +49,8 @@ public class GiftCertificateController {
 
     @GetMapping
     public ResponseEntity<CollectionModel<GiftCertificateDto>> getAllForQuery(WebRequest webRequest,
-                                                                              @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
-                                                                              @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+                                                                              @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                              @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> parameterMap = webRequest.getParameterMap();
         List<GiftCertificateDto> certificates = giftCertificateService.findAllForQuery(parameterMap, limit, offset);
         return ResponseEntity.ok(assembler.toCollectionModel(certificates, offset));

@@ -57,8 +57,8 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<CollectionModel<UserDto>> getAllForQuery(WebRequest request,
-                                                                   @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
-                                                                   @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+                                                                   @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                   @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
         List<UserDto> users = userService.findAllForQuery(reqParams, limit, offset);
         return ResponseEntity.ok(userAssembler.toCollectionModel(users, offset));
@@ -67,8 +67,8 @@ public class UserController {
 
     @GetMapping(path = "/{userId}/orders")
     public ResponseEntity<CollectionModel<OrderDto>> getAllOrdersForUser(WebRequest webRequest, @PathVariable Long userId,
-                                                                    @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
-                                                                    @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+                                                                    @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                    @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParamMap =new HashMap<>(webRequest.getParameterMap());
         reqParamMap.put(ApplicationConstants.USER_ID_KEY, new String[]{String.valueOf(userId)});
         List<OrderDto> orders = orderService.findAllForQuery(reqParamMap, limit, offset);

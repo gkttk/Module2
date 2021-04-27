@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.assemblers.ModelAssembler;
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
@@ -49,8 +50,8 @@ public class TagController {
 
     @GetMapping
     public ResponseEntity<CollectionModel<TagDto>> getAllForQuery(WebRequest request,
-                                                                  @RequestParam(required = false, defaultValue = Integer.MAX_VALUE + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
-                                                                  @RequestParam(required = false, defaultValue = "0") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+                                                                  @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                  @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
         List<TagDto> tags = tagService.findAllForQuery(reqParams, limit, offset);
 

@@ -17,10 +17,9 @@ public interface TagDao {
     /**
      * This method combines all getList queries.
      *
-     * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link com.epam.esm.criteria.Criteria}
-     *                  and arrays of params for searching.
-     * @param limit
-     * @param offset
+     * @param reqParams is a map of all request parameters.
+     * @param limit     for pagination
+     * @param offset    for pagination
      * @return list of Tag entities
      * @since 1.0
      */
@@ -30,7 +29,7 @@ public interface TagDao {
      * This method saves Tag entity.
      *
      * @param tag Tag entity without id.
-     * @return Tag entity with generated id.
+     * @return Saved Tag entity.
      * @since 1.0
      */
     Tag save(Tag tag);
@@ -39,7 +38,7 @@ public interface TagDao {
      * This method get Tag entity by id.
      *
      * @param id Tag entity's id.
-     * @return Optional of Tag entity.
+     * @return Optional of Tag entity.If there is no Tag with given id, return Optional.empty().
      * @since 1.0
      */
     Optional<Tag> findById(long id);
@@ -48,7 +47,7 @@ public interface TagDao {
      * This method get Tag entity by name.
      *
      * @param tagName Tag entity's name.
-     * @return Optional of Tag entity.
+     * @return Optional of Tag entity.If there is no Tag with given name, return Optional.empty().
      * @since 1.0
      */
     Optional<Tag> findByName(String tagName);
@@ -57,7 +56,7 @@ public interface TagDao {
      * This method delete Tag entity.
      *
      * @param id Tag entity id.
-     * @return a boolean which shows if in db was changed any row or not
+     * @return a boolean which shows if Tag entity with given id was in db.
      * @since 1.0
      */
     boolean deleteById(long id);

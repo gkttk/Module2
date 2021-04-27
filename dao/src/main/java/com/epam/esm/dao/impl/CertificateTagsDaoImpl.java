@@ -24,7 +24,7 @@ public class CertificateTagsDaoImpl implements CertificateTagsDao {
     }
 
     /**
-     * This method saves link between GiftCertificate entity and Tag entity.
+     * This method saves a link between GiftCertificate entity and Tag entity.
      *
      * @param certificateId id of GiftCertificate entity
      * @param tagId         id of Tag entity

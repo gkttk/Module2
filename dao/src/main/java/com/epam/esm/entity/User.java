@@ -20,6 +20,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
 
+/**
+ * User entity.
+ *
+ * @since 2.0
+ */
 @Entity
 @Table(name = "user")
 @Data

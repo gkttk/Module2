@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of {@link com.epam.esm.dao.TagDao} interface.
@@ -32,10 +33,9 @@ public class TagDaoImpl implements TagDao {
 
     /**
      * This method saves Tag entity.
-     * The method uses KayHolder for getting generated id for Tag entity from db.
      *
      * @param tag Tag entity without id.
-     * @return Tag entity with generated id.
+     * @return Saved Tag entity.
      * @since 1.0
      */
     @Override
@@ -72,42 +72,43 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public Optional<Tag> findByName(String tagName) {
-        TypedQuery<Tag> query = entityManager.createQuery(ApplicationConstants.GET_TAG_BY_NAME, Tag.class);
-        Tag tag = query.setParameter(ApplicationConstants.TAG_NAME_FIELD, tagName)
-                .getResultStream()
-                .findFirst()
-                .orElse(null);
+        TypedQuery<Tag> query = entityManager.createQuery(ApplicationConstants.GET_TAG_BY_NAME, Tag.class)
+                .setParameter(ApplicationConstants.TAG_NAME_FIELD, tagName);
 
-        return tag != null ? Optional.of(tag) : Optional.empty();
+        Optional<Tag> tagOpt = query.getResultStream().findFirst();
+        tagOpt.ifPresent(entityManager::detach);
+
+        return tagOpt;
     }
 
     /**
      * This method combines all getList queries.
      *
-     * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link Criteria}
-     *                  and arrays of params for searching.
-     * @param limit
-     * @param offset
+     * @param reqParams is a map of all request parameters.
+     * @param limit     for pagination
+     * @param offset    for pagination
      * @return list of Tag entities
      * @since 1.0
      */
     @Override
     public List<Tag> findBy(Map<String, String[]> reqParams, int limit, int offset) {
         TypedQuery<Tag> query = queryBuilder.buildQuery(reqParams, limit, offset);
-        return query.getResultList();
+        return query.getResultList()
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     /**
      * This method delete Tag entity.
      *
      * @param id Tag entity id.
-     * @return a boolean which shows if in db was changed any row or not
+     * @return a boolean which shows if Tag entity with given id was in db.
      * @since 1.0
      */
     @Override
     public boolean deleteById(long id) {
         Tag reference = entityManager.getReference(Tag.class, id);
-        //Tag tag = entityManager.find(Tag.class, id);
         if (reference != null) {
             entityManager.remove(reference);
             entityManager.flush();

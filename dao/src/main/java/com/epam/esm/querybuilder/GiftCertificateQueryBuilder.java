@@ -3,6 +3,7 @@ package com.epam.esm.querybuilder;
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -16,21 +17,51 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of {@link com.epam.esm.querybuilder.QueryBuilder} interface
+ * and {@link com.epam.esm.querybuilder.AbstractQueryBuilder} class.
+ *
+ * @since 2.0
+ */
 @Component
 public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertificate> implements QueryBuilder<GiftCertificate> {
 
-
+    @Autowired
     public GiftCertificateQueryBuilder(EntityManager entityManager) {
         super(entityManager);
-
     }
 
+    /**
+     * This method gets predicate for equal operation with joining.
+     * All predicates reduces as AND statement.
+     *
+     * @param params        all passed params for join.
+     * @param attributeName attribute of entity for joining.
+     * @param fieldName     the field with which to compare.
+     * @return reduced predicate with equal operations.
+     * @since 2.0
+     */
+    private Predicate getJoinAndPredicate(String[] params, String attributeName, String fieldName, CriteriaBuilder criteriaBuilder, Root<GiftCertificate> root) {
+        return Stream.of(params)
+                .map(param -> {
+                    Join<GiftCertificate, Tag> join = root.join(attributeName);
+                    return criteriaBuilder.equal(join.get(fieldName), param);
+
+                }).reduce(criteriaBuilder::and).orElse(null);
+    }
+
+    /**
+     * {@link AbstractQueryBuilder#getGenericClass()}
+     */
     @Override
     protected Class<GiftCertificate> getGenericClass() {
         return GiftCertificate.class;
     }
 
-
+    /**
+     * {@link AbstractQueryBuilder#getWherePredicates(Map, CriteriaBuilder, Root)} ()}
+     */
+    @Override
     protected List<Predicate> getWherePredicates(Map<String, String[]> reqParams, CriteriaBuilder criteriaBuilder, Root<GiftCertificate> root) {
         List<Predicate> predicates = new ArrayList<>();
         String[] params;
@@ -48,14 +79,14 @@ public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertif
         params = reqParams.get(ApplicationConstants.TAG_NAMES_KEY);
         if (params != null) {
             Predicate predicate = getJoinPredicate(params, ApplicationConstants.TAGS_ATTRIBUTE_NAME,
-                    ApplicationConstants.TAG_NAME_FIELD, criteriaBuilder, root);//todo
+                    ApplicationConstants.TAG_NAME_FIELD, criteriaBuilder, root);
             criteriaBuilder.or(predicate);
             predicates.add(criteriaBuilder.or(predicate));
         }
         params = reqParams.get(ApplicationConstants.TAG_AND_NAMES_KEY);
         if (params != null) {
             Predicate predicate = getJoinAndPredicate(params, ApplicationConstants.TAGS_ATTRIBUTE_NAME,
-                    ApplicationConstants.TAG_NAME_FIELD, criteriaBuilder, root);//todo
+                    ApplicationConstants.TAG_NAME_FIELD, criteriaBuilder, root);
             criteriaBuilder.and(predicate);
             predicates.add(criteriaBuilder.or(predicate));
         }
@@ -63,26 +94,10 @@ public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertif
         return predicates;
     }
 
-
-    private Predicate getJoinPredicate(String[] params, String attributeName, String fieldName, CriteriaBuilder criteriaBuilder, Root<GiftCertificate> root) {
-        return Stream.of(params)
-                .map(param -> {
-                    Join<GiftCertificate, Tag> join = root.join(attributeName);
-                    return criteriaBuilder.equal(join.get(fieldName), param);
-
-                }).reduce(criteriaBuilder::or).orElse(null);
-    }
-
-    private Predicate getJoinAndPredicate(String[] params, String attributeName, String fieldName, CriteriaBuilder criteriaBuilder, Root<GiftCertificate> root) {
-        return Stream.of(params)
-                .map(param -> {
-                    Join<GiftCertificate, Tag> join = root.join(attributeName);
-                    return criteriaBuilder.equal(join.get(fieldName), param);
-
-                }).reduce(criteriaBuilder::and).orElse(null);
-    }
-
-
+    /**
+     * {@link AbstractQueryBuilder#setOrder(String, String, CriteriaQuery, Root, CriteriaBuilder)} ()}
+     */
+    @Override
     protected void setOrder(String field, String order, CriteriaQuery<GiftCertificate> query, Root<GiftCertificate> root,
                             CriteriaBuilder criteriaBuilder) {
         boolean isDesc = ApplicationConstants.DESC_ORDER.equalsIgnoreCase(order);

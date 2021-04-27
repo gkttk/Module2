@@ -1,35 +1,45 @@
 package com.epam.esm.querybuilder;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
+/**
+ * Implementation of {@link com.epam.esm.querybuilder.QueryBuilder} interface
+ * and {@link com.epam.esm.querybuilder.AbstractQueryBuilder} class.
+ *
+ * @since 2.0
+ */
 @Component
 public class TagQueryBuilder extends AbstractQueryBuilder<Tag> implements QueryBuilder<Tag> {
-
+    @Autowired
     public TagQueryBuilder(EntityManager entityManager) {
         super(entityManager);
 
     }
 
+    /**
+     * {@link AbstractQueryBuilder#getGenericClass()}
+     */
     @Override
     protected Class<Tag> getGenericClass() {
         return Tag.class;
     }
 
-
+    /**
+     * {@link AbstractQueryBuilder#getWherePredicates(Map, CriteriaBuilder, Root)} ()}
+     */
+    @Override
     protected List<Predicate> getWherePredicates(Map<String, String[]> reqParams, CriteriaBuilder criteriaBuilder, Root<Tag> root) {
         List<Predicate> predicates = new ArrayList<>();
         String[] params;
@@ -42,16 +52,10 @@ public class TagQueryBuilder extends AbstractQueryBuilder<Tag> implements QueryB
         return predicates;
     }
 
-    private Predicate getJoinPredicate(String[] params, String attributeName, String fieldName, CriteriaBuilder criteriaBuilder, Root<Tag> root) {
-        return Stream.of(params)
-                .map(param -> {
-                    Join<Tag, GiftCertificate> join = root.join(attributeName);
-                    return criteriaBuilder.equal(join.get(fieldName), param);  //todo like
-
-                }).reduce(criteriaBuilder::or).orElse(null);
-    }
-
-
+    /**
+     * {@link AbstractQueryBuilder#setOrder(String, String, CriteriaQuery, Root, CriteriaBuilder)} ()}
+     */
+    @Override
     protected void setOrder(String field, String order, CriteriaQuery<Tag> query, Root<Tag> root,
                             CriteriaBuilder criteriaBuilder) {
         boolean isDesc = ApplicationConstants.DESC_ORDER.equalsIgnoreCase(order);

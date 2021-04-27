@@ -23,6 +23,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Order entity.
+ *
+ * @since 2.0
+ */
 @Entity
 @Table(name = "orders")
 @Data

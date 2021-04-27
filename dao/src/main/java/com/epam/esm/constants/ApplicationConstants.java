@@ -1,5 +1,9 @@
 package com.epam.esm.constants;
 
+
+/**
+ * This class contains all application constants.
+ */
 public final class ApplicationConstants {
 
     //defaults
@@ -65,7 +69,6 @@ public final class ApplicationConstants {
 
     //Order QueryBuilder
     public final static String USER_ATTRIBUTE_NAME = "user";
-
 
     //QueryBuilders sorting
     public final static String SORT_FIELDS_KEY = "sortFields";

@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
 /**
  * Default implementation of {@link com.epam.esm.dao.GiftCertificateDao} interface.
  *
@@ -35,18 +34,19 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     /**
      * This method combines all getList queries.
      *
-     * @param reqParams an instance of {@link CriteriaFactoryResult} which contains {@link Criteria}
-     *                  and arrays of params for searching.
-     * @param limit
-     * @param offset
+     * @param reqParams is a map of all request parameters.
+     * @param limit     for pagination
+     * @param offset    for pagination
      * @return list of GiftCertificate entities
      * @since 1.0
      */
     public List<GiftCertificate> findBy(Map<String, String[]> reqParams, int limit, int offset) {
         TypedQuery<GiftCertificate> query = queryBuilder.buildQuery(reqParams, limit, offset);
-        return query.getResultList().stream().distinct().collect(Collectors.toList());
+        return query.getResultList()
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
     }
-
 
     /**
      * This method get GiftCertificate entity by name.
@@ -59,15 +59,18 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     public Optional<GiftCertificate> findByName(String name) {
         TypedQuery<GiftCertificate> query = entityManager.createQuery(ApplicationConstants.FIND_GC_BY_NAME_QUERY, GiftCertificate.class)
                 .setParameter(ApplicationConstants.NAME_FIELD, name);
-        return query.getResultStream().findFirst();
+
+        Optional<GiftCertificate> certificateOpt = query.getResultStream().findFirst();
+        certificateOpt.ifPresent(entityManager::detach);
+
+        return certificateOpt;
     }
 
     /**
      * This method saves GiftCertificate entity.
-     * The method uses KayHolder for getting generated id for GiftCertificate entity from db.
      *
      * @param certificate GiftCertificate entity without id.
-     * @return id of inserted GiftCertificate entity
+     * @return Saved GiftCertificate entity.
      * @since 1.0
      */
     @Override
@@ -76,7 +79,6 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         entityManager.flush();
         entityManager.detach(certificate);
         return certificate;
-
     }
 
     /**
@@ -88,9 +90,9 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public Optional<GiftCertificate> findById(long id) {
-
         GiftCertificate result = entityManager.find(GiftCertificate.class, id);
-        if (result != null){
+
+        if (result != null) {
             entityManager.detach(result);
             return Optional.of(result);
         }
@@ -100,7 +102,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
 
     /**
-     * This method updates all updatable fields for GiftCertificate entity.
+     * This method updates GiftCertificate entity.
      *
      * @param certificate GiftCertificate entity with fields for update.
      * @since 1.0
@@ -115,14 +117,15 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
         entityManager.flush();
         entityManager.detach(giftCertificate);
+
         return giftCertificate;
     }
 
     /**
      * This method delete GiftCertificate entity.
      *
-     * @param id GiftCertificate entity id.
-     * @return a boolean which shows if in db was changed any row or not
+     * @param id GiftCertificate entity's id.
+     * @return a boolean which shows if GiftCertificate entity with given id was in db.
      * @since 1.0
      */
     @Override

@@ -39,9 +39,9 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "GiftCertificate's id value must be null")
     @NotNull(groups = {SaveGroup.class}, message = "GiftCertificate's id value must not be null")
     private Long id;
-    @NotBlank(groups = UpdateGroup.class, message = "GiftCertificate's name value must be a word, contain 2-35 characters and not be null")
-    @Pattern(regexp="^[A-Za-z\\s]*$", message = "GiftCertificate's name value must be a word, contain 2-35 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})
-    @Size(min = 2, max = 35, message = "GiftCertificate's name value must be a word, contain 2-35 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})
+    @NotBlank(groups = UpdateGroup.class, message = "GiftCertificate's name value must contain 2-35 characters and not be null")
+    @Pattern(regexp="^[0-9A-Za-z\\s]*$", message = "GiftCertificate's name value must contain 2-35 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})
+    @Size(min = 2, max = 35, message = "GiftCertificate's name value must contain 2-35 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})
     private String name;
     @NotBlank(groups = UpdateGroup.class, message = "GiftCertificate's description value must contain 20-150 characters and not be null")
     @Size(min = 20, max = 150, message = "GiftCertificate's description value must contain 20-150 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})

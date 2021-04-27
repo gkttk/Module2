@@ -1,11 +1,13 @@
 package com.epam.esm.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,6 +29,7 @@ import java.util.List;
 @Table(name = "tag")
 @Data
 @NoArgsConstructor
+@Audited
 public class Tag {
 
     @Id
@@ -36,9 +39,10 @@ public class Tag {
     @Column(unique = true, nullable = false)
     private String name;
 
+    @NotAudited
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "certificates_tags",
             joinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "certificate_id", referencedColumnName = "id"))

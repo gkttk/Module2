@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +27,7 @@ import java.util.List;
 @Table(name = "orders")
 @Data
 @NoArgsConstructor
+@Audited
 public class Order {
 
     @Id
@@ -39,6 +42,7 @@ public class Order {
             nullable = false, updatable = false)
     private LocalDateTime creationDate;
 
+    @NotAudited
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.LAZY)
@@ -47,6 +51,7 @@ public class Order {
             inverseJoinColumns = @JoinColumn(name = "certificate_id", referencedColumnName = "id"))
     private List<GiftCertificate> giftCertificates;
 
+    @NotAudited
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)

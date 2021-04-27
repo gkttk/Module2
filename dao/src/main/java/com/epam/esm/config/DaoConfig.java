@@ -5,11 +5,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan("com.epam.esm")
+@EnableJpaAuditing
 public class DaoConfig {
 
     @Bean
@@ -22,8 +24,6 @@ public class DaoConfig {
     public DataSource dataSource() {
         return getDatasourceProperties().initializeDataSourceBuilder().build();
     }
-
-
 
 
 }

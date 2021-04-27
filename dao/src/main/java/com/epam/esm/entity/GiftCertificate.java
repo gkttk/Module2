@@ -1,18 +1,22 @@
 package com.epam.esm.entity;
 
-import lombok.AllArgsConstructor;
+import com.epam.esm.audit.GiftCertificateAuditListener;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,11 +24,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.StringJoiner;
 
 /**
  * GiftCertificate entity.
@@ -35,6 +39,7 @@ import java.util.StringJoiner;
 @Table(name = "gift_certificate")
 @Data
 @NoArgsConstructor
+@Audited
 public class GiftCertificate {
 
     @Id
@@ -63,6 +68,7 @@ public class GiftCertificate {
             nullable = false)
     private LocalDateTime lastUpdateDate;
 
+    @NotAudited
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
@@ -70,4 +76,6 @@ public class GiftCertificate {
             joinColumns = @JoinColumn(name = "certificate_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags;
+
+
 }

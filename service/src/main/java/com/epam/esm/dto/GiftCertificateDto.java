@@ -22,10 +22,8 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-
 /**
- * This DTO is validated to fully update a GiftCertificate entity.
+ * GiftCertificate DTO.
  *
  * @since 1.0
  */

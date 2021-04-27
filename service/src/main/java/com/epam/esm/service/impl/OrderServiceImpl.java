@@ -11,6 +11,7 @@ import com.epam.esm.exceptions.OrderException;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.validator.EntityValidator;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Default implementation of {@link com.epam.esm.service.OrderService} interface.
+ *
+ * @since 2.0
+ */
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -29,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final EntityValidator<User> userValidator;
     private final EntityValidator<GiftCertificate> giftCertificateValidator;
 
+    @Autowired
     public OrderServiceImpl(OrderDao orderDao, ModelMapper modelMapper, EntityValidator<User> userValidator, EntityValidator<GiftCertificate> giftCertificateValidator) {
         this.orderDao = orderDao;
         this.modelMapper = modelMapper;
@@ -36,6 +43,14 @@ public class OrderServiceImpl implements OrderService {
         this.giftCertificateValidator = giftCertificateValidator;
     }
 
+    /**
+     * This method gets Order entity from dao layer with given id and converts it to OrderDto.
+     *
+     * @param id id of necessary entity.
+     * @return OrderDto.
+     * @throws OrderException if there is no entity with given id in database.
+     * @since 2.0
+     */
     @Override
     public OrderDto findById(long id) {
         Optional<Order> foundOrderOpt = orderDao.findById(id);
@@ -46,6 +61,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+    /**
+     * This method parses SaveOrderDto to GiftCertificates and their quantities and calculates the sum of the saving order.
+     * After that the method saves new Order.
+     *
+     * @param saveOrderDtoList dto with information about GiftCertificates and their quantities for saving Order.
+     * @param userId           id of user for which an order is making.
+     * @return saved OrderDto.
+     * @since 2.0
+     */
     @Override
     @Transactional
     public OrderDto save(List<SaveOrderDto> saveOrderDtoList, Long userId) {
@@ -76,6 +100,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+    /**
+     * This method deletes Order entity with given id from db.
+     *
+     * @param id id of deletable Order entity.
+     * @throws OrderException if Order entity with given id doesn't exist in db.
+     * @since 2.0
+     */
     @Override
     @Transactional
     public void delete(long id) {
@@ -85,6 +116,15 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    /**
+     * This method gets a list of OrderDto according to request parameters, limit and offset.
+     *
+     * @param reqParams parameters of a request.
+     * @param limit     for pagination.
+     * @param offset    for pagination.
+     * @return list of OrderDto.
+     * @since 2.0
+     */
     @Override
     public List<OrderDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
         List<Order> foundOrders = orderDao.findBy(reqParams, limit, offset);

@@ -1,4 +1,4 @@
-package com.epam.esm.dto.result;
+package com.epam.esm.advice.error;
 
 import java.util.List;
 

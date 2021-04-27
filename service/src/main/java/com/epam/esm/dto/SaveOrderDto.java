@@ -5,7 +5,11 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
+/**
+ * This DTO is for making an order.
+ *
+ * @since 2.0
+ */
 @Data
 @NoArgsConstructor
 public class SaveOrderDto {

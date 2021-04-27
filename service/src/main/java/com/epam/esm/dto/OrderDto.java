@@ -9,6 +9,11 @@ import org.springframework.hateoas.server.core.Relation;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Order DTO.
+ *
+ * @since 2.0
+ */
 @Relation(itemRelation = "order", collectionRelation = "orders")
 @Data
 @EqualsAndHashCode(callSuper = false)

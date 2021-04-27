@@ -14,9 +14,9 @@ import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
 
 /**
- * This DTO is validated to fully update a Tag entity.
+ * User DTO.
  *
- * @since 1.0
+ * @since 2.0
  */
 @Relation(itemRelation = "user", collectionRelation = "users")
 @Data

@@ -14,7 +14,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
- * This DTO is validated to fully update a Tag entity.
+ * Tag DTO.
  *
  * @since 1.0
  */

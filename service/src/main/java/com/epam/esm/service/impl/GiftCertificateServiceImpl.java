@@ -48,21 +48,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     /**
-     * This method do request to dao layer which depends on argument of the method.
-     * The method uses {@link GiftCertificateCriteriaFactory} for getting a correct {@link Criteria} which is based on passed request parameters.
-     * If the argument of the method additionally contains {@link com.epam.esm.constants.ApplicationConstants} SORT_FIELDS_KEY parameter then
-     * got result by {@link Criteria} will be sorted according to {@link com.epam.esm.constants.ApplicationConstants} ORDER_KEY parameter.
-     * If {@link com.epam.esm.constants.ApplicationConstants} ORDER_KEY parameter is not
-     * present or not equal "DESC" then sorting by ascending order.
+     * This method gets a list of GiftCertificateDto according to request parameters, limit and offset.
      *
      * @param reqParams parameters of a request.
-     * @param limit
-     * @param offset
-     * @return List of GiftCertificateDao.
-     * @throws GiftCertificateException if there is no entity in database.
+     * @param limit     for pagination.
+     * @param offset    for pagination.
+     * @return list of GiftCertificateDao.
      * @since 1.0
      */
-
     @Override
     public List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
 
@@ -82,38 +75,18 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     public GiftCertificateDto findById(long id) {
-        Optional<GiftCertificate> certificateOpt = giftCertificateDao.findById(id);
-
-        GiftCertificate foundCertificate = certificateOpt.orElseThrow(() -> new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("Can't find a certificate with id: %d", id)));
-
+        GiftCertificate foundCertificate = validator.validateAndFindByIdIfExist(id);
         return modelMapper.map(foundCertificate, GiftCertificateDto.class);
     }
 
 
-    private void fillTagLists(List<Tag> tagsForSaving, List<Tag> tagsForLinking, List<TagDto> passedDtoTags) {
-        //filling previous lists
-        if (passedDtoTags != null) {
-            passedDtoTags.stream()
-                    .distinct()
-                    .map(tagDto -> modelMapper.map(tagDto, Tag.class))
-                    .forEach(tag -> {
-                        Optional<Tag> foundTagOpt = tagDao.findByName(tag.getName());
-                        if (!foundTagOpt.isPresent()) {
-                            tagsForSaving.add(tag);
-                        } else {
-                            Tag foundTag = foundTagOpt.get();
-                            tagsForLinking.add(foundTag);
-                        }
-                    });
-        }
-    }
-
     /**
-     * This method set date fields for GiftCertificate entity and saves it in database. Also the method link passed tags with the GiftCertificate
-     * entity and, if the tag doesn't exist in db, creates it.
+     * This method separate passed tags to two lists: the first one are tags for saving(these tags are not present in DB),
+     * the second one are tags for linking(these tags are present in DB). Tags for saving will be set to entity and saved in DB.
+     * Tags for linking will be just bound with new saved GiftCertificate.
      *
-     * @param passedDto GiftCertificate entity without date fields and id for saving.
-     * @return GiftCertificateDto with id and tags.
+     * @param passedDto GiftCertificate for saving.
+     * @return saved GiftCertificate.
      * @since 1.0
      */
     @Override
@@ -142,14 +115,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         //union all tags for returning to client
         giftCertificate.getTags().addAll(tagsForLinking);
 
-        //  GiftCertificate savedCertificate = attachTags(passedDto.getTags(), passedDto);
-
         return modelMapper.map(savedCertificate, GiftCertificateDto.class);
 
     }
 
     /**
-     * This method does full update for GiftCertificate entity with given id.
+     * This method separate passed tags to two lists: the first one are tags for saving(these tags are not present in DB),
+     * the second one are tags for linking(these tags are present in DB). Tags for saving will be set to entity and saved in DB.
+     * Tags for linking will be just bound with new updated GiftCertificate.
      *
      * @param passedDto DTO contains field for updating GiftCertificate entity.
      * @param certId    id of updatable GiftCertificate entity.
@@ -189,8 +162,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     /**
-     * This method partly updates GiftCertificate entity.Also the method link passed tags with the GiftCertificate
-     * entity and, if the tag doesn't exist in db, creates it.
+     * Partial update of GiftCertificate.
      *
      * @param passedDto DTO contains field for partial updating GiftCertificate entity.
      * @param certId    id of updatable GiftCertificate entity.
@@ -269,6 +241,32 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             targetEntity.setDuration(duration);
         }
 
+    }
+
+
+    /**
+     * This method fills two given lists with passed Tags depends on necessity of saving or linking the tag.
+     *
+     * @param tagsForSaving  list of Tags for saving.
+     * @param tagsForLinking list of Tags for linking.
+     * @param passedDtoTags  passed Tags.
+     */
+    private void fillTagLists(List<Tag> tagsForSaving, List<Tag> tagsForLinking, List<TagDto> passedDtoTags) {
+        //filling previous lists
+        if (passedDtoTags != null) {
+            passedDtoTags.stream()
+                    .distinct()
+                    .map(tagDto -> modelMapper.map(tagDto, Tag.class))
+                    .forEach(tag -> {
+                        Optional<Tag> foundTagOpt = tagDao.findByName(tag.getName());
+                        if (!foundTagOpt.isPresent()) {
+                            tagsForSaving.add(tag);
+                        } else {
+                            Tag foundTag = foundTagOpt.get();
+                            tagsForLinking.add(foundTag);
+                        }
+                    });
+        }
     }
 
 

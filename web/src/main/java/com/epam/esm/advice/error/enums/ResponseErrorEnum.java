@@ -1,4 +1,4 @@
-package com.epam.esm.advice.error;
+package com.epam.esm.advice.error.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 @JsonIgnoreProperties(value = {"status"})
-public enum ResponseError {
+public enum ResponseErrorEnum {
     GIFT_CERTIFICATE_NOT_FOUND("Gift certificate is not found", HttpStatus.NOT_FOUND, 40401),
     GIFT_CERTIFICATE_WITH_SUCH_NAME_EXISTS("Gift certificate already exists", HttpStatus.BAD_REQUEST, 42010),
 
@@ -25,7 +25,7 @@ public enum ResponseError {
     private final int code;
     private final HttpStatus status;
 
-    ResponseError(String message, HttpStatus status, int code) {
+    ResponseErrorEnum(String message, HttpStatus status, int code) {
         this.message = message;
         this.code = code;
         this.status = status;

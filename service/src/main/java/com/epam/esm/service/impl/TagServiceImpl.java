@@ -41,14 +41,12 @@ public class TagServiceImpl implements TagService {
     }
 
     /**
-     * This method do request to dao layer which depends on argument of the method.
-     * The method uses {@link com.epam.esm.criteria.factory.TagCriteriaFactory} for getting a correct {@link Criteria} which is based on passed request parameters.
+     * This method gets a list of TagDto according to request parameters, limit and offset.
      *
      * @param reqParams parameters of a request.
-     * @param limit
-     * @param offset
-     * @return List of TagDao.
-     * @throws TagException is there are no tags in db.
+     * @param limit     for pagination.
+     * @param offset    for pagination.
+     * @return list of TagDto.
      * @since 1.0
      */
     @Override
@@ -61,11 +59,10 @@ public class TagServiceImpl implements TagService {
 
 
     /**
-     * This method get TagDto by Tag entity id.
+     * This method gets Tag entity from dao layer with given id and converts it to TagDto.
      *
-     * @param id Tag entity id.
-     * @return TagDto with id.
-     * @throws TagException if there is no Tag entity with given id in db.
+     * @param id id of necessary entity.
+     * @return TagDto.
      * @since 1.0
      */
     @Override
@@ -78,8 +75,7 @@ public class TagServiceImpl implements TagService {
      * This method saves a TagDto into db.
      *
      * @param tagDto DTO for saving without id.
-     * @return saved DTO with id.
-     * @throws TagException if Tag entity with a name like DTO already exists in db.
+     * @return TagDto.
      * @since 1.0
      */
     @Override
@@ -95,10 +91,10 @@ public class TagServiceImpl implements TagService {
     }
 
     /**
-     * This method deletes a Tag entity from db.
+     * This method deletes Tag entity with given id from db.
      *
-     * @param id Tag entity's id for deleting.
-     * @throws TagException if there is no Tag entity with given id in db.
+     * @param id id of deletable Tag entity.
+     * @throws TagException if Order entity with given id doesn't exist in db.
      * @since 1.0
      */
     @Transactional
@@ -111,10 +107,10 @@ public class TagServiceImpl implements TagService {
     }
 
     /**
-     * This method gets DTO with given name.
+     * This method gets TagDto with given name.
      *
      * @param tagName name of Tag entity.
-     * @return DTO with id with given name.
+     * @return TagDto.
      * @throws TagException is there is no Tag entity with given name in db.
      * @since 1.0
      */
@@ -126,6 +122,13 @@ public class TagServiceImpl implements TagService {
         return modelMapper.map(foundTag, TagDto.class);
     }
 
+
+    /**
+     * This method gets the most widely used tag of the user with the biggest cost of orders.
+     *
+     * @return TagDto.
+     * @throws TagException is there is no Tag.
+     */
     @Override
     public TagDto findMostWidelyUsed() {
         List<User> usersWithMaxOrderCost = userDao.findWithMaxOrderCost();
@@ -138,12 +141,11 @@ public class TagServiceImpl implements TagService {
 
         Map.Entry<Long, Long> tagIdCountEntry = tagIdCountMap.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
-                .orElseThrow(()->new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, "Tag is not found"));
+                .orElseThrow(() -> new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, "Tag is not found"));
 
         Long mostWidelyUsedTagId = tagIdCountEntry.getKey();
 
-
-        return  usersWithMaxOrderCost.stream()
+        return usersWithMaxOrderCost.stream()
                 .flatMap(user -> user.getOrders().stream())
                 .flatMap(order -> order.getGiftCertificates().stream())
                 .flatMap(giftCertificate -> giftCertificate.getTags().stream())

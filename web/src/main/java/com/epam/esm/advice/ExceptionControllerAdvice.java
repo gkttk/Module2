@@ -1,8 +1,8 @@
 package com.epam.esm.advice;
 
-import com.epam.esm.advice.error.ResponseError;
+import com.epam.esm.advice.error.ErrorResult;
+import com.epam.esm.advice.error.enums.ResponseErrorEnum;
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dto.result.ErrorResult;
 import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.exceptions.OrderException;
 import com.epam.esm.exceptions.ResponseErrorNotFoundException;
@@ -30,30 +30,30 @@ import java.util.stream.Stream;
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(GiftCertificateException.class)
-    public ResponseEntity<ResponseError> handleGiftCertificateException(GiftCertificateException exception) {
+    public ResponseEntity<ResponseErrorEnum> handleGiftCertificateException(GiftCertificateException exception) {
         int errorCode = exception.getErrorCode();
-        ResponseError error = getError(errorCode);
+        ResponseErrorEnum error = getError(errorCode);
         return new ResponseEntity<>(error, error.getStatus());
     }
 
     @ExceptionHandler(TagException.class)
-    public ResponseEntity<ResponseError> handleTagException(TagException exception) {
+    public ResponseEntity<ResponseErrorEnum> handleTagException(TagException exception) {
         int errorCode = exception.getErrorCode();
-        ResponseError error = getError(errorCode);
+        ResponseErrorEnum error = getError(errorCode);
         return new ResponseEntity<>(error, error.getStatus());
     }
 
     @ExceptionHandler(OrderException.class)
-    public ResponseEntity<ResponseError> handleOrderException(OrderException exception) {
+    public ResponseEntity<ResponseErrorEnum> handleOrderException(OrderException exception) {
         int errorCode = exception.getErrorCode();
-        ResponseError error = getError(errorCode);
+        ResponseErrorEnum error = getError(errorCode);
         return new ResponseEntity<>(error, error.getStatus());
     }
 
     @ExceptionHandler(UserException.class)
-    public ResponseEntity<ResponseError> handleUserException(UserException exception) {
+    public ResponseEntity<ResponseErrorEnum> handleUserException(UserException exception) {
         int errorCode = exception.getErrorCode();
-        ResponseError error = getError(errorCode);
+        ResponseErrorEnum error = getError(errorCode);
         return new ResponseEntity<>(error, error.getStatus());
     }
 
@@ -83,8 +83,8 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
 
-    private ResponseError getError(int errorCode) {
-        return Stream.of(ResponseError.values())
+    private ResponseErrorEnum getError(int errorCode) {
+        return Stream.of(ResponseErrorEnum.values())
                 .filter(error -> error.getCode() == errorCode)
                 .findFirst().orElseThrow(() -> new ResponseErrorNotFoundException(String.format("Can't find ResponseError with code:%d", errorCode)));
     }

@@ -2,7 +2,9 @@ package com.epam.esm.validator;
 
 /**
  * This interface represents an api to check existence/non-existence of entity in db.
- * Implementations : {@link com.epam.esm.validator.GiftCertificateValidator},{@link com.epam.esm.validator.TagValidator} classes.
+ * Implementations : {@link com.epam.esm.validator.GiftCertificateValidator},
+ * {@link com.epam.esm.validator.TagValidator},
+ * {@link com.epam.esm.validator.UserValidator} classes.
  *
  * @since 1.0
  */
@@ -18,7 +20,7 @@ public interface EntityValidator<T> {
     T validateAndFindByIdIfExist(long id);
 
     /**
-     * This method checks if an entity with given id exists in db by it's name.
+     * This method checks if an entity with given name exists in db.
      *
      * @param name name of the entity.
      * @since 1.0
@@ -26,7 +28,7 @@ public interface EntityValidator<T> {
     void validateIfEntityWithGivenNameExist(String name);
 
     /**
-     * This method throws an exception when GiftCertificate entity with given name and another id is present in db.
+     * This method checks if an entity with given name and another id is present in db.
      *
      * @param name name of entity
      * @param id   id of entity

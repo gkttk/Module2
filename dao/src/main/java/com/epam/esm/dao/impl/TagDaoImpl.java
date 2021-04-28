@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,22 @@ public class TagDaoImpl implements TagDao {
                 .setParameter(ApplicationConstants.TAG_NAME_FIELD, tagName);
 
         Optional<Tag> tagOpt = query.getResultStream().findFirst();
+        tagOpt.ifPresent(entityManager::detach);
+
+        return tagOpt;
+    }
+
+
+    /**
+     * Find Tag the most widely used tag of user with the biggest cost of all orders.
+     *
+     * @return Optional with Tag entity or empty Optional.
+     * @since 2.0
+     */
+    @Override
+    public Optional<Tag> findMaxWidelyUsed() {
+        Query nativeQuery = entityManager.createNativeQuery(ApplicationConstants.GET_MOST_WIDELY_USED_TAG, Tag.class);
+        Optional<Tag> tagOpt = nativeQuery.getResultStream().findFirst();
         tagOpt.ifPresent(entityManager::detach);
 
         return tagOpt;

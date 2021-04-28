@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -66,40 +65,6 @@ public class UserDaoImpl implements UserDao {
             return Optional.of(user);
         }
         return Optional.empty();
-    }
-
-
-    /**
-     * This method get list of users with the biggest sum of order costs.
-     * There might be several users with the same the biggest sum of order costs.
-     *
-     * @return list of users with the biggest cost of orders.
-     * @since 2.0
-     */
-    @Override
-    public List<User> findWithMaxOrderCost() {
-
-      /*  String sql = "SELECT u.id, u.login, u.role, sum(o.cost) FROM user u " +
-                "JOIN users_orders uo on u.id = uo.user_id " +
-                "JOIN orders o on uo.order_id = o.id " +
-                "GROUP BY u.id " +
-                "having sum(o.cost) = (SELECT sum(o.cost) FROM user u " +
-                "JOIN users_orders uo on u.id = uo.user_id " +
-                "JOIN orders o on uo.order_id = o.id " +
-                "GROUP BY u.id " +
-                "ORDER BY sum(o.cost) desc limit 1)";*/
-
-        String hqlMaxOrdersCost = "SELECT sum(o.cost) FROM User u JOIN u.orders o GROUP BY u.id" +
-                " order by sum(o.cost) desc";
-        TypedQuery<BigDecimal> query = entityManager.createQuery(hqlMaxOrdersCost, BigDecimal.class);
-        query.setMaxResults(1);
-        BigDecimal maxCost = query.getSingleResult();
-
-        String hql = "SELECT u FROM User u JOIN u.orders uo GROUP BY u.id HAVING sum(uo.cost) = :maxCost";
-        TypedQuery<User> userTypedQuery = entityManager.createQuery(hql, User.class);
-        userTypedQuery.setParameter("maxCost", maxCost);
-
-        return userTypedQuery.getResultList();
     }
 
 

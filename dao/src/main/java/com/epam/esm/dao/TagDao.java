@@ -15,6 +15,15 @@ import java.util.Optional;
 public interface TagDao {
 
     /**
+     * Find Tag the most widely used tag of user with the biggest cost of all orders.
+     *
+     * @return Tag entity.
+     * @since 2.0
+     */
+    Optional<Tag> findMaxWidelyUsed();
+
+
+    /**
      * This method combines all getList queries.
      *
      * @param reqParams is a map of all request parameters.

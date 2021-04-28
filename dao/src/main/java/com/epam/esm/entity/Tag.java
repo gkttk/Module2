@@ -1,5 +1,6 @@
 package com.epam.esm.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ import java.util.List;
 @Table(name = "tag")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Audited
 public class Tag {
 

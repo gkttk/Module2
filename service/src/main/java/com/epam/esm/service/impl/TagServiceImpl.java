@@ -2,10 +2,8 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
 import com.epam.esm.exceptions.TagException;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.EntityValidator;
@@ -28,15 +26,13 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
 
     private final TagDao tagDao;
-    private final UserDao userDao;
     private final ModelMapper modelMapper;
     private final EntityValidator<Tag> validator;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, UserDao userDao, ModelMapper modelMapper, EntityValidator<Tag> validator) {
+    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, EntityValidator<Tag> validator) {
         this.tagDao = tagDao;
         this.modelMapper = modelMapper;
-        this.userDao = userDao;
         this.validator = validator;
     }
 
@@ -131,27 +127,8 @@ public class TagServiceImpl implements TagService {
      */
     @Override
     public TagDto findMostWidelyUsed() {
-        List<User> usersWithMaxOrderCost = userDao.findWithMaxOrderCost();
-
-        Map<Long, Long> tagIdCountMap = usersWithMaxOrderCost.stream()
-                .flatMap(user -> user.getOrders().stream())
-                .flatMap(order -> order.getGiftCertificates().stream())
-                .flatMap(giftCertificate -> giftCertificate.getTags().stream())
-                .collect(Collectors.groupingBy(Tag::getId, Collectors.counting()));
-
-        Map.Entry<Long, Long> tagIdCountEntry = tagIdCountMap.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .orElseThrow(() -> new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, "Tag is not found"));
-
-        Long mostWidelyUsedTagId = tagIdCountEntry.getKey();
-
-        return usersWithMaxOrderCost.stream()
-                .flatMap(user -> user.getOrders().stream())
-                .flatMap(order -> order.getGiftCertificates().stream())
-                .flatMap(giftCertificate -> giftCertificate.getTags().stream())
-                .filter(tag -> tag.getId().equals(mostWidelyUsedTagId))
-                .findFirst()
-                .map(tag -> modelMapper.map(tag, TagDto.class))
-                .get();
+        Optional<Tag> tagOpt = tagDao.findMaxWidelyUsed();
+        Tag tag = tagOpt.orElseThrow(() -> new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, "Tag is not found in DB"));
+        return modelMapper.map(tag, TagDto.class);
     }
 }

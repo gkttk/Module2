@@ -41,15 +41,6 @@ public interface UserDao {
     User save(User user);
 
     /**
-     * This method get list of users with the biggest sum of order costs.
-     * There might be several users with the same the biggest sum of order costs.
-     *
-     * @return list of users with the biggest cost of orders.
-     * @since 2.0
-     */
-    List<User> findWithMaxOrderCost();
-
-    /**
      * This method combines all getList queries.
      *
      * @param reqParams is a map of all request parameters.

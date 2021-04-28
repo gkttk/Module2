@@ -5,6 +5,7 @@ import com.epam.esm.advice.error.enums.ResponseErrorEnum;
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.exceptions.OrderException;
+import com.epam.esm.exceptions.RequestParameterParserException;
 import com.epam.esm.exceptions.ResponseErrorNotFoundException;
 import com.epam.esm.exceptions.TagException;
 import com.epam.esm.exceptions.UserException;
@@ -28,6 +29,13 @@ import java.util.stream.Stream;
 
 @ControllerAdvice
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(RequestParameterParserException.class)
+    public ResponseEntity<ResponseErrorEnum> handleRequestParameterParserException(RequestParameterParserException exception) {
+        int errorCode = exception.getErrorCode();
+        ResponseErrorEnum error = getError(errorCode);
+        return new ResponseEntity<>(error, error.getStatus());
+    }
 
     @ExceptionHandler(GiftCertificateException.class)
     public ResponseEntity<ResponseErrorEnum> handleGiftCertificateException(GiftCertificateException exception) {

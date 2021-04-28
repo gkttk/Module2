@@ -3,6 +3,9 @@ package com.epam.esm.querybuilder;
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.querybuilder.parameterparser.ParameterParser;
+import com.epam.esm.querybuilder.parameterparser.enums.Operators;
+import com.epam.esm.querybuilder.parameterparser.parserresult.ParserResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,9 +29,13 @@ import java.util.stream.Stream;
 @Component
 public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertificate> implements QueryBuilder<GiftCertificate> {
 
+    private final ParameterParser parameterParser;
+
+
     @Autowired
-    public GiftCertificateQueryBuilder(EntityManager entityManager) {
+    public GiftCertificateQueryBuilder(EntityManager entityManager, ParameterParser parameterParser) {
         super(entityManager);
+        this.parameterParser = parameterParser;
     }
 
     /**
@@ -78,10 +85,22 @@ public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertif
         }
         params = reqParams.get(ApplicationConstants.TAG_NAMES_KEY);
         if (params != null) {
-            Predicate predicate = getJoinPredicate(params, ApplicationConstants.TAGS_ATTRIBUTE_NAME,
-                    ApplicationConstants.TAG_NAME_FIELD, criteriaBuilder, root);
-            criteriaBuilder.or(predicate);
-            predicates.add(criteriaBuilder.or(predicate));
+            for (String param : params) {
+                ParserResult parserResult = parameterParser.parseRequestParameter(param);
+                Operators operator = parserResult.getOperator();
+                String[] tagNames = parserResult.getParameters();
+                Predicate predicate;
+                if (ApplicationConstants.AND_OPERATOR_NAME.equals(operator.name())) {
+                    predicate = getJoinAndPredicate(tagNames, ApplicationConstants.TAGS_ATTRIBUTE_NAME,
+                            ApplicationConstants.TAG_NAME_FIELD, criteriaBuilder, root);
+                    criteriaBuilder.and(predicate);
+                } else {
+                    predicate = getJoinPredicate(tagNames, ApplicationConstants.TAGS_ATTRIBUTE_NAME,
+                            ApplicationConstants.TAG_NAME_FIELD, criteriaBuilder, root);
+                    criteriaBuilder.or(predicate);
+                }
+                predicates.add(criteriaBuilder.or(predicate));
+            }
         }
         params = reqParams.get(ApplicationConstants.TAG_AND_NAMES_KEY);
         if (params != null) {

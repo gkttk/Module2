@@ -19,7 +19,8 @@ public enum ResponseErrorEnum {
     ORDER_NOT_FOUND("Order is not found", HttpStatus.NOT_FOUND, 40404),
 
     INCORRECT_GIFT_CERTIFICATE_SORTING_FIELD("Incorrect field for sorting GiftCertificate was passed", HttpStatus.BAD_REQUEST, 44601),
-    INCORRECT_TAG_SORTING_FIELD("Incorrect field for sorting Tag was passed", HttpStatus.BAD_REQUEST, 44602);
+    INCORRECT_TAG_SORTING_FIELD("Incorrect field for sorting Tag was passed", HttpStatus.BAD_REQUEST, 44602),
+    INCORRECT_OPERATOR_VALUE_PASSED_IN_REQUEST("Incorrect operator value was passed in request parameter", HttpStatus.BAD_REQUEST, 46000);
 
     private final String message;
     private final int code;

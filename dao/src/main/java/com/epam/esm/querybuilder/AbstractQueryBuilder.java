@@ -1,6 +1,9 @@
 package com.epam.esm.querybuilder;
 
 import com.epam.esm.constants.ApplicationConstants;
+import com.epam.esm.querybuilder.parameterparser.ParameterParser;
+import com.epam.esm.querybuilder.parameterparser.enums.Operators;
+import com.epam.esm.querybuilder.parameterparser.parserresult.ParserResult;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
@@ -22,11 +25,95 @@ import java.util.stream.Stream;
 public abstract class AbstractQueryBuilder<T> {
 
     protected final EntityManager entityManager;
+    protected final ParameterParser parser;
 
     @Autowired
-    protected AbstractQueryBuilder(EntityManager entityManager) {
+    protected AbstractQueryBuilder(EntityManager entityManager, ParameterParser parser) {
         this.entityManager = entityManager;
+        this.parser = parser;
     }
+
+    /**
+     * This method parses parameters and constructs LIKE statement according to passed operator.
+     *
+     * @param predicates all predicates of current creating query.
+     * @param params     parameters of request
+     * @param field      field for Like query.
+     * @since 2.0
+     */
+    protected void likeProcess(CriteriaBuilder criteriaBuilder, Root<T> root, List<Predicate> predicates, String[] params,
+                               String field) {
+        Stream.of(params).forEach(param -> {
+            ParserResult parserResult = parser.parseRequestParameter(param);
+            Operators operator = parserResult.getOperator();
+            String[] values = parserResult.getParameters();
+            if (ApplicationConstants.AND_OPERATOR_NAME.equals(operator.name())) {
+                Stream.of(values)
+                        .map(value -> getLikePredicate(value, field, criteriaBuilder, root))
+                        .reduce(criteriaBuilder::and).ifPresent(predicates::add);
+            } else {
+                Stream.of(values)
+                        .map(value -> getLikePredicate(value, field, criteriaBuilder, root))
+                        .reduce(criteriaBuilder::or).ifPresent(predicates::add);
+            }
+        });
+    }
+
+
+    /**
+     * This method parses parameters and constructs JOIN statement according to passed operator.
+     *
+     * @param predicates    all predicates of current creating query.
+     * @param params        parameters of request
+     * @param field         field for JOIN query.
+     * @param attributeName field for JOIN query.
+     * @since 2.0
+     */
+    protected void joinProcess(CriteriaBuilder criteriaBuilder, Root<T> root, List<Predicate> predicates, String[] params,
+                               String field, String attributeName) {
+        Stream.of(params).forEach(param -> {
+            ParserResult parserResult = parser.parseRequestParameter(param);
+            Operators operator = parserResult.getOperator();
+            String[] values = parserResult.getParameters();
+
+            if (ApplicationConstants.AND_OPERATOR_NAME.equals(operator.name())) {
+                Stream.of(values)
+                        .map(value -> getJoinPredicate(value, field, attributeName, criteriaBuilder, root))
+                        .reduce(criteriaBuilder::and).ifPresent(predicates::add);
+            } else {
+                Stream.of(values)
+                        .map(value -> getJoinPredicate(value, field, attributeName, criteriaBuilder, root))
+                        .reduce(criteriaBuilder::or).ifPresent(predicates::add);
+            }
+        });
+    }
+
+    /**
+     * This method parses parameters and constructs EQUAL statement according to passed operator.
+     *
+     * @param predicates all predicates of current creating query.
+     * @param params     parameters of request
+     * @param field      field for EQUAL query.
+     * @since 2.0
+     */
+    protected void equalProcess(CriteriaBuilder criteriaBuilder, Root<T> root, List<Predicate> predicates, String[] params,
+                                String field) {
+        Stream.of(params).forEach(param -> {
+            ParserResult parserResult = parser.parseRequestParameter(param);
+            Operators operator = parserResult.getOperator();
+            String[] values = parserResult.getParameters();
+            if (ApplicationConstants.AND_OPERATOR_NAME.equals(operator.name())) {
+                Stream.of(values)
+                        .map(value -> getEqualsPredicate(value, field, criteriaBuilder, root))
+                        .reduce(criteriaBuilder::and).ifPresent(predicates::add);
+            } else {
+                Stream.of(values)
+                        .map(value -> getEqualsPredicate(value, field, criteriaBuilder, root))
+                        .reduce(criteriaBuilder::or).ifPresent(predicates::add);
+            }
+        });
+    }
+
 
     /**
      * This method constructs query for entity according to given request parameters.
@@ -72,29 +159,26 @@ public abstract class AbstractQueryBuilder<T> {
     /**
      * This method gets predicate for equals operation.
      *
-     * @param params    all passed params for equals.
+     * @param param     passed param for equals.
      * @param fieldName the field with which to compare.
      * @return reduced predicate with equals operations.
      * @since 2.0
      */
-    protected Predicate getEqualsPredicate(Object[] params, String fieldName, CriteriaBuilder criteriaBuilder, Root<T> root) {
-        return Stream.of(params)
-                .map(param -> criteriaBuilder.equal(root.get(fieldName), param))
-                .reduce(criteriaBuilder::or).orElse(null);
+    protected Predicate getEqualsPredicate(String param, String fieldName, CriteriaBuilder criteriaBuilder, Root<T> root) {
+        return criteriaBuilder.equal(root.get(fieldName), param);
     }
 
     /**
      * This method gets predicate for like operation.
      *
-     * @param params    all passed params for like.
+     * @param param     passed param for like.
      * @param fieldName the field with which to compare.
      * @return reduced predicate with like operations.
      * @since 2.0
      */
-    protected Predicate getLikePredicate(String[] params, String fieldName, CriteriaBuilder criteriaBuilder, Root<T> root) {
-        return Stream.of(params)
-                .map(param -> criteriaBuilder.like(root.get(fieldName), "%" + param + "%"))
-                .reduce(criteriaBuilder::or).orElse(null);
+    protected Predicate getLikePredicate(String param, String fieldName, CriteriaBuilder criteriaBuilder, Root<T> root) {
+        return criteriaBuilder.like(root.get(fieldName), "%" + param + "%");
+
     }
 
     /**
@@ -110,19 +194,15 @@ public abstract class AbstractQueryBuilder<T> {
      * This method gets predicate for equal operation with joining between two tables.
      * All predicates reduces as OR statement.
      *
-     * @param params        all passed params for join.
+     * @param params        passed param for join.
      * @param attributeName attribute of entity for joining.
      * @param fieldName     the field with which to compare.
      * @return reduced predicate with equal operations.
      * @since 2.0
      */
-    protected Predicate getJoinPredicate(String[] params, String attributeName, String fieldName, CriteriaBuilder criteriaBuilder, Root<T> root) {
-        return Stream.of(params)
-                .map(param -> {
-                    Join<?, ?> join = root.join(attributeName);
-                    return criteriaBuilder.equal(join.get(fieldName), param);
-
-                }).reduce(criteriaBuilder::or).orElse(null);
+    protected Predicate getJoinPredicate(String param, String fieldName, String attributeName, CriteriaBuilder criteriaBuilder, Root<T> root) {
+        Join<?, ?> join = root.join(attributeName);
+        return criteriaBuilder.equal(join.get(fieldName), param);
     }
 
     /**

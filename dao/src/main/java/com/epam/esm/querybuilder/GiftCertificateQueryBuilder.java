@@ -2,23 +2,18 @@ package com.epam.esm.querybuilder;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.querybuilder.parameterparser.ParameterParser;
-import com.epam.esm.querybuilder.parameterparser.enums.Operators;
-import com.epam.esm.querybuilder.parameterparser.parserresult.ParserResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * Implementation of {@link com.epam.esm.querybuilder.QueryBuilder} interface
@@ -29,32 +24,10 @@ import java.util.stream.Stream;
 @Component
 public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertificate> implements QueryBuilder<GiftCertificate> {
 
-    private final ParameterParser parameterParser;
-
 
     @Autowired
-    public GiftCertificateQueryBuilder(EntityManager entityManager, ParameterParser parameterParser) {
-        super(entityManager);
-        this.parameterParser = parameterParser;
-    }
-
-    /**
-     * This method gets predicate for equal operation with joining.
-     * All predicates reduces as AND statement.
-     *
-     * @param params        all passed params for join.
-     * @param attributeName attribute of entity for joining.
-     * @param fieldName     the field with which to compare.
-     * @return reduced predicate with equal operations.
-     * @since 2.0
-     */
-    private Predicate getJoinAndPredicate(String[] params, String attributeName, String fieldName, CriteriaBuilder criteriaBuilder, Root<GiftCertificate> root) {
-        return Stream.of(params)
-                .map(param -> {
-                    Join<GiftCertificate, Tag> join = root.join(attributeName);
-                    return criteriaBuilder.equal(join.get(fieldName), param);
-
-                }).reduce(criteriaBuilder::and).orElse(null);
+    public GiftCertificateQueryBuilder(EntityManager entityManager, ParameterParser parser) {
+        super(entityManager, parser);
     }
 
     /**
@@ -74,44 +47,24 @@ public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertif
         String[] params;
         params = reqParams.get(ApplicationConstants.NAMES_PART_KEY);
         if (params != null) {
-            Predicate predicate = getLikePredicate(params, ApplicationConstants.NAME_FIELD, criteriaBuilder, root);
-            predicates.add(criteriaBuilder.or(predicate));
+            //example of the parameter ?namesPart=and:firstNamePart,secondNamePart
+            likeProcess(criteriaBuilder, root, predicates, params, ApplicationConstants.NAME_FIELD);
+
         }
         params = reqParams.get(ApplicationConstants.DESCRIPTION_PART_KEY);
         if (params != null) {
-            Predicate predicate = getLikePredicate(params, ApplicationConstants.DESCRIPTION_FIELD, criteriaBuilder, root);
-            criteriaBuilder.or(predicate);
-            predicates.add(criteriaBuilder.or(predicate));
+            //example of the parameter ?descriptionsPart=and:firstPart,secondPart
+            likeProcess(criteriaBuilder, root, predicates, params, ApplicationConstants.DESCRIPTION_FIELD);
         }
         params = reqParams.get(ApplicationConstants.TAG_NAMES_KEY);
         if (params != null) {
-            for (String param : params) {
-                ParserResult parserResult = parameterParser.parseRequestParameter(param);
-                Operators operator = parserResult.getOperator();
-                String[] tagNames = parserResult.getParameters();
-                Predicate predicate;
-                if (ApplicationConstants.AND_OPERATOR_NAME.equals(operator.name())) {
-                    predicate = getJoinAndPredicate(tagNames, ApplicationConstants.TAGS_ATTRIBUTE_NAME,
-                            ApplicationConstants.TAG_NAME_FIELD, criteriaBuilder, root);
-                    criteriaBuilder.and(predicate);
-                } else {
-                    predicate = getJoinPredicate(tagNames, ApplicationConstants.TAGS_ATTRIBUTE_NAME,
-                            ApplicationConstants.TAG_NAME_FIELD, criteriaBuilder, root);
-                    criteriaBuilder.or(predicate);
-                }
-                predicates.add(criteriaBuilder.or(predicate));
-            }
-        }
-        params = reqParams.get(ApplicationConstants.TAG_AND_NAMES_KEY);
-        if (params != null) {
-            Predicate predicate = getJoinAndPredicate(params, ApplicationConstants.TAGS_ATTRIBUTE_NAME,
-                    ApplicationConstants.TAG_NAME_FIELD, criteriaBuilder, root);
-            criteriaBuilder.and(predicate);
-            predicates.add(criteriaBuilder.or(predicate));
+            //example of the parameter ?tagNames=and:tag1,tag2
+            joinProcess(criteriaBuilder, root, predicates, params, ApplicationConstants.TAG_NAME_FIELD, ApplicationConstants.TAGS_ATTRIBUTE_NAME);
         }
 
         return predicates;
     }
+
 
     /**
      * {@link AbstractQueryBuilder#setOrder(String, String, CriteriaQuery, Root, CriteriaBuilder)} ()}

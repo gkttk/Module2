@@ -2,6 +2,7 @@ package com.epam.esm.querybuilder;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.querybuilder.parameterparser.ParameterParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,8 +24,8 @@ import java.util.Map;
 @Component
 public class TagQueryBuilder extends AbstractQueryBuilder<Tag> implements QueryBuilder<Tag> {
     @Autowired
-    public TagQueryBuilder(EntityManager entityManager) {
-        super(entityManager);
+    public TagQueryBuilder(EntityManager entityManager, ParameterParser parser) {
+        super(entityManager, parser);
 
     }
 
@@ -45,8 +46,8 @@ public class TagQueryBuilder extends AbstractQueryBuilder<Tag> implements QueryB
         String[] params;
         params = reqParams.get(ApplicationConstants.CERTIFICATE_ID_KEY);
         if (params != null) {
-            Predicate predicate = getJoinPredicate(params, ApplicationConstants.GC_ATTRIBUTE_NAME, ApplicationConstants.ID_FIELD, criteriaBuilder, root);
-            predicates.add(criteriaBuilder.or(predicate));
+            //example of the parameter ?certificateId=or:id1,id2
+            joinProcess(criteriaBuilder, root, predicates, params, ApplicationConstants.ID_FIELD, ApplicationConstants.GC_ATTRIBUTE_NAME);
         }
 
         return predicates;

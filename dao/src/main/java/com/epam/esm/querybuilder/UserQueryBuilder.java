@@ -2,6 +2,7 @@ package com.epam.esm.querybuilder;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.entity.User;
+import com.epam.esm.querybuilder.parameterparser.ParameterParser;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -22,8 +23,8 @@ import java.util.Map;
 @Component
 public class UserQueryBuilder extends AbstractQueryBuilder<User> implements QueryBuilder<User> {
 
-    public UserQueryBuilder(EntityManager entityManager) {
-        super(entityManager);
+    public UserQueryBuilder(EntityManager entityManager, ParameterParser parser) {
+        super(entityManager, parser);
     }
 
     /**
@@ -43,9 +44,8 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements Quer
         String[] params;
         params = reqParams.get(ApplicationConstants.ROLE_KEY);
         if (params != null) {
-            Predicate predicate = getEqualsPredicate(params, ApplicationConstants.USER_ROLE_FIELD, criteriaBuilder, root);
-            predicates.add(criteriaBuilder.or(predicate));
-
+            //example of the parameter ?role=and:ADMIN,USER
+            equalProcess(criteriaBuilder, root, predicates, params, ApplicationConstants.USER_ROLE_FIELD);
         }
 
         return predicates;

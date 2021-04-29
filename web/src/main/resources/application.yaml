@@ -1,0 +1,19 @@
+logging:
+  level:
+    org:
+      springframework:
+        transaction:
+          interceptor: TRACE
+server:
+  port: 8080
+spring:
+  application:
+    name: gifts
+  mvc:
+    servlet:
+      load-on-startup: 1
+      path: /
+  profiles:
+    active: dev
+
+

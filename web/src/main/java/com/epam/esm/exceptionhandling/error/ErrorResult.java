@@ -1,4 +1,4 @@
-package com.epam.esm.advice.error;
+package com.epam.esm.exceptionhandling.error;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
-package com.epam.esm.advice;
+package com.epam.esm.exceptionhandling;
 
-import com.epam.esm.advice.error.ErrorResult;
-import com.epam.esm.advice.error.enums.ResponseErrorEnum;
+import com.epam.esm.exceptionhandling.error.ErrorResult;
+import com.epam.esm.exceptionhandling.error.enums.ResponseErrorEnum;
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.exceptions.OrderException;

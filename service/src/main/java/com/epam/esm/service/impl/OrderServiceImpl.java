@@ -1,15 +1,18 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
+import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.OrderDao;
+import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.SaveOrderDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
+import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.exceptions.OrderException;
+import com.epam.esm.exceptions.UserException;
 import com.epam.esm.service.OrderService;
-import com.epam.esm.validator.EntityValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,16 +34,16 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderDao orderDao;
+    private final UserDao userDao;
+    private final GiftCertificateDao giftCertificateDao;
     private final ModelMapper modelMapper;
-    private final EntityValidator<User> userValidator;
-    private final EntityValidator<GiftCertificate> giftCertificateValidator;
 
     @Autowired
-    public OrderServiceImpl(OrderDao orderDao, ModelMapper modelMapper, EntityValidator<User> userValidator, EntityValidator<GiftCertificate> giftCertificateValidator) {
+    public OrderServiceImpl(OrderDao orderDao, UserDao userDao, GiftCertificateDao giftCertificateDao, ModelMapper modelMapper) {
         this.orderDao = orderDao;
+        this.userDao = userDao;
+        this.giftCertificateDao = giftCertificateDao;
         this.modelMapper = modelMapper;
-        this.userValidator = userValidator;
-        this.giftCertificateValidator = giftCertificateValidator;
     }
 
     /**
@@ -73,13 +76,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderDto save(List<SaveOrderDto> saveOrderDtoList, Long userId) {
-        User user = userValidator.validateAndFindByIdIfExist(userId);
+        User user = findByIdIfExist(userId);
 
         List<GiftCertificate> certificatesForOrder = new ArrayList<>();
         saveOrderDtoList
                 .forEach(saveOrderDto -> {
                     long certificateId = saveOrderDto.getCertificateId();
-                    GiftCertificate foundCertificate = giftCertificateValidator.validateAndFindByIdIfExist(certificateId);
+                    GiftCertificate foundCertificate = checkAndFindGiftCertificateByIdIfExist(certificateId);
                     int count = saveOrderDto.getCount();
                     for (int i = 0; i < count; i++) {
                         certificatesForOrder.add(foundCertificate);
@@ -132,4 +135,33 @@ public class OrderServiceImpl implements OrderService {
                 .map(entity -> modelMapper.map(entity, OrderDto.class))
                 .collect(Collectors.toList());
     }
+
+    /**
+     * This method return an User entity if it exists in db.
+     *
+     * @param id User's id.
+     * @return User entity.
+     * @throws UserException if there is no entity with given id in db.
+     */
+    private User findByIdIfExist(long id) {
+        return userDao.findById(id)
+                .orElseThrow(() -> new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE,
+                        String.format("Can't find an user with id: %d", id)));
+    }
+
+    /**
+     * This method attempts to get an GiftCertificate entity from db by it's id.
+     *
+     * @param certificateId id of the GiftCertificate entity.
+     * @return GiftCertificate entity.
+     * @throws GiftCertificateException when there is no entity with given id in db.
+     * @since 1.0
+     */
+    public GiftCertificate checkAndFindGiftCertificateByIdIfExist(long certificateId) {
+        Optional<GiftCertificate> certificateOpt = giftCertificateDao.findById(certificateId);
+        return certificateOpt.orElseThrow(() -> new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d doesn't exist in DB",
+                certificateId)));
+    }
+
+
 }

@@ -6,7 +6,6 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.TagException;
 import com.epam.esm.service.TagService;
-import com.epam.esm.validator.EntityValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,13 +26,11 @@ public class TagServiceImpl implements TagService {
 
     private final TagDao tagDao;
     private final ModelMapper modelMapper;
-    private final EntityValidator<Tag> validator;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, EntityValidator<Tag> validator) {
+    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper) {
         this.tagDao = tagDao;
         this.modelMapper = modelMapper;
-        this.validator = validator;
     }
 
     /**
@@ -63,7 +60,7 @@ public class TagServiceImpl implements TagService {
      */
     @Override
     public TagDto findById(long id) {
-        Tag foundTag = validator.validateAndFindByIdIfExist(id);
+        Tag foundTag = findByIdIfExist(id);
         return modelMapper.map(foundTag, TagDto.class);
     }
 
@@ -77,8 +74,8 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional
     public TagDto save(TagDto tagDto) {
-        validator.validateIfEntityWithGivenNameExist(tagDto.getName());
 
+        checkIfEntityWithGivenNameExist(tagDto.getName());
         Tag entity = modelMapper.map(tagDto, Tag.class);
         Tag savedEntity = tagDao.save(entity);
         tagDto.setId(savedEntity.getId());
@@ -130,5 +127,34 @@ public class TagServiceImpl implements TagService {
         Optional<Tag> tagOpt = tagDao.findMaxWidelyUsed();
         Tag tag = tagOpt.orElseThrow(() -> new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, "Tag is not found in DB"));
         return modelMapper.map(tag, TagDto.class);
+    }
+
+    /**
+     * This method attempts to get an Tag entity from db by it's id.
+     *
+     * @param tagId id of the Tag entity.
+     * @return Tag entity.
+     * @throws TagException when there is no entity with given id in db.
+     * @since 1.0
+     */
+    private Tag findByIdIfExist(long tagId) {
+        Optional<Tag> foundTagOpt = tagDao.findById(tagId);
+        return foundTagOpt.orElseThrow(() ->
+                new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, String.format("Can't find a tag with id: %d", tagId)));
+    }
+
+    /**
+     * This method checks if a Tag entity with given name exists in db.
+     *
+     * @param tagName name of the Tag entity.
+     * @throws TagException if there is Tag entity with given name in db.
+     * @since 1.0
+     */
+    private void checkIfEntityWithGivenNameExist(String tagName) {
+        Optional<Tag> foundTagOpt = tagDao.findByName(tagName);
+        if (foundTagOpt.isPresent()) {
+            throw new TagException(ApplicationConstants.TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE, String.format("Tag with name: %s already exist in DB",
+                    tagName));
+        }
     }
 }

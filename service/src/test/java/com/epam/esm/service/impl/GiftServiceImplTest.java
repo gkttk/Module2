@@ -9,7 +9,6 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.GiftCertificateException;
-import com.epam.esm.validator.EntityValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,9 +42,6 @@ public class GiftServiceImplTest {
 
     @Mock
     private TagDao tagDao;
-
-    @Mock
-    EntityValidator<GiftCertificate> giftCertificateValidator;
 
     @Mock
     private CertificateTagsDao certificateTagsDao;
@@ -132,7 +128,7 @@ public class GiftServiceImplTest {
     @Test
     public void testSave_DtoWithId_EntityWithGivenNameDoesNotExistInDb() {
         //given
-        doNothing().when(giftCertificateValidator).validateIfEntityWithGivenNameExist(testDtoWithoutId.getName());
+        when(certDao.findByName(testDtoWithoutId.getName())).thenReturn(Optional.of(testEntity));
         when(modelMapper.map(testDtoWithoutId, GiftCertificate.class)).thenReturn(testEntityWithoutId);
         when(modelMapper.map(tagDto, Tag.class)).thenReturn(tag);
         when(tagDao.findByName(tag.getName())).thenReturn(Optional.empty());
@@ -142,7 +138,7 @@ public class GiftServiceImplTest {
         GiftCertificateDto result = service.save(testDtoWithoutId);
         //then
         assertNotNull(result.getId());
-        verify(giftCertificateValidator).validateIfEntityWithGivenNameExist(testDtoWithoutId.getName());
+        verify(certDao).findByName(testDtoWithoutId.getName());
         verify(modelMapper).map(testDtoWithoutId, GiftCertificate.class);
         verify(modelMapper).map(tagDto, Tag.class);
         verify(certDao).save(testEntityWithoutId);
@@ -153,8 +149,8 @@ public class GiftServiceImplTest {
     public void testUpdate_UpdatedDto_EntityWithGivenNameDoesNotExistInDb() {
         //given
         long certificateId = testDto.getId();
-        doNothing().when(giftCertificateValidator).validateAndFindByIdIfExist(certificateId);
-        doNothing().when(giftCertificateValidator).validateIfAnotherEntityWithGivenNameExist(testDto.getName(), certificateId);
+        doNothing().when(certDao.findById(certificateId));
+        doNothing().when(certDao.findByName(testDto.getName()));
         doNothing().when(certificateTagsDao).deleteAllTagsForCertificate(certificateId);
 
         when(modelMapper.map(tagDto, Tag.class)).thenReturn(tag);
@@ -168,8 +164,8 @@ public class GiftServiceImplTest {
         GiftCertificateDto result = service.update(testDto, certificateId);
         //then
         assertEquals(result, testDto);
-        verify(giftCertificateValidator).validateAndFindByIdIfExist(certificateId);
-        verify(giftCertificateValidator).validateIfAnotherEntityWithGivenNameExist(testDto.getName(), certificateId);
+        verify(certDao).findById(certificateId);
+        verify(certDao).findByName(testDto.getName());
         verify(certificateTagsDao).deleteAllTagsForCertificate(certificateId);
         verify(modelMapper).map(tagDto, Tag.class);
         verify(tagDao).findByName(tag.getName());
@@ -183,8 +179,8 @@ public class GiftServiceImplTest {
         //given
         long certificateId = testDto.getId();
         long tagId = testDto.getTags().get(0).getId();
-        doNothing().when(giftCertificateValidator).validateAndFindByIdIfExist(certificateId);
-        doNothing().when(giftCertificateValidator).validateIfAnotherEntityWithGivenNameExist(testDto.getName(), certificateId);
+        when(certDao.findById(certificateId)).thenReturn(Optional.of(testEntity));
+        when(certDao.findByName(testDto.getName())).thenReturn(Optional.empty());
         when(certDao.update(testEntity)).thenReturn(testEntity);
         doNothing().when(certificateTagsDao).save(certificateId, tagId);
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
@@ -192,8 +188,8 @@ public class GiftServiceImplTest {
         GiftCertificateDto result = service.patch(testDto, certificateId);
         //then
         assertEquals(result, testDto);
-        verify(giftCertificateValidator).validateAndFindByIdIfExist(certificateId);
-        verify(giftCertificateValidator).validateIfAnotherEntityWithGivenNameExist(testDto.getName(), certificateId);
+        verify(certDao).findById(certificateId);
+        verify(certDao).findByName(testDto.getName());
         verify(certDao).update(testEntity);
         verify(certificateTagsDao).save(certificateId, tagId);
         verify(modelMapper).map(testEntity, GiftCertificateDto.class);

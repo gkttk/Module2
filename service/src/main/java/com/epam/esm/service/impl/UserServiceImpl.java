@@ -1,13 +1,14 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.User;
+import com.epam.esm.exceptions.GiftCertificateException;
+import com.epam.esm.exceptions.UserException;
 import com.epam.esm.service.UserService;
-import com.epam.esm.validator.EntityValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,13 +27,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
     private final ModelMapper modelMapper;
-    private final EntityValidator<User> validator;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, ModelMapper modelMapper, EntityValidator<User> validator) {
+    public UserServiceImpl(UserDao userDao, ModelMapper modelMapper) {
         this.userDao = userDao;
         this.modelMapper = modelMapper;
-        this.validator = validator;
     }
 
     /**
@@ -44,7 +43,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserDto findById(long id) {
-        User foundUser = validator.validateAndFindByIdIfExist(id);
+        User foundUser = findByIdIfExist(id);
         return modelMapper.map(foundUser, UserDto.class);
     }
 
@@ -75,10 +74,39 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto save(UserDto user) {
-        user.setRole(user.getRole().toUpperCase());//todo
-        validator.validateIfEntityWithGivenNameExist(user.getLogin());
+        user.setRole(user.getRole().toUpperCase());
+        checkIfEntityWithGivenNameExist(user.getLogin());
         User userEntity = modelMapper.map(user, User.class);
         User savedUser = userDao.save(userEntity);
         return modelMapper.map(savedUser, UserDto.class);
     }
+
+    /**
+     * This method return an User if it exists.
+     *
+     * @param id User's id.
+     * @return User entity.
+     * @throws GiftCertificateException if there is no entity with given id in db.
+     */
+    private User findByIdIfExist(long id) {
+        return userDao.findById(id)
+                .orElseThrow(() -> new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE,
+                        String.format("Can't find an user with id: %d", id)));
+    }
+
+    /**
+     * This method checks if a User entity with given login exists in db.
+     *
+     * @param login login of the User entity.
+     * @throws UserException if there is User entity with given login in db.
+     * @since 2.0
+     */
+    public void checkIfEntityWithGivenNameExist(String login) {
+        Optional<User> userOpt = userDao.findByLogin(login);
+        if (userOpt.isPresent()) {
+            throw new UserException(ApplicationConstants.USER_SUCH_LOGIN_EXISTS_CODE, String.format("User with login: %s already exists", login));
+        }
+    }
+
+
 }

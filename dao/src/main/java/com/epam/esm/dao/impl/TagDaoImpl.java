@@ -84,18 +84,17 @@ public class TagDaoImpl implements TagDao {
 
 
     /**
-     * Find Tag the most widely used tag of user with the biggest cost of all orders.
+     * Find Tag the most widely used tags of user with given id.
      *
-     * @return Optional with Tag entity or empty Optional.
+     * @return list of Tag entities.
      * @since 2.0
      */
     @Override
-    public Optional<Tag> findMaxWidelyUsed() {
-        Query nativeQuery = entityManager.createNativeQuery(ApplicationConstants.GET_MOST_WIDELY_USED_TAG, Tag.class);
-        Optional<Tag> tagOpt = nativeQuery.getResultStream().findFirst();
-        tagOpt.ifPresent(entityManager::detach);
-
-        return tagOpt;
+    public List<Tag> findMaxWidelyUsed(long userId) {
+        Query nativeQuery = entityManager.createNativeQuery(ApplicationConstants.GET_MOST_WIDELY_USED_TAGS, Tag.class);
+        nativeQuery.setParameter(1, userId);
+        nativeQuery.setParameter(2, userId);
+        return (List<Tag>) nativeQuery.getResultStream().collect(Collectors.toList());
     }
 
     /**

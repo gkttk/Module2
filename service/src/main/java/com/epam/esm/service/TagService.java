@@ -60,10 +60,10 @@ public interface TagService {
     TagDto findByName(String tagName);
 
     /**
-     * Find Tag the most widely used tag of user with the biggest cost of all orders.
-     *
-     * @return TagDto
+     * Find the most used tags of user with given id.
+     * @param userId User entity's id.
+     * @return list of TagDto.
      * @since 2.0
      */
-    TagDto findMostWidelyUsed();
+    List<TagDto> findMostWidelyUsed(long userId);
 }

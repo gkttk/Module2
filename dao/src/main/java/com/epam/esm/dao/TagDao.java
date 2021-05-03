@@ -15,12 +15,12 @@ import java.util.Optional;
 public interface TagDao {
 
     /**
-     * Find Tag the most widely used tag of user with the biggest cost of all orders.
+     * Find Tag the most widely used tags of user with given id.
      *
-     * @return Tag entity.
+     * @return list of Tag entities.
      * @since 2.0
      */
-    Optional<Tag> findMaxWidelyUsed();
+    List<Tag> findMaxWidelyUsed(long userId);
 
 
     /**

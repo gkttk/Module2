@@ -2,9 +2,12 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
 import com.epam.esm.exceptions.TagException;
+import com.epam.esm.exceptions.UserException;
 import com.epam.esm.service.TagService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +28,13 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
 
     private final TagDao tagDao;
+    private final UserDao userDao;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper) {
+    public TagServiceImpl(TagDao tagDao, UserDao userDao, ModelMapper modelMapper) {
         this.tagDao = tagDao;
+        this.userDao = userDao;
         this.modelMapper = modelMapper;
     }
 
@@ -117,16 +122,24 @@ public class TagServiceImpl implements TagService {
 
 
     /**
-     * This method gets the most widely used tag of the user with the biggest cost of orders.
+     * This method gets the most widely used tags of the user with given id.
      *
-     * @return TagDto.
-     * @throws TagException is there is no Tag.
+     * @param userId User entity's id.
+     * @return list of TagDto.
+     * @throws UserException is there is no user with given id in DB.
+     * @since 2.0
      */
     @Override
-    public TagDto findMostWidelyUsed() {
-        Optional<Tag> tagOpt = tagDao.findMaxWidelyUsed();
-        Tag tag = tagOpt.orElseThrow(() -> new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, "Tag is not found in DB"));
-        return modelMapper.map(tag, TagDto.class);
+    public List<TagDto> findMostWidelyUsed(long userId) {
+        Optional<User> userOpt = userDao.findById(userId);
+        if (!userOpt.isPresent()) {
+            throw new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE,
+                    String.format("Can't find an user with id: %d", userId));
+        }
+        List<Tag> tags = tagDao.findMaxWidelyUsed(userId);
+        return tags.stream()
+                .map(tag -> modelMapper.map(tag, TagDto.class))
+                .collect(Collectors.toList());
     }
 
     /**

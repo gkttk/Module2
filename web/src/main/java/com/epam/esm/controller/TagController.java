@@ -74,10 +74,10 @@ public class TagController {
     }
 
 
-    @GetMapping("/most_widely_used_tag")
-    public ResponseEntity<TagDto> getMostWidelyUsedTagOfUserWithMaxOrderCost() {
-        TagDto tagDto = tagService.findMostWidelyUsed();
-        return ResponseEntity.ok(assembler.toModel(tagDto));
+    @GetMapping("{userId}/most_widely_used_tag")
+    public ResponseEntity<CollectionModel<TagDto>> getMostWidelyUsedTagsOfUserWithMaxOrderCost(@PathVariable long userId) {
+        List<TagDto> tags = tagService.findMostWidelyUsed(userId);
+        return ResponseEntity.ok(assembler.toCollectionModel(tags, ApplicationConstants.DEFAULT_OFFSET));
     }
 
 }

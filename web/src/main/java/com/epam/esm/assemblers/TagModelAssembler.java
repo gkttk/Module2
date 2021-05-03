@@ -32,7 +32,7 @@ public class TagModelAssembler extends RepresentationModelAssemblerSupport<TagDt
     public TagDto toModel(TagDto entity) {
         Long id = entity.getId();
         entity.add(linkTo(methodOn(TagController.class).getById(id)).withSelfRel());
-        entity.add(linkTo(methodOn(GiftCertificateController.class).deleteById(id)).withRel(ApplicationConstants.DELETE));
+        entity.add(linkTo(methodOn(TagController.class).deleteById(id)).withRel(ApplicationConstants.DELETE));
 
         return entity;
     }

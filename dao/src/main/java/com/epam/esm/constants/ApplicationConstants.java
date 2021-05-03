@@ -28,22 +28,18 @@ public final class ApplicationConstants {
 
     //Tag queries
     public final static String GET_TAG_BY_NAME = "SELECT t FROM Tag t WHERE t.name =:name";
-    public final static String GET_MOST_WIDELY_USED_TAG = "SELECT t.id, t.name FROM tag t " +
+    public final static String GET_MOST_WIDELY_USED_TAG = "SELECT t.id, t.name from tag t " +
             "JOIN certificates_tags ct on t.id = ct.tag_id " +
-            "JOIN gift_certificate gc on ct.certificate_id = gc.id " +
-            "JOIN orders_certificates oc on gc.id = oc.certificate_id " +
-            "JOIN orders o on oc.order_id = o.id " +
+            "JOIN orders_certificates oc on ct.certificate_id = oc.certificate_id " +
+            "JOIN users_orders uo on oc.order_id = uo.order_id " +
+            "WHERE uo.user_id = (SELECT uo.user_id FROM orders o " +
             "JOIN users_orders uo on o.id = uo.order_id " +
-            "JOIN user on uo.user_id = user.id " +
-            "WHERE user.id = (SELECT u.id FROM user u " +
-            "JOIN users_orders uo on u.id = uo.user_id " +
-            "JOIN orders o on uo.order_id = o.id " +
-            "GROUP BY u.id " +
-            "HAVING sum(o.cost) = (SELECT sum(o.cost) FROM user u " +
-            "JOIN users_orders uo on u.id = uo.user_id " +
-            "JOIN orders o on uo.order_id = o.id " +
-            "GROUP BY u.id " +
-            "ORDER BY sum(o.cost) desc limit 1)) LIMIT 1";
+            "GROUP BY uo.user_id " +
+            "HAVING sum(o.cost) = (SELECT sum(o.cost) FROM orders o " +
+            "JOIN users_orders uo on o.id = uo.order_id " +
+            "GROUP BY uo.user_id " +
+            "ORDER BY sum(o.cost) desc limit 1)) " +
+            "LIMIT 1";
 
 
     //User queries

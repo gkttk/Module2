@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
 
 /**
  * Default implementation of {@link com.epam.esm.dao.CertificateTagsDao} interface.

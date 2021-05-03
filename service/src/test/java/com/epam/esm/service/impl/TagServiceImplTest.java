@@ -1,11 +1,12 @@
-/*
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
 import com.epam.esm.exceptions.TagException;
-import com.epam.esm.validator.TagValidator;
+import com.epam.esm.exceptions.UserException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,173 +18,207 @@ import org.modelmapper.ModelMapper;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-//@ContextConfiguration(classes = {ServiceConfig.class, DaoConfig.class})
 public class TagServiceImplTest {
 
     @Mock
-    private TagDao tagDaoMock;
+    private TagDao tagDao;
 
     @Mock
-    private ModelMapper modelMapperMock;
+    private UserDao userDao;
 
     @Mock
-    private TagValidator validator;
+    private ModelMapper modelMapper;
 
     @InjectMocks
     private TagServiceImpl tagService;
 
     private TagDto testDto;
     private Tag testEntity;
+    private static final int TEST_LIMIT = 5;
+    private static final int TEST_OFFSET = 0;
 
     @BeforeEach
     void init() {
-        testDto = new TagDto(100L, "test");
-        testEntity = new Tag(100L, "test");
+        testDto = new TagDto();
+        testDto.setId(100L);
+        testDto.setName("dto");
+        testEntity = new Tag();
+        testEntity.setId(100L);
+        testEntity.setName("entity");
     }
 
     @Test
-    public void testFindById_EntityWithGivenIdIsPresentInDb_ReturnDto() {
+    public void testFindById_ReturnDto_EntityWithGivenIdIsPresentInDb() {
         //given
         long id = testEntity.getId();
-        when(validator.validateAndFindByIdIfExist(id)).thenReturn(testEntity);
-        when(modelMapperMock.map(testEntity, TagDto.class)).thenReturn(testDto);
+        when(tagDao.findById(id)).thenReturn(Optional.of(testEntity));
+        when(modelMapper.map(testEntity, TagDto.class)).thenReturn(testDto);
         //when
         TagDto result = tagService.findById(id);
         //then
-        verify(validator).validateAndFindByIdIfExist(id);
-        verify(modelMapperMock).map(testEntity, TagDto.class);
+        verify(tagDao).findById(id);
+        verify(modelMapper).map(testEntity, TagDto.class);
         assertEquals(result, testDto);
     }
 
+
     @Test
-    public void testFindById_EntityWithGivenIdIsNotPresentInDb_ThrowException() {
+    public void testFindById_ThrowException_EntityWithGivenIdIsNotPresentInDb() {
         //given
         long tagId = testDto.getId();
-        when(validator.validateAndFindByIdIfExist(tagId)).thenThrow(TagException.class);
+        when(tagDao.findById(tagId)).thenThrow(TagException.class);
         //when
         //then
         assertThrows(TagException.class, () -> tagService.findById(tagId));
-        verify(validator).validateAndFindByIdIfExist(tagId);
+        verify(tagDao).findById(tagId);
     }
 
+
     @Test
-    public void testFindAll_EntitiesArePresentInDb_ReturnListOfDto() {
+    public void testFindAllForQuery_ReturnListOfDto_EntitiesArePresentInDb() {
         //given
+        Map<String, String[]> reqParams = Collections.emptyMap();
 
         List<Tag> expectedEntitiesList = Arrays.asList(testEntity, testEntity, testEntity);
         List<TagDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
 
-        when(tagDaoMock.findBy(any(), , )).thenReturn(expectedEntitiesList);
-        when(modelMapperMock.map(testEntity, TagDto.class)).thenReturn(testDto);
+        when(tagDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(expectedEntitiesList);
+        when(modelMapper.map(testEntity, TagDto.class)).thenReturn(testDto);
         //when
-        List<TagDto> result = tagService.findAllForQuery(anyMap(), , );
+        List<TagDto> result = tagService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
-        verify(tagDaoMock).findBy(anyMap(), , );
-        verify(modelMapperMock, times(expectedEntitiesList.size())).map(any(), any());
+        verify(tagDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
+        verify(modelMapper, times(expectedEntitiesList.size())).map(testEntity, TagDto.class);
         assertEquals(result, expectedResult);
     }
 
     @Test
-    public void testFindAll_ThereIsNoEntitiesInDb_ReturnEmptyList() {
+    public void testFindAllForQuery_ReturnEmptyList_ThereIsNoEntitiesInDb() {
         //given
+        Map<String, String[]> reqParams = Collections.emptyMap();
+
         List<Tag> expectedEntitiesList = Collections.emptyList();
-        when(tagDaoMock.findBy(any(), , )).thenReturn(expectedEntitiesList);
+        when(tagDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(expectedEntitiesList);
         List<TagDto> expectedResult = Collections.emptyList();
         //when
-        List<TagDto> result = tagService.findAllForQuery(anyMap(), , );
+        List<TagDto> result = tagService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
         assertEquals(result, expectedResult);
-        verify(tagDaoMock).findBy(any(), , );
+        verify(tagDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
     }
 
     @Test
-    public void testSave_GivenEntityIsNotPresentInDb_SaveEntityAndReturnDto() {
+    public void testSave_SaveEntityAndReturnDto_GivenEntityIsNotPresentInDb() {
         //given
         String tagName = testDto.getName();
-        doNothing().when(validator).validateIfEntityWithGivenNameExist(tagName);
-        when(modelMapperMock.map(testDto, Tag.class)).thenReturn(testEntity);
-        when(tagDaoMock.save(testEntity)).thenReturn(testEntity);
+        when(tagDao.findByName(tagName)).thenReturn(Optional.empty());
+        when(modelMapper.map(testDto, Tag.class)).thenReturn(testEntity);
+        when(tagDao.save(testEntity)).thenReturn(testEntity);
         //when
         TagDto result = tagService.save(testDto);
         //then
-        verify(validator).validateIfEntityWithGivenNameExist(tagName);
-        verify(modelMapperMock).map(testDto, Tag.class);
-        verify(tagDaoMock).save(testEntity);
+        verify(tagDao).findByName(tagName);
+        verify(modelMapper).map(testDto, Tag.class);
+        verify(tagDao).save(testEntity);
         assertEquals(result, testDto);
     }
 
     @Test
-    public void testSave_GivenEntityIsPresentInDb_ThrowException() {
+    public void testSave_ThrowException_GivenEntityIsPresentInDb() {
         //given
         String tagName = testDto.getName();
-        doThrow(TagException.class).when(validator).validateIfEntityWithGivenNameExist(tagName);
+        when(tagDao.findByName(tagName)).thenThrow(TagException.class);
         //when
         //then
         assertThrows(TagException.class, () -> tagService.save(testDto));
-        verify(validator).validateIfEntityWithGivenNameExist(tagName);
+        verify(tagDao).findByName(tagName);
     }
 
     @Test
-    public void testDelete_EntityWithSuchIdIsPresentInDb_DeleteEntity() {
+    public void testDelete_DeleteEntity_EntityWithSuchIdIsPresentInDb() {
         //given
         long tagId = testDto.getId();
-        when(tagDaoMock.deleteById(tagId)).thenReturn(true);
+        when(tagDao.deleteById(tagId)).thenReturn(true);
         //when
         tagService.delete(tagId);
         //then
-        verify(tagDaoMock).deleteById(tagId);
+        verify(tagDao).deleteById(tagId);
     }
 
     @Test
-    public void testDelete_EntityWithSuchIdIsNotPresentInDb_ThrowException() {
+    public void testDelete_ThrowException_EntityWithSuchIdIsNotPresentInDb() {
         //given
         long tagId = testDto.getId();
-        when(tagDaoMock.deleteById(tagId)).thenReturn(false);
+        when(tagDao.deleteById(tagId)).thenReturn(false);
         //when
         //then
         assertThrows(TagException.class, () -> tagService.delete(tagId));
-        verify(tagDaoMock).deleteById(tagId);
+        verify(tagDao).deleteById(tagId);
     }
 
     @Test
-    public void testFindByName_EntityWithSuchNameIsPresentInDb_ReturnDto() {
+    public void testFindByName_ReturnDto_EntityWithSuchNameIsPresentInDb() {
         //given
         String name = testDto.getName();
-        when(tagDaoMock.findByName(name)).thenReturn(Optional.of(testEntity));
-        when(modelMapperMock.map(testEntity, TagDto.class)).thenReturn(testDto);
+        when(tagDao.findByName(name)).thenReturn(Optional.of(testEntity));
+        when(modelMapper.map(testEntity, TagDto.class)).thenReturn(testDto);
         //when
         TagDto result = tagService.findByName(name);
         //then
-        verify(tagDaoMock).findByName(name);
-        verify(modelMapperMock).map(testEntity, TagDto.class);
+        verify(tagDao).findByName(name);
+        verify(modelMapper).map(testEntity, TagDto.class);
         assertEquals(result, testDto);
     }
 
     @Test
-    public void testFindByName_EntityWithSuchNameIsNotPresentInDb_ThrowException() {
+    public void testFindByName_ThrowException_EntityWithSuchNameIsNotPresentInDb() {
         //given
         String name = testDto.getName();
-        when(tagDaoMock.findByName(name)).thenReturn(Optional.empty());
+        when(tagDao.findByName(name)).thenReturn(Optional.empty());
         //when
         //then
         assertThrows(TagException.class, () -> tagService.findByName(name));
-        verify(tagDaoMock).findByName(name);
+        verify(tagDao).findByName(name);
+    }
+
+    @Test
+    public void testFindMostWidelyUser_ReturnListOfDto_UserWithGivenIdExists() {
+        //given
+        long userId = 1;
+        when(userDao.findById(userId)).thenReturn(Optional.of(new User()));
+        when(tagDao.findMaxWidelyUsed(userId)).thenReturn(Arrays.asList(testEntity, testEntity));
+        when(modelMapper.map(testEntity, TagDto.class)).thenReturn(testDto);
+        List<TagDto> expectedResult = Arrays.asList(testDto, testDto);
+        //when
+        List<TagDto> result = tagService.findMostWidelyUsed(userId);
+        //then
+        verify(userDao).findById(userId);
+        verify(tagDao).findMaxWidelyUsed(userId);
+        verify(modelMapper, times(2)).map(testEntity, TagDto.class);
+        assertEquals(result, expectedResult);
+    }
+
+    @Test
+    public void testFindMostWidelyUser_ThrowException_UserWithGivenIdDoesNotExistInDb() {
+        //given
+        long userId = -1;
+        when(userDao.findById(userId)).thenReturn(Optional.empty());
+        //when
+        //then
+        assertThrows(UserException.class, () -> tagService.findMostWidelyUsed(userId));
+        verify(userDao).findById(userId);
     }
 
 
 }
-*/

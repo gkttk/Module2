@@ -34,6 +34,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+
 @ExtendWith(MockitoExtension.class)
 public class GiftServiceImplTest {
 
@@ -128,7 +129,7 @@ public class GiftServiceImplTest {
     @Test
     public void testSave_DtoWithId_EntityWithGivenNameDoesNotExistInDb() {
         //given
-        when(certDao.findByName(testDtoWithoutId.getName())).thenReturn(Optional.of(testEntity));
+        when(certDao.findByName(testDtoWithoutId.getName())).thenReturn(Optional.empty());
         when(modelMapper.map(testDtoWithoutId, GiftCertificate.class)).thenReturn(testEntityWithoutId);
         when(modelMapper.map(tagDto, Tag.class)).thenReturn(tag);
         when(tagDao.findByName(tag.getName())).thenReturn(Optional.empty());
@@ -149,8 +150,9 @@ public class GiftServiceImplTest {
     public void testUpdate_UpdatedDto_EntityWithGivenNameDoesNotExistInDb() {
         //given
         long certificateId = testDto.getId();
-        doNothing().when(certDao.findById(certificateId));
-        doNothing().when(certDao.findByName(testDto.getName()));
+       when(certDao.findById(certificateId)).thenReturn(Optional.of(testEntity));
+
+        when(certDao.findByName(testDto.getName())).thenReturn(Optional.empty());
         doNothing().when(certificateTagsDao).deleteAllTagsForCertificate(certificateId);
 
         when(modelMapper.map(tagDto, Tag.class)).thenReturn(tag);
@@ -178,11 +180,11 @@ public class GiftServiceImplTest {
     public void testPatch_PatchedDto_EntityWithGivenNameDoesNotExistInDb() {
         //given
         long certificateId = testDto.getId();
-        long tagId = testDto.getTags().get(0).getId();
         when(certDao.findById(certificateId)).thenReturn(Optional.of(testEntity));
         when(certDao.findByName(testDto.getName())).thenReturn(Optional.empty());
+        when(modelMapper.map(tagDto, Tag.class)).thenReturn(tag);
+        when(tagDao.findByName(tag.getName())).thenReturn(Optional.empty());
         when(certDao.update(testEntity)).thenReturn(testEntity);
-        doNothing().when(certificateTagsDao).save(certificateId, tagId);
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
         //when
         GiftCertificateDto result = service.patch(testDto, certificateId);
@@ -190,8 +192,9 @@ public class GiftServiceImplTest {
         assertEquals(result, testDto);
         verify(certDao).findById(certificateId);
         verify(certDao).findByName(testDto.getName());
+        verify(modelMapper).map(tagDto, Tag.class);
+        verify(tagDao).findByName(tag.getName());
         verify(certDao).update(testEntity);
-        verify(certificateTagsDao).save(certificateId, tagId);
         verify(modelMapper).map(testEntity, GiftCertificateDto.class);
     }
 
@@ -242,13 +245,11 @@ public class GiftServiceImplTest {
         int offset = 0;
         Map<String, String[]> reqParams = Collections.emptyMap();
         when(certDao.findBy(reqParams, limit, offset)).thenReturn(Collections.emptyList());
-        when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
         //when
         List<GiftCertificateDto> result = service.findAllForQuery(reqParams, limit, offset);
         //then
         assertTrue(result.isEmpty());
         verify(certDao).findBy(reqParams, limit, offset);
-        verify(modelMapper, times(2)).map(testEntity, GiftCertificateDto.class);
     }
 }
 

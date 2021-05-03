@@ -194,7 +194,7 @@ public abstract class AbstractQueryBuilder<T> {
      * This method gets predicate for equal operation with joining between two tables.
      * All predicates reduces as OR statement.
      *
-     * @param params        passed param for join.
+     * @param param        passed param for join.
      * @param attributeName attribute of entity for joining.
      * @param fieldName     the field with which to compare.
      * @return reduced predicate with equal operations.

@@ -20,6 +20,8 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderDto extends RepresentationModel<OrderDto> {
 
+
+
     private Long id;
     private BigDecimal cost;
     private String creationDate;

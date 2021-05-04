@@ -6,6 +6,7 @@ import com.epam.esm.dto.SaveOrderDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,14 +49,14 @@ public class UserControllerTest {
 
     @InjectMocks
     private UserController userController;
-    private UserDto userDto;
-    private OrderDto orderDto;
+    private static UserDto userDto;
+    private static OrderDto orderDto;
 
     private static final int TEST_LIMIT = 5;
     private static final int TEST_OFFSET = 0;
 
-    @BeforeEach
-    void init() {
+    @BeforeAll
+    static void init() {
         userDto = new UserDto(1L, "log", "pass", "ADMIN");
         orderDto = new OrderDto(1L, BigDecimal.TEN, null, null);
     }

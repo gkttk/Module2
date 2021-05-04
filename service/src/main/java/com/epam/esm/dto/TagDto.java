@@ -2,6 +2,7 @@ package com.epam.esm.dto;
 
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ import javax.validation.constraints.Size;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
+@AllArgsConstructor
 public class TagDto extends RepresentationModel<TagDto> {
 
     @Null(message = "Tag's id value must be null", groups = {UpdateGroup.class, PatchGroup.class})

@@ -118,7 +118,7 @@ public class GiftCertificateControllerTest {
     }
 
     @Test
-    public void testCreateCertificate_ThereAreNoValidationErrors_ReturnHttpStatusCreated() {
+    public void testCreateCertificate_ThereAreNoValidationErrors_ReturnHttpStatusOk() {
         //given
         when(serviceMock.save(testDto)).thenReturn(defaultCertDto);
         when(assemblerMock.toModel(defaultCertDto)).thenReturn(defaultCertDto);

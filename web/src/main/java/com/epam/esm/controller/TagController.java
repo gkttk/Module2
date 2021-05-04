@@ -75,7 +75,7 @@ public class TagController {
 
 
     @GetMapping("{userId}/most_widely_used_tag")
-    public ResponseEntity<CollectionModel<TagDto>> getMostWidelyUsedTagsOfUserWithMaxOrderCost(@PathVariable long userId) {
+    public ResponseEntity<CollectionModel<TagDto>> getMostWidelyUsedTagsOfUser(@PathVariable long userId) {
         List<TagDto> tags = tagService.findMostWidelyUsed(userId);
         return ResponseEntity.ok(assembler.toCollectionModel(tags, ApplicationConstants.DEFAULT_OFFSET));
     }

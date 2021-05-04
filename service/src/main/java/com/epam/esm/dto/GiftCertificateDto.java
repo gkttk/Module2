@@ -3,6 +3,8 @@ package com.epam.esm.dto;
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.SaveGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -32,6 +34,8 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto>  {
 
     @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "GiftCertificate's id value must be null")

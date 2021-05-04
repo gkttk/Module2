@@ -34,7 +34,6 @@ public class GiftCertificateModelAssembler extends RepresentationModelAssemblerS
         entity.add(linkTo(methodOn(GiftCertificateController.class).updateCertificate(null, modelId)).withRel(ApplicationConstants.UPDATE));
         entity.add(linkTo(methodOn(GiftCertificateController.class).patchCertificate(null, modelId)).withRel(ApplicationConstants.PARTIAL_UPDATE));
         entity.add(linkTo(methodOn(GiftCertificateController.class).deleteById(modelId)).withRel(ApplicationConstants.DELETE));
-
         return entity;
     }
 

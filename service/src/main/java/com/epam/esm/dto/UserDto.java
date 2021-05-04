@@ -3,6 +3,7 @@ package com.epam.esm.dto;
 import com.epam.esm.dto.groups.SaveGroup;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -24,8 +25,9 @@ import javax.validation.constraints.Pattern;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(toBuilder = true)
 @JsonFilter("passwordFilter")
-public class UserDto extends RepresentationModel<TagDto> {
+public class UserDto extends RepresentationModel<UserDto> {
 
     @Null(message = "User's id value must be null", groups = SaveGroup.class)
     private Long id;

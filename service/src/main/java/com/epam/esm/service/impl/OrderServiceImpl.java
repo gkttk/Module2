@@ -76,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderDto save(List<SaveOrderDto> saveOrderDtoList, Long userId) {
-        User user = findByIdIfExist(userId);
+        User user = findUserByIdIfExist(userId);
 
         List<GiftCertificate> certificatesForOrder = new ArrayList<>();
         saveOrderDtoList
@@ -143,7 +143,7 @@ public class OrderServiceImpl implements OrderService {
      * @return User entity.
      * @throws UserException if there is no entity with given id in db.
      */
-    private User findByIdIfExist(long id) {
+    private User findUserByIdIfExist(long id) {
         return userDao.findById(id)
                 .orElseThrow(() -> new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE,
                         String.format("Can't find an user with id: %d", id)));

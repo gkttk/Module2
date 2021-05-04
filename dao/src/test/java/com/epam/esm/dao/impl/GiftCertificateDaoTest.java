@@ -187,8 +187,8 @@ public class GiftCertificateDaoTest {
     @Test
     public void testFindBy_ListOfEntitiesWithGivenTagNamesAndQuery_ThereAreEntitiesWithGivenTagNamesAndQueryInDb() {
         //given
-        Map<String, String[]> reqParams = Collections.singletonMap(ApplicationConstants.TAG_AND_NAMES_KEY, new String[]{"tag1", "tag2"});
-        int expectedSize = 1;
+        Map<String, String[]> reqParams = Collections.singletonMap(ApplicationConstants.TAG_NAMES_KEY, new String[]{"or:tag1,tag2"});
+        int expectedSize = 4;
         //when
         List<GiftCertificate> results = giftCertificateDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then

@@ -88,20 +88,6 @@ public class UserDaoTest {
         assertEquals(results.size(), expectedListSize);
     }
 
-    @Test
-    public void testFindWithMaxOrderCost_ListEntitiesWithMaxOrderCost_AtLeastOneEntityIsPresentInDb() {
-        //given
-        //when
-        List<User> results = userDao.findWithMaxOrderCost();
-        //then
-        assertFalse(results.isEmpty());
-        assertAll(
-                () -> assertEquals(results.get(0).getId(), user3.getId()),
-                () -> assertEquals(results.get(0).getLogin(), user3.getLogin()),
-                () -> assertEquals(results.get(0).getPassword(), user3.getPassword()),
-                () -> assertEquals(results.get(0).getRole(), user3.getRole()));
-    }
-
 
     @Test
     @Rollback

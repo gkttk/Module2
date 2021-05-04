@@ -7,12 +7,12 @@ import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,20 +32,20 @@ public class TagDaoTest {
     @Autowired
     private TagDao tagDao;
 
-    private static Tag tag1;
+    private static Tag tag;
 
     @BeforeAll
     static void init() {
-        tag1 = new Tag();
-        tag1.setId(1L);
-        tag1.setName("tag1");
+        tag = new Tag();
+        tag.setId(1L);
+        tag.setName("tag1");
     }
 
     @Test
     public void testFindById_OptionalWithEntity_EntityWithGivenIdIsPresentInDb() {
         //given
-        long testId = tag1.getId();
-        Optional<Tag> expected = Optional.of(tag1);
+        long testId = tag.getId();
+        Optional<Tag> expected = Optional.of(tag);
         //when
         Optional<Tag> result = tagDao.findById(testId);
         //then
@@ -65,8 +65,8 @@ public class TagDaoTest {
     @Test
     public void testFindByName_OptionalWithEntity_EntityWithGivenNameIsPresentInDb() {
         //given
-        String testName = tag1.getName();
-        Optional<Tag> expected = Optional.of(tag1);
+        String testName = tag.getName();
+        Optional<Tag> expected = Optional.of(tag);
         //when
         Optional<Tag> result = tagDao.findByName(testName);
         //then
@@ -101,22 +101,11 @@ public class TagDaoTest {
     @Rollback
     public void testDeleteById_True_WhenEntityWasDeleted() {
         //given
-        long testId = tag1.getId();
+        long testId = tag.getId();
         //when
         boolean result = tagDao.deleteById(testId);
         //then
         assertTrue(result);
-    }
-
-    @Test
-    @Rollback
-    public void testDeleteById_False_WhenEntityWasNotDeleted() {
-        //given
-        long testId = -1L;
-        //when
-        boolean result = tagDao.deleteById(testId);
-        //then
-        assertFalse(result);
     }
 
     @Test
@@ -142,6 +131,20 @@ public class TagDaoTest {
         //then
         assertFalse(results.isEmpty());
         assertEquals(results.size(), expectedSize);
+    }
+
+    @Test
+    public void testFindMaxWidelyUsed_ListOfEntities_WhenEntityArePresentInDb(){
+        //given
+        long userId = 1;
+        Tag expectedTag = new Tag();
+        expectedTag.setId(2L);
+        expectedTag.setName("tag2");
+
+        List<Tag> expectedResult = Collections.singletonList(expectedTag);
+        //when
+        List<Tag> result = tagDao.findMaxWidelyUsed(userId);
+        assertEquals(result, expectedResult);
     }
 
 }

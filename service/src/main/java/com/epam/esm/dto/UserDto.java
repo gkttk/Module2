@@ -2,6 +2,7 @@ package com.epam.esm.dto;
 
 import com.epam.esm.dto.groups.SaveGroup;
 import com.fasterxml.jackson.annotation.JsonFilter;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ import javax.validation.constraints.Pattern;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
+@AllArgsConstructor
 @JsonFilter("passwordFilter")
 public class UserDto extends RepresentationModel<TagDto> {
 

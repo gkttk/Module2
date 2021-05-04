@@ -1,5 +1,6 @@
 package com.epam.esm.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,8 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderDto extends RepresentationModel<OrderDto> {
-
-
 
     private Long id;
     private BigDecimal cost;

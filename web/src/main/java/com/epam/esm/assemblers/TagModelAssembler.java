@@ -1,7 +1,6 @@
 package com.epam.esm.assemblers;
 
-import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.controller.GiftCertificateController;
+import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.controller.TagController;
 import com.epam.esm.dto.TagDto;
 import org.springframework.hateoas.CollectionModel;
@@ -32,7 +31,7 @@ public class TagModelAssembler extends RepresentationModelAssemblerSupport<TagDt
     public TagDto toModel(TagDto entity) {
         Long id = entity.getId();
         entity.add(linkTo(methodOn(TagController.class).getById(id)).withSelfRel());
-        entity.add(linkTo(methodOn(TagController.class).deleteById(id)).withRel(ApplicationConstants.DELETE));
+        entity.add(linkTo(methodOn(TagController.class).deleteById(id)).withRel(WebLayerConstants.DELETE));
 
         return entity;
     }
@@ -46,10 +45,10 @@ public class TagModelAssembler extends RepresentationModelAssemblerSupport<TagDt
     public CollectionModel<TagDto> toCollectionModel(Iterable<? extends TagDto> entities, Integer offset) {
         CollectionModel<TagDto> collectionModel = super.toCollectionModel(entities);
         collectionModel.add(linkTo(methodOn(TagController.class)
-                .getAllForQuery(null, ApplicationConstants.DEFAULT_LIMIT, 0)).withRel(ApplicationConstants.FIRST_PAGE));
+                .getAllForQuery(null, WebLayerConstants.DEFAULT_LIMIT, 0)).withRel(WebLayerConstants.FIRST_PAGE));
         collectionModel.add(linkTo(methodOn(TagController.class)
-                .getAllForQuery(null, ApplicationConstants.DEFAULT_LIMIT, offset + ApplicationConstants.DEFAULT_LIMIT))
-                .withRel(ApplicationConstants.NEXT_PAGE));
+                .getAllForQuery(null, WebLayerConstants.DEFAULT_LIMIT, offset + WebLayerConstants.DEFAULT_LIMIT))
+                .withRel(WebLayerConstants.NEXT_PAGE));
 
         return collectionModel;
     }

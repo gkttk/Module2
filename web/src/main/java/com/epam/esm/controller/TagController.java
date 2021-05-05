@@ -1,7 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.assemblers.ModelAssembler;
-import com.epam.esm.constants.ApplicationConstants;
+import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
@@ -47,8 +47,8 @@ public class TagController {
 
     @GetMapping
     public ResponseEntity<CollectionModel<TagDto>> getAllForQuery(WebRequest request,
-                                                                  @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
-                                                                  @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+                                                                  @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                  @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
         List<TagDto> tags = tagService.findAllForQuery(reqParams, limit, offset);
 
@@ -77,7 +77,7 @@ public class TagController {
     @GetMapping("{userId}/most_widely_used_tag")
     public ResponseEntity<CollectionModel<TagDto>> getMostWidelyUsedTagsOfUser(@PathVariable long userId) {
         List<TagDto> tags = tagService.findMostWidelyUsed(userId);
-        return ResponseEntity.ok(assembler.toCollectionModel(tags, ApplicationConstants.DEFAULT_OFFSET));
+        return ResponseEntity.ok(assembler.toCollectionModel(tags, WebLayerConstants.DEFAULT_OFFSET));
     }
 
 }

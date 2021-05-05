@@ -2,7 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.assemblers.GiftCertificateModelAssembler;
 import com.epam.esm.assemblers.ModelAssembler;
-import com.epam.esm.constants.ApplicationConstants;
+import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
@@ -44,8 +44,8 @@ public class GiftCertificateController {
 
     @GetMapping
     public ResponseEntity<CollectionModel<GiftCertificateDto>> getAllForQuery(WebRequest webRequest,
-                                                                              @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
-                                                                              @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+                                                                              @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                              @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> parameterMap = webRequest.getParameterMap();
         List<GiftCertificateDto> certificates = giftCertificateService.findAllForQuery(parameterMap, limit, offset);
         return ResponseEntity.ok(assembler.toCollectionModel(certificates, offset));

@@ -1,14 +1,11 @@
 package com.epam.esm.assemblers;
 
 import com.epam.esm.config.WebTestConfig;
-import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dto.GiftCertificateDto;
-import org.junit.jupiter.api.Assertions;
+import com.epam.esm.constants.WebLayerConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.Links;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -21,13 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public abstract class AbstractModelAssemblerTest<T extends RepresentationModel<T>> {
 
     protected abstract T getDto();
+
     protected abstract ModelAssembler<T> getModelAssembler();
 
     @Test
     public void testToModel_ReturnDtoWithLinks() {
         //given
-       ModelAssembler<T> modelAssembler = getModelAssembler();
-       //when
+        ModelAssembler<T> modelAssembler = getModelAssembler();
+        //when
         T result = modelAssembler.toModel(getDto());
         //then
         assertFalse(result.getLinks().isEmpty());
@@ -38,7 +36,7 @@ public abstract class AbstractModelAssemblerTest<T extends RepresentationModel<T
         //given
         ModelAssembler<T> modelAssembler = getModelAssembler();
         //when
-        CollectionModel<T> result = modelAssembler.toCollectionModel(Arrays.asList(getDto(), getDto()), ApplicationConstants.DEFAULT_OFFSET);
+        CollectionModel<T> result = modelAssembler.toCollectionModel(Arrays.asList(getDto(), getDto()), WebLayerConstants.DEFAULT_OFFSET);
         //then
         assertFalse(result.getLinks().isEmpty());
     }

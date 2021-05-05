@@ -1,7 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.assemblers.ModelAssembler;
-import com.epam.esm.constants.ApplicationConstants;
+import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.SaveOrderDto;
 import com.epam.esm.dto.UserDto;
@@ -56,8 +56,8 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<CollectionModel<UserDto>> getAllForQuery(WebRequest request,
-                                                                   @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
-                                                                   @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+                                                                   @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                   @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
         List<UserDto> users = userService.findAllForQuery(reqParams, limit, offset);
         return ResponseEntity.ok(userAssembler.toCollectionModel(users, offset));
@@ -66,19 +66,19 @@ public class UserController {
 
     @GetMapping(path = "/{userId}/orders")
     public ResponseEntity<CollectionModel<OrderDto>> getAllOrdersForUser(WebRequest webRequest, @PathVariable Long userId,
-                                                                         @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
-                                                                         @RequestParam(required = false, defaultValue = ApplicationConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
+                                                                         @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                         @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParamMap = new HashMap<>(webRequest.getParameterMap());
-        reqParamMap.put(ApplicationConstants.USER_ID_KEY, new String[]{String.valueOf(userId)});
+        reqParamMap.put(WebLayerConstants.USER_ID_KEY, new String[]{String.valueOf(userId)});
         List<OrderDto> orders = orderService.findAllForQuery(reqParamMap, limit, offset);
 
         CollectionModel<OrderDto> order = CollectionModel.of(orders);
         order.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, userId, ApplicationConstants.DEFAULT_LIMIT, 0))
-                .withRel(ApplicationConstants.FIRST_PAGE));
+                .getAllOrdersForUser(null, userId, WebLayerConstants.DEFAULT_LIMIT, 0))
+                .withRel(WebLayerConstants.FIRST_PAGE));
         order.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, userId, ApplicationConstants.DEFAULT_LIMIT, offset + ApplicationConstants.DEFAULT_LIMIT))
-                .withRel(ApplicationConstants.NEXT_PAGE));
+                .getAllOrdersForUser(null, userId, WebLayerConstants.DEFAULT_LIMIT, offset + WebLayerConstants.DEFAULT_LIMIT))
+                .withRel(WebLayerConstants.NEXT_PAGE));
 
         return ResponseEntity.ok(order);
     }

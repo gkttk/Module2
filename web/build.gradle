@@ -5,7 +5,6 @@ plugins {
 
 dependencies {
     implementation project(':service')
-    implementation project(':dao')
     implementation 'org.springframework.boot:spring-boot-starter-tomcat'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'

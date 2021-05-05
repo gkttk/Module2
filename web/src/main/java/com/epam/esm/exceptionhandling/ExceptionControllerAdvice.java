@@ -1,6 +1,6 @@
 package com.epam.esm.exceptionhandling;
 
-import com.epam.esm.constants.ApplicationConstants;
+import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.exceptionhandling.error.ErrorResult;
 import com.epam.esm.exceptionhandling.error.enums.ResponseErrorEnum;
 import com.epam.esm.exceptions.GiftCertificateException;
@@ -64,7 +64,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         List<String> messages = constraintViolations.stream()
                 .map(ConstraintViolation::getMessageTemplate)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(new ErrorResult(ApplicationConstants.DEFAULT_VALIDATION_ERROR_CODE, messages), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResult(WebLayerConstants.DEFAULT_VALIDATION_ERROR_CODE, messages), HttpStatus.BAD_REQUEST);
     }
 
 
@@ -79,7 +79,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(new ErrorResult(ApplicationConstants.DEFAULT_VALIDATION_ERROR_CODE, messages), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResult(WebLayerConstants.DEFAULT_VALIDATION_ERROR_CODE, messages), HttpStatus.BAD_REQUEST);
     }
 
 

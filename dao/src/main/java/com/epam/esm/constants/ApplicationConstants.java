@@ -11,14 +11,6 @@ public final class ApplicationConstants {
     public final static int DEFAULT_LIMIT = 5;
     public final static int DEFAULT_OFFSET = 0;
 
-    //hateoas
-    public final static String UPDATE = "update";
-    public final static String PARTIAL_UPDATE = "partial_update";
-    public final static String DELETE = "delete";
-    public final static String FIRST_PAGE = "firstPage";
-    public final static String NEXT_PAGE = "nextPage";
-    public final static String MAKE_ORDER = "make_an_order";
-
     //table names
     public final static String CERTIFICATE_TAGS_TABLE_NAME = "certificates_tags";
     public final static String USERS_ORDERS_TABLE_NAME = "users_orders";
@@ -43,20 +35,6 @@ public final class ApplicationConstants {
             "WHERE uo.user_id = ? " +
             "GROUP BY t.id order by c desc LIMIT 1)";
 
-   /* public final static String GET_MOST_WIDELY_USED_TAG = "SELECT t.id, t.name from tag t " +
-            "JOIN certificates_tags ct on t.id = ct.tag_id " +
-            "JOIN orders_certificates oc on ct.certificate_id = oc.certificate_id " +
-            "JOIN users_orders uo on oc.order_id = uo.order_id " +
-            "WHERE uo.user_id = (SELECT uo.user_id FROM orders o " +
-            "JOIN users_orders uo on o.id = uo.order_id " +
-            "GROUP BY uo.user_id " +
-            "HAVING sum(o.cost) = (SELECT sum(o.cost) FROM orders o " +
-            "JOIN users_orders uo on o.id = uo.order_id " +
-            "GROUP BY uo.user_id " +
-            "ORDER BY sum(o.cost) desc limit 1)) " +
-            "LIMIT 1";*/
-
-
     //User queries
     public final static String GET_USER_BY_LOGIN = "SELECT u FROM User u WHERE u.login =:login";
 
@@ -70,8 +48,6 @@ public final class ApplicationConstants {
     public final static String USER_ID_KEY = "userId";
     public final static String USER_ID_FIELD = "id";
     public final static String AND_OPERATOR_NAME = "AND";
-
-
 
     //User QueryBuilder
     public final static String ROLE_KEY = "role";
@@ -119,7 +95,6 @@ public final class ApplicationConstants {
     public final static int CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE = 42010;
     public final static int USER_SUCH_LOGIN_EXISTS_CODE = 42011;
     public final static int TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE = 42000;
-    public final static int DEFAULT_VALIDATION_ERROR_CODE = 50000;
 
     //Parameter parser
     public static final String REGEX_FOR_SPLIT_PARAMETERS = ",(?!$)";

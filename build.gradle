@@ -7,19 +7,13 @@ plugins {
 
 
 subprojects {
-   // test.enabled = false
+    test.enabled = false
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java-library'
 
     dependencies {
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        /*testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.0-M1'
-        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.0-M1'
-        testImplementation group: 'org.junit.platform', name: 'junit-platform-engine', version: '1.8.0-M1'
-        testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.8.0'
-        testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.8.0'
-        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.8.0-M1'*/
         implementation 'org.springframework.boot:spring-boot-starter-hateoas'
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
@@ -34,10 +28,7 @@ subprojects {
     test {
         useJUnitPlatform()
     }
-
-
 }
-
 
 allprojects {
 

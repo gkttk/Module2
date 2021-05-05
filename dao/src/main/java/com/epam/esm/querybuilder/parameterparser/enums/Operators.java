@@ -1,8 +1,5 @@
 package com.epam.esm.querybuilder.parameterparser.enums;
 
-import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.exceptions.RequestParameterParserException;
-
 import java.util.stream.Stream;
 
 /**
@@ -16,13 +13,11 @@ public enum Operators {
      *
      * @param name name for matching.
      * @return Operator with the same name as passed.
-     * @throws RequestParameterParserException if there are no matches here.
      */
     public static Operators findOperatorByName(String name) {
         return Stream.of(Operators.values())
                 .filter(operator -> operator.name().equalsIgnoreCase(name))
-                .findFirst().orElseThrow(() -> new RequestParameterParserException(ApplicationConstants.INCORRECT_OPERATOR_VALUE,
-                        String.format("Incorrect name of Operator in request parameter: %s", name)));
+                .findFirst().orElse(Operators.NONE);
     }
 
 }

@@ -120,7 +120,6 @@ public final class ApplicationConstants {
     public final static int USER_SUCH_LOGIN_EXISTS_CODE = 42011;
     public final static int TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE = 42000;
     public final static int DEFAULT_VALIDATION_ERROR_CODE = 50000;
-    public final static int INCORRECT_OPERATOR_VALUE = 46000;
 
     //Parameter parser
     public static final String REGEX_FOR_SPLIT_PARAMETERS = ",(?!$)";

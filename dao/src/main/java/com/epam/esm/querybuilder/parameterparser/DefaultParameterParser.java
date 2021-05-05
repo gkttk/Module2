@@ -18,13 +18,12 @@ public class DefaultParameterParser implements ParameterParser {
         String valuesString = requestParameter.substring(columnIndex + 1);
         String[] values = valuesString.split(ApplicationConstants.REGEX_FOR_SPLIT_PARAMETERS);
         String[] trimmedValues = Stream.of(values).map(String::trim).toArray(String[]::new);
+        Operators operator = Operators.NONE;
         if (columnIndex != -1) {
             String operatorName = requestParameter.substring(0, columnIndex);
-            Operators operator = Operators.findOperatorByName(operatorName);
-            return new ParserResult(operator, trimmedValues);
-        } else {
-            return new ParserResult(Operators.NONE, trimmedValues);
+            operator = Operators.findOperatorByName(operatorName);
         }
+        return new ParserResult(operator, trimmedValues);
 
 
     }

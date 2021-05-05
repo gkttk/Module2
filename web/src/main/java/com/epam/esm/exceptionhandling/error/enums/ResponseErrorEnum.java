@@ -17,8 +17,7 @@ public enum ResponseErrorEnum {
     USER_NOT_FOUND("User is not found", HttpStatus.NOT_FOUND, ApplicationConstants.USER_NOT_FOUND_ERROR_CODE),
     USER_WITH_SUCH_LOGIN_EXISTS("User already exists", HttpStatus.BAD_REQUEST, ApplicationConstants.USER_SUCH_LOGIN_EXISTS_CODE),
 
-    ORDER_NOT_FOUND("Order is not found", HttpStatus.NOT_FOUND, ApplicationConstants.ORDER_NOT_FOUND_ERROR_CODE),
-    INCORRECT_OPERATOR_VALUE_PASSED_IN_REQUEST("Incorrect operator value was passed in request parameter", HttpStatus.BAD_REQUEST, ApplicationConstants.INCORRECT_OPERATOR_VALUE);
+    ORDER_NOT_FOUND("Order is not found", HttpStatus.NOT_FOUND, ApplicationConstants.ORDER_NOT_FOUND_ERROR_CODE);
 
     private final String message;
     private final int code;

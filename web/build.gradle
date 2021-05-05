@@ -1,13 +1,10 @@
 plugins {
     id 'org.springframework.boot'
-
 }
 
 dependencies {
     implementation project(':service')
     implementation 'org.springframework.boot:spring-boot-starter-tomcat'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
-    implementation group: 'javax.servlet', name: 'jstl', version: '1.2'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.4.5'
 }

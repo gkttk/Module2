@@ -101,7 +101,7 @@ public class UserControllerTest {
         long userId = userDto.getId();
         List<OrderDto> listDto = Arrays.asList(orderDto, orderDto);
 
-        when(orderServiceMock.findAllForQuery(anyMap(), eq(TEST_LIMIT), eq(TEST_OFFSET))).thenReturn(listDto);
+        when(orderServiceMock.findAllForQuery(eq(userId),  anyMap(), eq(TEST_LIMIT), eq(TEST_OFFSET))).thenReturn(listDto);
         //when
         ResponseEntity<CollectionModel<OrderDto>> result = userController.getAllOrdersForUser(webRequestMock, userId, TEST_LIMIT, TEST_OFFSET);
         //then
@@ -109,7 +109,7 @@ public class UserControllerTest {
             assertAll(() -> assertEquals(order.getId(), orderDto.getId()),
                     () -> assertEquals(order.getCost(), orderDto.getCost()));
         });
-        verify(orderServiceMock).findAllForQuery(anyMap(), eq(TEST_LIMIT), eq(TEST_OFFSET));
+        verify(orderServiceMock).findAllForQuery(eq(userId),anyMap(), eq(TEST_LIMIT), eq(TEST_OFFSET));
     }
 
     @Test

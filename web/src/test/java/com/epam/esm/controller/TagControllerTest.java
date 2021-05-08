@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.assemblers.TagModelAssembler;
+import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.service.TagService;
 import org.junit.jupiter.api.BeforeAll;
@@ -129,14 +130,14 @@ public class TagControllerTest {
         long userId = 1;
         List<TagDto> listTags = Collections.singletonList(defaultTagDto);
         when(serviceMock.findMostWidelyUsed(userId)).thenReturn(listTags);
-        when(assemblerMock.toCollectionModel(listTags, TEST_OFFSET)).thenReturn(CollectionModel.of(listTags));
-        ResponseEntity<CollectionModel<TagDto>> expectedResult = ResponseEntity.ok(CollectionModel.of(listTags));
+        when(assemblerMock.toModel(defaultTagDto)).thenReturn(defaultTagDto);
+        ResponseEntity<List<TagDto>> expectedResult = ResponseEntity.ok(listTags);
         //when
-        ResponseEntity<CollectionModel<TagDto>> result = tagController.getMostWidelyUsedTagOfUser(userId);
+        ResponseEntity<List<TagDto>> result = tagController.getMostWidelyUsedTagOfUser(userId);
         //then
         assertEquals(result, expectedResult);
         verify(serviceMock).findMostWidelyUsed(userId);
-        verify(assemblerMock).toCollectionModel(listTags, TEST_OFFSET);
+        verify(assemblerMock).toModel(defaultTagDto);
     }
 
 

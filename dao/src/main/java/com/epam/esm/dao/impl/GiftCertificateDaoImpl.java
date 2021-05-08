@@ -93,7 +93,6 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         GiftCertificate result = entityManager.find(GiftCertificate.class, id);
 
         if (result != null) {
-            entityManager.detach(result);
             return Optional.of(result);
         }
 

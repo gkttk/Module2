@@ -1,5 +1,6 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.TagDto;
@@ -23,6 +24,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,6 +38,10 @@ public class TagServiceImplTest {
 
     @Mock
     private UserDao userDao;
+
+    @Mock
+    private CertificateTagsDao certificateTagsDao;
+
 
     @Mock
     private ModelMapper modelMapper;
@@ -149,6 +155,7 @@ public class TagServiceImplTest {
     public void testDelete_DeleteEntity_EntityWithSuchIdIsPresentInDb() {
         //given
         long tagId = testDto.getId();
+        doNothing().when(certificateTagsDao).deleteAllCertificateLinksForTagId(tagId);
         when(tagDao.deleteById(tagId)).thenReturn(true);
         //when
         tagService.delete(tagId);
@@ -160,6 +167,7 @@ public class TagServiceImplTest {
     public void testDelete_ThrowException_EntityWithSuchIdIsNotPresentInDb() {
         //given
         long tagId = testDto.getId();
+        doNothing().when(certificateTagsDao).deleteAllCertificateLinksForTagId(tagId);
         when(tagDao.deleteById(tagId)).thenReturn(false);
         //when
         //then

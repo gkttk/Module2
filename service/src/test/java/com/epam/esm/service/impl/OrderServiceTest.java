@@ -23,6 +23,7 @@ import org.modelmapper.ModelMapper;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -113,13 +114,15 @@ public class OrderServiceTest {
     @Test
     public void testFindAllForQuery_ListOfDto_ThereAreEntitiesInDb() {
         //given
-        Map<String, String[]> reqParams = Collections.emptyMap();
+        long userId = 1;
+        Map<String, String[]> reqParams = new HashMap<>();
+        when(userDao.findById(userId)).thenReturn(Optional.of(user));
         when(orderDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Arrays.asList(order, order));
         when(modelMapper.map(order, OrderDto.class)).thenReturn(orderDto);
 
         List<OrderDto> expectedResult = Arrays.asList(orderDto, orderDto);
         //when
-        List<OrderDto> result = orderService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
+        List<OrderDto> result = orderService.findAllForQuery(userId,reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
         assertEquals(result, expectedResult);
         verify(orderDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
@@ -129,12 +132,14 @@ public class OrderServiceTest {
     @Test
     public void testFindAllForQuery_EmptyList_ThereAreNoEntitiesInDb() {
         //given
-        Map<String, String[]> reqParams = Collections.emptyMap();
+        long userId = 1;
+        Map<String, String[]> reqParams = new HashMap<>();
+        when(userDao.findById(userId)).thenReturn(Optional.of(user));
         when(orderDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Collections.emptyList());
 
         List<OrderDto> expectedResult = Collections.emptyList();
         //when
-        List<OrderDto> result = orderService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
+        List<OrderDto> result = orderService.findAllForQuery(userId,reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
         assertEquals(result, expectedResult);
         verify(orderDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);

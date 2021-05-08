@@ -13,9 +13,6 @@ public class WebLayerConstants {
     public final static String NEXT_PAGE = "nextPage";
     public final static String MAKE_ORDER = "make_an_order";
 
-    public final static String USER_ID_KEY = "userId";
-
-
     //Codes
     public final static int CERTIFICATE_NOT_FOUND_CODE = 40401;
     public final static int TAG_NOT_FOUND_ERROR_CODE = 40402;

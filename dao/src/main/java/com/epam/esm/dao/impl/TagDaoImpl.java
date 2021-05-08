@@ -19,6 +19,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Root;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -114,7 +115,15 @@ public class TagDaoImpl implements TagDao {
         countQuery.orderBy(cb.desc(cb.count(countJoin3.get(Tag_.id))));
         countQuery.select(cb.count(countJoin3.get(Tag_.id)));
 
-        Long countResult = entityManager.createQuery(countQuery).setMaxResults(1).getSingleResult();
+        Optional<Long> countStream = entityManager.createQuery(countQuery)
+                .setMaxResults(1)
+                .getResultStream()
+                .findFirst();
+        
+        if (!countStream.isPresent()){
+            return Collections.emptyList();
+        }
+        Long countResult = countStream.get();
         //end of subSelect
 
         //start of mainSelect

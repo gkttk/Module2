@@ -47,8 +47,9 @@ public interface OrderService {
      * @param reqParams request parameters.
      * @param limit     for pagination.
      * @param offset    for pagination.
+     * @param userId    id of User.
      * @return list of OrderDto.
      * @since 2.0
      */
-    List<OrderDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
+    List<OrderDto> findAllForQuery(long userId, Map<String, String[]> reqParams, int limit, int offset);
 }

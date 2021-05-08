@@ -129,7 +129,9 @@ public class OrderServiceImpl implements OrderService {
      * @since 2.0
      */
     @Override
-    public List<OrderDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
+    public List<OrderDto> findAllForQuery(long userId, Map<String, String[]> reqParams, int limit, int offset) {
+        findUserByIdIfExist(userId);
+        reqParams.put(ApplicationConstants.USER_ID_KEY, new String[]{String.valueOf(userId)});
         List<Order> foundOrders = orderDao.findBy(reqParams, limit, offset);
         return foundOrders.stream()
                 .map(entity -> modelMapper.map(entity, OrderDto.class))

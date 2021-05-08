@@ -69,9 +69,7 @@ public class UserController {
                                                                          @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
                                                                          @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParamMap = new HashMap<>(webRequest.getParameterMap());
-        reqParamMap.put(WebLayerConstants.USER_ID_KEY, new String[]{String.valueOf(userId)});
-        List<OrderDto> orders = orderService.findAllForQuery(reqParamMap, limit, offset);
-
+        List<OrderDto> orders = orderService.findAllForQuery(userId, reqParamMap, limit, offset);
         CollectionModel<OrderDto> order = CollectionModel.of(orders);
         order.add(linkTo(methodOn(UserController.class)
                 .getAllOrdersForUser(null, userId, WebLayerConstants.DEFAULT_LIMIT, 0))

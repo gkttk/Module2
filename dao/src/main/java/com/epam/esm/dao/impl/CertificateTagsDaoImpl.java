@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
 
 /**
  * Default implementation of {@link com.epam.esm.dao.CertificateTagsDao} interface.
@@ -46,8 +45,20 @@ public class CertificateTagsDaoImpl implements CertificateTagsDao {
      * @since 1.0
      */
     @Override
-    public void deleteAllTagsForCertificate(long certificateId) {
+    public void deleteAllTagLinksForCertificateId(long certificateId) {
         entityManager.createNativeQuery(ApplicationConstants.DELETE_ALL_TAGS_FOR_CERTIFICATE)
                 .setParameter(1, certificateId).executeUpdate();
+    }
+
+    /**
+     * This method removes all links between Tag entity and GiftCertificate entity for a specific Tag.
+     *
+     * @param tagId id of Tag entity
+     * @since 2.0
+     */
+    @Override
+    public void deleteAllCertificateLinksForTagId(long tagId) {
+        entityManager.createNativeQuery(ApplicationConstants.DELETE_ALL_CERTIFICATES_FOR_TAG)
+                .setParameter(1, tagId).executeUpdate();
     }
 }

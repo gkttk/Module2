@@ -153,7 +153,7 @@ public class GiftServiceImplTest {
        when(certDao.findById(certificateId)).thenReturn(Optional.of(testEntity));
 
         when(certDao.findByName(testDto.getName())).thenReturn(Optional.empty());
-        doNothing().when(certificateTagsDao).deleteAllTagsForCertificate(certificateId);
+        doNothing().when(certificateTagsDao).deleteAllTagLinksForCertificateId(certificateId);
 
         when(modelMapper.map(tagDto, Tag.class)).thenReturn(tag);
         when(tagDao.findByName(tag.getName())).thenReturn(Optional.empty());
@@ -168,7 +168,7 @@ public class GiftServiceImplTest {
         assertEquals(result, testDto);
         verify(certDao).findById(certificateId);
         verify(certDao).findByName(testDto.getName());
-        verify(certificateTagsDao).deleteAllTagsForCertificate(certificateId);
+        verify(certificateTagsDao).deleteAllTagLinksForCertificateId(certificateId);
         verify(modelMapper).map(tagDto, Tag.class);
         verify(tagDao).findByName(tag.getName());
         verify(modelMapper).map(testDto, GiftCertificate.class);

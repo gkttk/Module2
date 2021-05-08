@@ -29,6 +29,8 @@ public final class ApplicationConstants {
     public final static String SAVE_USER_ORDER_QUERY = "INSERT INTO " + USERS_ORDERS_TABLE_NAME + " VALUES (?,?)";
     public final static String DELETE_ALL_TAGS_FOR_CERTIFICATE = "DELETE FROM " + CERTIFICATE_TAGS_TABLE_NAME +
             " WHERE certificate_id = ?";
+    public final static String DELETE_ALL_CERTIFICATES_FOR_TAG = "DELETE FROM " + CERTIFICATE_TAGS_TABLE_NAME +
+            " WHERE tag_id = ?";
 
     //QueryBuilders
     public final static String USER_ID_KEY = "userId";

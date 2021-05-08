@@ -164,10 +164,9 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public boolean deleteById(long id) {
-        Tag reference = entityManager.getReference(Tag.class, id);
+        Tag reference = entityManager.find(Tag.class, id);
         if (reference != null) {
             entityManager.remove(reference);
-            entityManager.flush();
             return true;
         }
         return false;

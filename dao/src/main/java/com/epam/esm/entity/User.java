@@ -42,13 +42,12 @@ public class User {
     private String password;
 
     @Column(nullable = false, columnDefinition = "varchar(50) default 'USER'")
-    // @Enumerated(value = EnumType.STRING)
     private String role;
 
     @NotAudited
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_orders",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"))

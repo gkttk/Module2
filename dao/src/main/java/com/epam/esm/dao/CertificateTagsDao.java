@@ -4,7 +4,7 @@ package com.epam.esm.dao;
 /**
  * This interface represents an api to interact with the link between GiftCertificate entity
  * and Tag entity in database.
- *
+ * <p>
  * Implementations : {@link com.epam.esm.dao.impl.CertificateTagsDaoImpl} classes.
  *
  * @since 1.0
@@ -26,6 +26,13 @@ public interface CertificateTagsDao {
      * @param certificateId id of GiftCertificate entity
      * @since 1.0
      */
-    void deleteAllTagsForCertificate(long certificateId);
+    void deleteAllTagLinksForCertificateId(long certificateId);
 
+    /**
+     * This method removes all links between Tag entity and GiftCertificate entity for a specific Tag.
+     *
+     * @param tagId id of Tag entity
+     * @since 2.0
+     */
+    void deleteAllCertificateLinksForTagId(long tagId);
 }

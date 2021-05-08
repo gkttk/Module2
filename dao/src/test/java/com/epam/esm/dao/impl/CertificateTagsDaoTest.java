@@ -5,13 +5,11 @@ import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -52,7 +50,7 @@ public class CertificateTagsDaoTest {
         //given
         long certificateId = 1;
         //when
-        certificateTagsDao.deleteAllTagsForCertificate(certificateId);
+        certificateTagsDao.deleteAllTagLinksForCertificateId(certificateId);
         //then
         Optional<GiftCertificate> certificateWithNewTagOpt = giftCertificateDao.findById(certificateId);
         certificateWithNewTagOpt.ifPresent(certificate-> {

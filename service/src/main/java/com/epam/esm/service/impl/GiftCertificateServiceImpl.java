@@ -134,7 +134,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         checkIfAnotherEntityWithGivenNameExist(passedDto.getName(), certId);
 
-        certificateTagsDao.deleteAllTagsForCertificate(certId);
+        certificateTagsDao.deleteAllTagLinksForCertificateId(certId);
 
         //collection of tags which dont exist in db
         List<Tag> tagsForSaving = new ArrayList<>();
@@ -204,6 +204,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     @Override
     public void delete(long id) {
+        certificateTagsDao.deleteAllTagLinksForCertificateId(id);
         boolean isDeleted = giftCertificateDao.delete(id);
         if (!isDeleted) {
             throw new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d doesn't exist in DB", id));

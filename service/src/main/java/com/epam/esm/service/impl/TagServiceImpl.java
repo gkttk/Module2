@@ -1,6 +1,7 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
+import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.TagDto;
@@ -30,12 +31,14 @@ public class TagServiceImpl implements TagService {
     private final TagDao tagDao;
     private final UserDao userDao;
     private final ModelMapper modelMapper;
+    private final CertificateTagsDao certificateTagsDao;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, UserDao userDao, ModelMapper modelMapper) {
+    public TagServiceImpl(TagDao tagDao, UserDao userDao, ModelMapper modelMapper, CertificateTagsDao certificateTagsDao) {
         this.tagDao = tagDao;
         this.userDao = userDao;
         this.modelMapper = modelMapper;
+        this.certificateTagsDao = certificateTagsDao;
     }
 
     /**
@@ -98,6 +101,7 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public void delete(long id) {
+        certificateTagsDao.deleteAllCertificateLinksForTagId(id);
         boolean isDeleted = tagDao.deleteById(id);
         if (!isDeleted) {
             throw new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with id: %d is not found in DB", id));

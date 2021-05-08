@@ -24,6 +24,7 @@ spring:
         format_sql: true
         show_sql: true
         use_sql_comments: true
+        enable_lazy_load_no_trans: true
       org:
         hibernate:
           envers:

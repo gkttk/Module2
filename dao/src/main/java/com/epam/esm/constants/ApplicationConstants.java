@@ -21,20 +21,6 @@ public final class ApplicationConstants {
     //Tag queries
     public final static String GET_TAG_BY_NAME = "SELECT t FROM Tag t WHERE t.name =:name";
 
-    public final static String GET_MOST_WIDELY_USED_TAGS = "SELECT t.id, t.name from tag t " +
-            "JOIN certificates_tags ct on t.id = ct.tag_id " +
-            "JOIN orders_certificates oc on ct.certificate_id = oc.certificate_id " +
-            "JOIN users_orders uo on oc.order_id = uo.order_id " +
-            "WHERE uo.user_id = ? " +
-            "GROUP BY t.id " +
-            "HAVING count(t.id)  = ( " +
-            "SELECT count(t.id) as c from tag t " +
-            "JOIN certificates_tags ct on t.id = ct.tag_id " +
-            "JOIN orders_certificates oc on ct.certificate_id = oc.certificate_id " +
-            "JOIN users_orders uo on oc.order_id = uo.order_id " +
-            "WHERE uo.user_id = ? " +
-            "GROUP BY t.id order by c desc LIMIT 1)";
-
     //User queries
     public final static String GET_USER_BY_LOGIN = "SELECT u FROM User u WHERE u.login =:login";
 
@@ -72,6 +58,7 @@ public final class ApplicationConstants {
     public final static String TAG_NAME_FIELD = "name";
     public final static String CERTIFICATE_ID_KEY = "certificateId";
     public final static String GC_ATTRIBUTE_NAME = "giftCertificates";
+    public final static String MAX_WIDELY_USED = "maxWidelyUsed";
 
     //Order QueryBuilder
     public final static String USER_ATTRIBUTE_NAME = "user";

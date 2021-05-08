@@ -7,16 +7,19 @@ plugins {
 
 
 subprojects {
-    test.enabled = false
+    //test.enabled = false
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java-library'
+
+
 
     dependencies {
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         implementation 'org.springframework.boot:spring-boot-starter-hateoas'
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
+        annotationProcessor('org.hibernate:hibernate-jpamodelgen:5.4.31.Final')
     }
 
     dependencyManagement {

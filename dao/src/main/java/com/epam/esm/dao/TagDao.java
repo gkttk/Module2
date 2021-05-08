@@ -17,10 +17,10 @@ public interface TagDao {
     /**
      * Find Tag the most widely used tags of user with given id.
      *
-     * @return list of Tag entities.
+     * @return List with Tags entity.
      * @since 2.0
      */
-    List<Tag> findMaxWidelyUsed(long userId);
+   List<Tag> findMaxWidelyUsed(long userId);
 
 
     /**

@@ -132,7 +132,7 @@ public class TagControllerTest {
         when(assemblerMock.toCollectionModel(listTags, TEST_OFFSET)).thenReturn(CollectionModel.of(listTags));
         ResponseEntity<CollectionModel<TagDto>> expectedResult = ResponseEntity.ok(CollectionModel.of(listTags));
         //when
-        ResponseEntity<CollectionModel<TagDto>> result = tagController.getMostWidelyUsedTagsOfUser(userId);
+        ResponseEntity<CollectionModel<TagDto>> result = tagController.getMostWidelyUsedTagOfUser(userId);
         //then
         assertEquals(result, expectedResult);
         verify(serviceMock).findMostWidelyUsed(userId);

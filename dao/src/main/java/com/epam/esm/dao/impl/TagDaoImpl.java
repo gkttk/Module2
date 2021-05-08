@@ -2,14 +2,23 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.GiftCertificate_;
+import com.epam.esm.entity.Order_;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.Tag_;
+import com.epam.esm.entity.User;
+import com.epam.esm.entity.User_;
 import com.epam.esm.querybuilder.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ListJoin;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -86,15 +95,46 @@ public class TagDaoImpl implements TagDao {
     /**
      * Find Tag the most widely used tags of user with given id.
      *
-     * @return list of Tag entities.
+     * @return Optional with Tag entities.
      * @since 2.0
      */
     @Override
     public List<Tag> findMaxWidelyUsed(long userId) {
-        Query nativeQuery = entityManager.createNativeQuery(ApplicationConstants.GET_MOST_WIDELY_USED_TAGS, Tag.class);
-        nativeQuery.setParameter(1, userId);
-        nativeQuery.setParameter(2, userId);
-        return (List<Tag>) nativeQuery.getResultStream().collect(Collectors.toList());
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        //start of subSelect
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<User> countRoot = countQuery.from(User.class);
+
+        ListJoin<User, com.epam.esm.entity.Order> countJoin1 = countRoot.join(User_.orders);
+        ListJoin<com.epam.esm.entity.Order, GiftCertificate> countJoin2 = countJoin1.join(Order_.giftCertificates);
+        ListJoin<GiftCertificate, Tag> countJoin3 = countJoin2.join(GiftCertificate_.tags);
+
+        countQuery.where(cb.equal(countRoot.get(User_.id), userId));
+        countQuery.groupBy(countJoin3.get(Tag_.id));
+        countQuery.orderBy(cb.desc(cb.count(countJoin3.get(Tag_.id))));
+        countQuery.select(cb.count(countJoin3.get(Tag_.id)));
+
+        Long countResult = entityManager.createQuery(countQuery).setMaxResults(1).getSingleResult();
+        //end of subSelect
+
+        //start of mainSelect
+        CriteriaQuery<Tag> query = cb.createQuery(Tag.class);
+        Root<User> root = query.from(User.class);
+        ListJoin<User, com.epam.esm.entity.Order> join1 = root.join(User_.orders);
+        ListJoin<com.epam.esm.entity.Order, GiftCertificate> join2 = join1.join(Order_.giftCertificates);
+        ListJoin<GiftCertificate, Tag> join3 = join2.join(GiftCertificate_.tags);
+
+        query.where(cb.equal(root.get(User_.id), userId));
+        query.groupBy(join3.get(Tag_.id));
+
+        query.having(cb.equal(cb.count(join3.get(Tag_.id)), countResult));
+        query.select(join3);
+        //end of mainSelect
+
+        return entityManager.createQuery(query)
+                .getResultStream()
+                .peek(entityManager::detach)
+                .collect(Collectors.toList());
     }
 
     /**

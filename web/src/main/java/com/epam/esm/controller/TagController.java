@@ -24,6 +24,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/tags", produces = "application/hal+json")
@@ -75,9 +76,10 @@ public class TagController {
 
 
     @GetMapping("{userId}/most_widely_used_tag")
-    public ResponseEntity<CollectionModel<TagDto>> getMostWidelyUsedTagsOfUser(@PathVariable long userId) {
+    public ResponseEntity<List<TagDto>> getMostWidelyUsedTagOfUser(@PathVariable long userId) {
         List<TagDto> tags = tagService.findMostWidelyUsed(userId);
-        return ResponseEntity.ok(assembler.toCollectionModel(tags, WebLayerConstants.DEFAULT_OFFSET));
+        List<TagDto> tagsWithLinks = tags.stream().map(assembler::toModel).collect(Collectors.toList());
+        return ResponseEntity.ok(tagsWithLinks);
     }
 
 }

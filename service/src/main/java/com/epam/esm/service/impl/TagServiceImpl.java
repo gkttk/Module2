@@ -136,8 +136,9 @@ public class TagServiceImpl implements TagService {
             throw new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE,
                     String.format("Can't find an user with id: %d", userId));
         }
-        List<Tag> tags = tagDao.findMaxWidelyUsed(userId);
-        return tags.stream()
+
+        return tagDao.findMaxWidelyUsed(userId)
+                .stream()
                 .map(tag -> modelMapper.map(tag, TagDto.class))
                 .collect(Collectors.toList());
     }

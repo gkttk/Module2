@@ -72,7 +72,7 @@ public class TagControllerTest {
         List<TagDto> listDto = Arrays.asList(defaultTagDto, defaultTagDto);
         when(webRequestMock.getParameterMap()).thenReturn(paramMap);
         when(serviceMock.findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET)).thenReturn(listDto);
-        when(assemblerMock.toCollectionModel(listDto, TEST_OFFSET)).thenReturn(CollectionModel.of(listDto));
+        when(assemblerMock.toCollectionModel(listDto, TEST_OFFSET,paramMap)).thenReturn(CollectionModel.of(listDto));
         ResponseEntity<CollectionModel<TagDto>> expectedResult = ResponseEntity.ok(CollectionModel.of(listDto));
 
         //when
@@ -81,7 +81,7 @@ public class TagControllerTest {
         assertEquals(result, expectedResult);
         verify(webRequestMock).getParameterMap();
         verify(serviceMock).findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET);
-        verify(assemblerMock).toCollectionModel(listDto, TEST_OFFSET);
+        verify(assemblerMock).toCollectionModel(listDto, TEST_OFFSET,paramMap);
     }
 
     @Test

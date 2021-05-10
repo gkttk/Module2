@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@ComponentScan(basePackages = {"com.epam.esm.assemblers"})
+@ComponentScan(basePackages = {"com.epam.esm.assemblers","com.epam.esm.uri_builder"})
 public class WebTestConfig implements WebMvcConfigurer {
 
 

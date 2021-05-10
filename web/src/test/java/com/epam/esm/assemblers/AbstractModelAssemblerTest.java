@@ -10,6 +10,7 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -36,7 +37,7 @@ public abstract class AbstractModelAssemblerTest<T extends RepresentationModel<T
         //given
         ModelAssembler<T> modelAssembler = getModelAssembler();
         //when
-        CollectionModel<T> result = modelAssembler.toCollectionModel(Arrays.asList(getDto(), getDto()), WebLayerConstants.DEFAULT_OFFSET);
+        CollectionModel<T> result = modelAssembler.toCollectionModel(Arrays.asList(getDto(), getDto()), WebLayerConstants.DEFAULT_OFFSET, Collections.emptyMap());
         //then
         assertFalse(result.getLinks().isEmpty());
     }

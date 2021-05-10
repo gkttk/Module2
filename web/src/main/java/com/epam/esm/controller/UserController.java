@@ -60,7 +60,7 @@ public class UserController {
                                                                    @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
         List<UserDto> users = userService.findAllForQuery(reqParams, limit, offset);
-        return ResponseEntity.ok(userAssembler.toCollectionModel(users, offset));
+        return ResponseEntity.ok(userAssembler.toCollectionModel(users, offset, reqParams));
     }
 
 

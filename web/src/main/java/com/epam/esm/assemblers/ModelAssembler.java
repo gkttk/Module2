@@ -2,6 +2,8 @@ package com.epam.esm.assemblers;
 
 import org.springframework.hateoas.CollectionModel;
 
+import java.util.Map;
+
 /**
  * This interface represents of api which helps to enrich result JSON by HATEOAS links.
  * @param <T> class of DTO.
@@ -18,8 +20,10 @@ public interface ModelAssembler<T> {
     /**
      * This method add links to collection of DTOs.
      * @param entities DTOs for links.
+     * @param offset offset for pagination.
+     * @param reqParams parameters of current request.
      * @return collection of DTO with links.
      */
-    CollectionModel<T> toCollectionModel(Iterable<? extends T> entities, Integer offset);
+    CollectionModel<T> toCollectionModel(Iterable<? extends T> entities, Integer offset, Map<String, String[]> reqParams);
 
 }

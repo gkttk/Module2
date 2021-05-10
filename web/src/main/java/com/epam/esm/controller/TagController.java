@@ -53,7 +53,7 @@ public class TagController {
         Map<String, String[]> reqParams = request.getParameterMap();
         List<TagDto> tags = tagService.findAllForQuery(reqParams, limit, offset);
 
-        return ResponseEntity.ok(assembler.toCollectionModel(tags, offset));
+        return ResponseEntity.ok(assembler.toCollectionModel(tags, offset, reqParams));
     }
 
     @GetMapping("/{id}")

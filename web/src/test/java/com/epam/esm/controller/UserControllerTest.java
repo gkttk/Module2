@@ -84,7 +84,7 @@ public class UserControllerTest {
         when(webRequestMock.getParameterMap()).thenReturn(paramMap);
         when(userServiceMock.findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET)).thenReturn(listDto);
         CollectionModel<UserDto> collectionModel = CollectionModel.of(listDto);
-        when(assemblerMock.toCollectionModel(listDto, TEST_OFFSET)).thenReturn(collectionModel);
+        when(assemblerMock.toCollectionModel(listDto, TEST_OFFSET,paramMap)).thenReturn(collectionModel);
         ResponseEntity<CollectionModel<UserDto>> expectedResult = ResponseEntity.ok(collectionModel);
 
         //when
@@ -93,7 +93,7 @@ public class UserControllerTest {
         assertEquals(result, expectedResult);
         verify(webRequestMock).getParameterMap();
         verify(userServiceMock).findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET);
-        verify(assemblerMock).toCollectionModel(listDto, TEST_OFFSET);
+        verify(assemblerMock).toCollectionModel(listDto, TEST_OFFSET,paramMap);
     }
 
     @Test

@@ -3,9 +3,12 @@ package com.epam.esm.assemblers;
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.controller.GiftCertificateController;
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.uri_builder.UriBuilder;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -16,8 +19,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
 public class GiftCertificateModelAssembler extends RepresentationModelAssemblerSupport<GiftCertificateDto, GiftCertificateDto> implements ModelAssembler<GiftCertificateDto> {
 
-    public GiftCertificateModelAssembler() {
+    private final UriBuilder uriBuilder;
+
+    public GiftCertificateModelAssembler(UriBuilder uriBuilder) {
         super(GiftCertificateController.class, GiftCertificateDto.class);
+        this.uriBuilder = uriBuilder;
     }
 
     /**
@@ -38,15 +44,25 @@ public class GiftCertificateModelAssembler extends RepresentationModelAssemblerS
     }
 
     /**
-     * {@link com.epam.esm.assemblers.ModelAssembler#toCollectionModel(Iterable, Integer)} (Object)}
-     *
-     * @param entities list of GiftCertificateDto.
+     * {@link com.epam.esm.assemblers.ModelAssembler#toCollectionModel(Iterable, Integer, Map)} (Object)}
+     * @param entities DTOs for links.
+     * @param offset offset for pagination.
+     * @param reqParams parameters of current request.
      * @return list of GiftCertificateDto with links.
      */
-    public CollectionModel<GiftCertificateDto> toCollectionModel(Iterable<? extends GiftCertificateDto> entities, Integer offset) {
+    public CollectionModel<GiftCertificateDto> toCollectionModel(Iterable<? extends GiftCertificateDto> entities,
+                                                                 Integer offset, Map<String, String[]> reqParams) {
         CollectionModel<GiftCertificateDto> collectionModel = super.toCollectionModel(entities);
-        collectionModel.add(linkTo(methodOn(GiftCertificateController.class).getAllForQuery(null, WebLayerConstants.DEFAULT_LIMIT, 0)).withRel("firstPage"));
-        collectionModel.add(linkTo(methodOn(GiftCertificateController.class).getAllForQuery(null, WebLayerConstants.DEFAULT_LIMIT, offset + WebLayerConstants.DEFAULT_LIMIT)).withRel("nextPage"));
+        String paramsString = uriBuilder.buildRequestParams(reqParams);
+        collectionModel.add(linkTo(methodOn(GiftCertificateController.class)
+                .getAllForQuery(null, WebLayerConstants.DEFAULT_LIMIT, 0))
+                .slash(paramsString)
+                .withRel("firstPage"));
+        collectionModel.add(linkTo(methodOn(GiftCertificateController.class)
+                .getAllForQuery(null, WebLayerConstants.DEFAULT_LIMIT, offset + WebLayerConstants.DEFAULT_LIMIT))
+                .slash(paramsString)
+                .withRel("nextPage"));
+
         return collectionModel;
     }
 

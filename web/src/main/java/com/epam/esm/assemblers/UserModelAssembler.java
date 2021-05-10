@@ -4,9 +4,12 @@ import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.controller.TagController;
 import com.epam.esm.controller.UserController;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.uri_builder.UriBuilder;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -18,8 +21,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserModelAssembler extends RepresentationModelAssemblerSupport<UserDto, UserDto>
         implements ModelAssembler<UserDto> {
 
-    public UserModelAssembler() {
+    private final UriBuilder uriBuilder;
+
+    public UserModelAssembler(UriBuilder uriBuilder) {
         super(TagController.class, UserDto.class);
+        this.uriBuilder = uriBuilder;
     }
 
     /**
@@ -37,17 +43,24 @@ public class UserModelAssembler extends RepresentationModelAssemblerSupport<User
     }
 
     /**
-     * {@link com.epam.esm.assemblers.ModelAssembler#toCollectionModel(Iterable, Integer)} (Object)}
+     * {@link com.epam.esm.assemblers.ModelAssembler#toCollectionModel(Iterable, Integer, Map)} (Object)}
      *
-     * @param entities list of UserDto.
+     * @param entities DTOs for links.
+     * @param offset offset for pagination.
+     * @param reqParams parameters of current request.
      * @return list of UserDto with links.
      */
-    public CollectionModel<UserDto> toCollectionModel(Iterable<? extends UserDto> entities, Integer offset) {
+    public CollectionModel<UserDto> toCollectionModel(Iterable<? extends UserDto> entities,
+                                                      Integer offset, Map<String, String[]> reqParams) {
         CollectionModel<UserDto> collectionModel = super.toCollectionModel(entities);
+        String paramsString = uriBuilder.buildRequestParams(reqParams);
         collectionModel.add(linkTo(methodOn(UserController.class)
-                .getAllForQuery(null, WebLayerConstants.DEFAULT_LIMIT, 0)).withRel(WebLayerConstants.FIRST_PAGE));
+                .getAllForQuery(null, WebLayerConstants.DEFAULT_LIMIT, 0))
+                .slash(paramsString)
+                .withRel(WebLayerConstants.FIRST_PAGE));
         collectionModel.add(linkTo(methodOn(UserController.class)
                 .getAllForQuery(null, WebLayerConstants.DEFAULT_LIMIT, offset + WebLayerConstants.DEFAULT_LIMIT))
+                .slash(paramsString)
                 .withRel(WebLayerConstants.NEXT_PAGE));
 
         return collectionModel;

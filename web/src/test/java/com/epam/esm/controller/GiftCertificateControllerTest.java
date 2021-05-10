@@ -77,7 +77,7 @@ public class GiftCertificateControllerTest {
         List<GiftCertificateDto> listDto = Arrays.asList(defaultCertDto, defaultCertDto);
         when(webRequestMock.getParameterMap()).thenReturn(paramMap);
         when(serviceMock.findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET)).thenReturn(listDto);
-        when(assemblerMock.toCollectionModel(listDto, TEST_OFFSET)).thenReturn(CollectionModel.of(listDto));
+        when(assemblerMock.toCollectionModel(listDto, TEST_OFFSET,paramMap)).thenReturn(CollectionModel.of(listDto));
         ResponseEntity<CollectionModel<GiftCertificateDto>> expectedResult = ResponseEntity.ok(CollectionModel.of(listDto));
 
         //when
@@ -86,7 +86,7 @@ public class GiftCertificateControllerTest {
         assertEquals(result, expectedResult);
         verify(webRequestMock).getParameterMap();
         verify(serviceMock).findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET);
-        verify(assemblerMock).toCollectionModel(listDto, TEST_OFFSET);
+        verify(assemblerMock).toCollectionModel(listDto, TEST_OFFSET,paramMap);
     }
 
 

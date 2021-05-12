@@ -2,15 +2,13 @@ package com.epam.esm.assemblers;
 
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.controller.OrderController;
-import com.epam.esm.controller.TagController;
 import com.epam.esm.controller.UserController;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.uri_builder.UriBuilder;
+import com.epam.esm.uri_builder.result.UriBuilderResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -19,52 +17,36 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * Implementation of {@link com.epam.esm.assemblers.ModelAssembler} for OrderDto.
  */
 @Component
-public class OrderModelAssembler extends RepresentationModelAssemblerSupport<OrderDto, OrderDto>
-        implements ModelAssembler<OrderDto> {
+public class OrderModelAssembler extends AbstractModelAssembler<OrderDto> {
 
-    private final UriBuilder uriBuilder;
-
+    @Autowired
     public OrderModelAssembler(UriBuilder uriBuilder) {
-        super(TagController.class, OrderDto.class);
-        this.uriBuilder = uriBuilder;
+        super(uriBuilder);
     }
 
-    /**
-     * {@link com.epam.esm.assemblers.ModelAssembler#toModel(Object)}
-     *
-     * @param entity OrderDto.
-     * @return OrderDto with links.
-     */
     @Override
-    public OrderDto toModel(OrderDto entity) {
-        Long id = entity.getId();
-        entity.add(linkTo(methodOn(OrderController.class).getById(id)).withSelfRel());
-        entity.add(linkTo(methodOn(OrderController.class).deleteById(id)).withRel(WebLayerConstants.DELETE));
-        return entity;
+    protected void addFirstPage(CollectionModel<OrderDto> collectionModel, UriBuilderResult uriBuilderResult) {
+        collectionModel.add(linkTo(methodOn(UserController.class)
+                .getAllOrdersForUser(null, null, uriBuilderResult.getLimit(), WebLayerConstants.DEFAULT_OFFSET))
+                .slash(uriBuilderResult.getParamString())
+                .withRel(WebLayerConstants.FIRST_PAGE));
     }
 
-    /**
-     * {@link com.epam.esm.assemblers.ModelAssembler#toCollectionModel(Iterable, Integer, Map)} (Object)}
-     *
-     * @param entities DTOs for links.
-     * @param offset offset for pagination.
-     * @param reqParams parameters of current request.
-     * @return list of OrderDto with links.
-     */
-    public CollectionModel<OrderDto> toCollectionModel(Iterable<? extends OrderDto> entities,
-                                                       Integer offset, Map<String, String[]> reqParams) {
-        CollectionModel<OrderDto> collectionModel = super.toCollectionModel(entities);
-        String paramsString = uriBuilder.buildRequestParams(reqParams);
+    @Override
+    protected void addNextPage(CollectionModel<OrderDto> collectionModel, UriBuilderResult uriBuilderResult) {
+        int limit = uriBuilderResult.getLimit();
+        int offset = uriBuilderResult.getOffset();
         collectionModel.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, null, WebLayerConstants.DEFAULT_LIMIT, 0))
-                .slash(paramsString)
-                .withRel(WebLayerConstants.FIRST_PAGE));
-        collectionModel.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, null, WebLayerConstants.DEFAULT_LIMIT, offset + WebLayerConstants.DEFAULT_LIMIT))
-                .slash(paramsString)
+                .getAllOrdersForUser(null, null, limit, offset + limit))
+                .slash(uriBuilderResult.getParamString())
                 .withRel(WebLayerConstants.NEXT_PAGE));
+    }
 
-        return collectionModel;
+    @Override
+    protected void addModelLinks(OrderDto dto) {
+        Long id = dto.getId();
+        dto.add(linkTo(methodOn(OrderController.class).getById(id)).withSelfRel());
+        dto.add(linkTo(methodOn(OrderController.class).deleteById(id)).withRel(WebLayerConstants.DELETE));
     }
 
 }

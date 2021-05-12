@@ -24,7 +24,7 @@ import javax.validation.constraints.Size;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagDto extends RepresentationModel<TagDto> {
+public class TagDto extends RepresentationModel<TagDto>{
 
     @Null(message = "Tag's id value must be null", groups = {UpdateGroup.class, PatchGroup.class})
     private Long id;

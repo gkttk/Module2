@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SaveOrderDto {
+public class SaveOrderDto{
 
     @NotNull(message = "CertificateId value must be not null")
     private Long certificateId;

@@ -1,6 +1,8 @@
 package com.epam.esm.uri_builder;
 
 import com.epam.esm.config.WebTestConfig;
+import com.epam.esm.constants.WebLayerConstants;
+import com.epam.esm.uri_builder.result.UriBuilderResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = WebTestConfig.class)
@@ -22,29 +25,35 @@ public class UriBuilderTest {
     private DefaultUriBuilder uriBuilder;
 
     @Test
-    public void testBuildRequestParams_returnCorrectStringWithParams_WhenMapWithParamsWasPassed() {
+    public void testBuildRequestParams_returnCorrectUriResultWithParams_WhenMapWithParamsWasPassed() {
         //given
         Map<String, String[]> parameters = new HashMap<>();
         parameters.put("hello", new String[]{"world", "space"});
         parameters.put("bye", new String[]{"2"});
         //when
-        String result = uriBuilder.buildRequestParams(parameters);
+        UriBuilderResult result = uriBuilder.buildRequestParams(parameters);
         //then
         assertAll(
-                () -> assertTrue(result.contains("hello=world")),
-                () -> assertTrue(result.contains("hello=space")),
-                () -> assertTrue(result.contains("bye=2"))
+                () -> assertEquals(result.getLimit(), WebLayerConstants.DEFAULT_LIMIT),
+                () -> assertEquals(result.getOffset(), WebLayerConstants.DEFAULT_OFFSET),
+                () -> assertTrue(result.getParamString().contains("hello=world")),
+                () -> assertTrue(result.getParamString().contains("hello=space")),
+                () -> assertTrue(result.getParamString().contains("bye=2"))
         );
     }
 
     @Test
-    public void testBuildRequestParams_returnEmptyString_WhenEmptyMapWasPassed() {
+    public void testBuildRequestParams_returnUriResultWithoutParams_WhenEmptyMapWasPassed() {
         //given
         Map<String, String[]> parameters = Collections.emptyMap();
         //when
-        String result = uriBuilder.buildRequestParams(parameters);
+        UriBuilderResult result = uriBuilder.buildRequestParams(parameters);
         //then
-        assertTrue(result.isEmpty());
+        assertAll(
+                () -> assertEquals(result.getLimit(),  WebLayerConstants.DEFAULT_LIMIT),
+                () -> assertEquals(result.getOffset(), WebLayerConstants.DEFAULT_OFFSET),
+                () -> assertTrue(result.getParamString().isEmpty())
+        );
     }
 
 

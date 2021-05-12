@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;

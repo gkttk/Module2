@@ -24,6 +24,6 @@ public interface ModelAssembler<T> {
      * @param reqParams parameters of current request.
      * @return collection of DTO with links.
      */
-    CollectionModel<T> toCollectionModel(Iterable<? extends T> entities, Integer offset, Map<String, String[]> reqParams);
+    CollectionModel<T> toCollectionModel(Iterable<T> entities, Integer offset, Map<String, String[]> reqParams);
 
 }

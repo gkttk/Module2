@@ -5,6 +5,11 @@ public class WebLayerConstants {
     public final static int DEFAULT_LIMIT = 5;
     public final static int DEFAULT_OFFSET = 0;
 
+    //keys
+    public final static String LIMIT = "limit";
+    public final static String OFFSET = "offset";
+
+
     //hateoas
     public final static String UPDATE = "update";
     public final static String PARTIAL_UPDATE = "partial_update";

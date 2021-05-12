@@ -27,7 +27,7 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @JsonFilter("passwordFilter")
-public class UserDto extends RepresentationModel<UserDto> {
+public class UserDto extends RepresentationModel<UserDto>{
 
     @Null(message = "User's id value must be null", groups = SaveGroup.class)
     private Long id;

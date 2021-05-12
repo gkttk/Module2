@@ -6,12 +6,11 @@ plugins {
 }
 
 
+
 subprojects {
     //test.enabled = false
     apply plugin: 'java'
-    apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java-library'
-
 
 
     dependencies {
@@ -22,19 +21,13 @@ subprojects {
         annotationProcessor('org.hibernate:hibernate-jpamodelgen:5.4.31.Final')
     }
 
-    dependencyManagement {
-        imports {
-            mavenBom("org.springframework.boot:spring-boot-dependencies:2.1.7.RELEASE")
-        }
-    }
-
     test {
         useJUnitPlatform()
     }
 }
 
 allprojects {
-
+    apply plugin: 'io.spring.dependency-management'
     apply plugin: 'application'
 
     mainClassName = "com.epam.esm.ApplicationRunner"
@@ -45,6 +38,13 @@ allprojects {
     repositories {
         mavenCentral()
     }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:Edgware.SR4"
+        }
+    }
+
 
 /*    javadoc{
         source = sourceSets.main.allJava

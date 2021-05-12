@@ -1,8 +1,10 @@
 package com.epam.esm.uri_builder;
 
+import com.epam.esm.uri_builder.result.UriBuilderResult;
+
 import java.util.Map;
 
 public interface UriBuilder {
 
-    String buildRequestParams(Map<String, String[]> parameterMap);
+    UriBuilderResult buildRequestParams(Map<String, String[]> parameterMap);
 }

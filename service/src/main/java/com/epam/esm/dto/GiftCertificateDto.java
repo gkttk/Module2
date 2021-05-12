@@ -36,7 +36,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto>  {
+public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto>{
 
     @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "GiftCertificate's id value must be null")
     @NotNull(groups = {SaveGroup.class}, message = "GiftCertificate's id value must not be null")

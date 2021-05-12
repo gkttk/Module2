@@ -103,7 +103,7 @@ public class TagDaoImpl implements TagDao {
     public List<Tag> findMaxWidelyUsed(long userId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         //start of subSelect
-        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+               CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<User> countRoot = countQuery.from(User.class);
 
         ListJoin<User, com.epam.esm.entity.Order> countJoin1 = countRoot.join(User_.orders);

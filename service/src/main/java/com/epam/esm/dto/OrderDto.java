@@ -22,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class OrderDto extends RepresentationModel<OrderDto> {
+public class OrderDto extends RepresentationModel<OrderDto>{
 
     private Long id;
     private BigDecimal cost;

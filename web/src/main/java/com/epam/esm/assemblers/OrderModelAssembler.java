@@ -14,7 +14,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
- * Implementation of {@link com.epam.esm.assemblers.ModelAssembler} for OrderDto.
+ * Implementation of {@link com.epam.esm.assemblers.AbstractModelAssembler} for OrderDto.
  */
 @Component
 public class OrderModelAssembler extends AbstractModelAssembler<OrderDto> {

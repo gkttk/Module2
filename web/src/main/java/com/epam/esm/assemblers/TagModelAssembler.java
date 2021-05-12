@@ -13,7 +13,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
- * Implementation of {@link com.epam.esm.assemblers.ModelAssembler} for TagDto.
+ * Implementation of {@link com.epam.esm.assemblers.AbstractModelAssembler} for TagDto.
  */
 @Component
 public class TagModelAssembler extends AbstractModelAssembler<TagDto> {

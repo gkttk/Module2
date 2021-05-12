@@ -13,7 +13,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
- * Implementation of {@link com.epam.esm.assemblers.ModelAssembler} for GiftCertificateDao.
+ * Implementation of {@link com.epam.esm.assemblers.AbstractModelAssembler} for GiftCertificateDao.
  */
 @Component
 public class GiftCertificateModelAssembler extends AbstractModelAssembler<GiftCertificateDto> {

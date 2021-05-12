@@ -1,6 +1,5 @@
 package com.epam.esm.assemblers;
 
-import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.uri_builder.UriBuilder;
 import com.epam.esm.uri_builder.result.UriBuilderResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +7,11 @@ import org.springframework.hateoas.CollectionModel;
 
 import java.util.Map;
 
+/**
+ * Common abstract class for all ModelAssembler classes.
+ *
+ * @param <T> class of DTO.
+ */
 public abstract class AbstractModelAssembler<T> implements ModelAssembler<T> {
 
     private final UriBuilder uriBuilder;

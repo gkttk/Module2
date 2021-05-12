@@ -174,14 +174,19 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         changeEntityFieldsIfPresent(foundCert, passedDto, certId);//fill fields by passed GiftCertificateDto
 
+        List<TagDto> passedTags = passedDto.getTags();
+        if (passedTags == null || passedTags.isEmpty()) {
+            GiftCertificate patchedCertificate = giftCertificateDao.update(foundCert);
+            return modelMapper.map(patchedCertificate, GiftCertificateDto.class);
+        }
+
         //collection of tags which dont exist in db
         List<Tag> tagsForSaving = new ArrayList<>();
         //collection of tags which exist in db
         List<Tag> tagsForLinking = new ArrayList<>();
 
-        fillTagLists(tagsForSaving, tagsForLinking, passedDto.getTags());
+        fillTagLists(tagsForSaving, tagsForLinking, passedTags);
 
-        passedDto.setId(certId);
         foundCert.setTags(tagsForSaving);
         GiftCertificate patchedCertificate = giftCertificateDao.update(foundCert);//update
 
@@ -190,7 +195,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         patchedCertificate.getTags().addAll(tagsForLinking);
 
         return modelMapper.map(patchedCertificate, GiftCertificateDto.class);
-
     }
 
 

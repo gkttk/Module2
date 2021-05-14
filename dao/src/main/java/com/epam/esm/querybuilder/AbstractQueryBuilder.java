@@ -150,7 +150,9 @@ public abstract class AbstractQueryBuilder<T> {
         }
 
         //limit&offset
+        criteriaQuery.distinct(true);
         TypedQuery<T> query = entityManager.createQuery(criteriaQuery);
+
         query.setMaxResults(limit);
         query.setFirstResult(offset);
 

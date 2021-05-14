@@ -1,5 +1,39 @@
 plugins {
-    id 'org.springframework.boot'
+    id 'org.springframework.boot' version '2.4.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'java'
+apply plugin: 'java-library'
+apply plugin: 'application'
+
+
+
+
+group 'com.epam.esm'
+version '2.0-SNAPSHOT'
+
+
+repositories {
+    mavenCentral()
+}
+
+
+def isTest = false
+test.onlyIf { isTest }
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Edgware.SR4"
+    }
+}
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+    options.encoding = 'UTF-8'
 }
 
 dependencies {
@@ -7,4 +41,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-tomcat'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.4.5'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor('org.hibernate:hibernate-jpamodelgen:5.4.31.Final')
+}
+
+test {
+    useJUnitPlatform()
 }

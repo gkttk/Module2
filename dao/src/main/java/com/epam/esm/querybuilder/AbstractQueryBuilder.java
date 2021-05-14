@@ -138,8 +138,9 @@ public abstract class AbstractQueryBuilder<T> {
         String[] params;
         params = reqParams.get(ApplicationConstants.SORT_FIELDS_KEY);
         if (params != null) {
-            String[] order = reqParams.get(ApplicationConstants.ORDER_KEY);
-            if (order != null && ApplicationConstants.DESC_ORDER.equalsIgnoreCase(order[0])) {
+            String[] orderValues = reqParams.get(ApplicationConstants.ORDER_KEY);
+            String order = orderValues[0];
+            if (order != null && ApplicationConstants.DESC_ORDER.equalsIgnoreCase(order.trim())) {
                 Stream.of(params)
                         .forEach(param -> setOrder(param, ApplicationConstants.DESC_ORDER, criteriaQuery, root, criteriaBuilder));
             } else {

@@ -1,4 +1,6 @@
 rootProject.name = 'gifts'
-include("web", "service", "dao")
+include('web')
+include('service')
+include('dao')
 
 

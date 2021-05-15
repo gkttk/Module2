@@ -1,21 +1,20 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.entity.GiftCertificate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,173 +22,178 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DaoTestConfig.class})
+@SpringBootTest(classes = DaoTestConfig.class)
 @ActiveProfiles("test")
+@Transactional
 public class GiftCertificateDaoTest {
 
     @Autowired
     private GiftCertificateDao giftCertificateDao;
 
     private static GiftCertificate certificate1;
-    private static GiftCertificate certificate2;
-    private static GiftCertificate certificate3;
 
     @BeforeAll
     static void init() {
         certificate1 = new GiftCertificate();
         certificate1.setId(1L);
-        certificate1.setName("certificate1");
-        certificate1.setDescription("description1");
-        certificate1.setPrice(new BigDecimal("1.5"));
+        certificate1.setName("1name");
+        certificate1.setDescription("1description20Symbols");
+        certificate1.setPrice(new BigDecimal("100.00"));
         certificate1.setDuration(10);
-
-        certificate1.setCreateDate("2021-03-29 11:24:04");
-        certificate1.setLastUpdateDate("2021-03-29 11:30:18");
-
-        certificate2 = new GiftCertificate();
-        certificate2.setId(2L);
-        certificate2.setName("certificate2");
-        certificate2.setDescription("description2");
-        certificate2.setPrice(new BigDecimal("2.5"));
-        certificate2.setDuration(20);
-        certificate2.setCreateDate("2021-02-29 11:24:04");
-        certificate2.setLastUpdateDate("2021-02-29 11:30:18");
-
-        certificate3 = new GiftCertificate();
-        certificate3.setId(3L);
-        certificate3.setName("certificate3");
-        certificate3.setDescription("description3");
-        certificate3.setPrice(new BigDecimal("3.5"));
-        certificate3.setDuration(30);
-        certificate3.setCreateDate("2021-01-29 11:24:04");
-        certificate3.setLastUpdateDate("2021-01-29 11:30:18");
     }
 
     @Test
-    public void testFindBy_UsingTagNamesCriteria_ListEntities() {
+    public void testFindById_EntityWithGivenId_WhenEntityWithGivenIdIsPresentInDb() {
         //given
-        String[] tagNames = new String[]{"tag3"};
-        Map<String, String[]> params = Collections.singletonMap("tagNames", tagNames);
-        List<GiftCertificate> expected = Collections.singletonList(certificate1);
+        long testId = certificate1.getId();
         //when
-        List<GiftCertificate> result = giftCertificateDao.findBy(params);
+        Optional<GiftCertificate> resultOpt = giftCertificateDao.findById(testId);
         //then
-        assertEquals(result, expected);
+        assertTrue(resultOpt.isPresent());
+        resultOpt.ifPresent(result -> {
+            assertAll(() -> assertEquals(result.getName(), certificate1.getName()),
+                    () -> assertEquals(result.getDescription(), certificate1.getDescription()),
+                    () -> assertEquals(result.getPrice(), certificate1.getPrice()),
+                    () -> assertEquals(result.getDuration(), certificate1.getDuration()));
+        });
     }
 
     @Test
-    public void testFindBy_UsingAllCriteria_ListEntities() {
+    public void testFindById_EmptyOptional_WhenEntityWithGivenIdIsNotPresentInDb() {
         //given
-        Map<String, String[]> params = Collections.emptyMap();
-        List<GiftCertificate> expected = Arrays.asList(certificate1, certificate2, certificate3);
+        long testId = -1L;
         //when
-        List<GiftCertificate> result = giftCertificateDao.findBy(params);
+        Optional<GiftCertificate> resultOpt = giftCertificateDao.findById(testId);
         //then
-        assertEquals(result, expected);
+        assertFalse(resultOpt.isPresent());
     }
 
-
     @Test
-    public void testFindByName_EntityWithGivenNameIsPresentInDb_ReturnOptionalWithEntity() {
+    public void testFindByName_EntityWithGivenName_WhenEntityWithGivenNameIsPresentInDb() {
         //given
-        String name = certificate1.getName();
-        Optional<GiftCertificate> expectedResult = Optional.of(certificate1);
+        String testName = certificate1.getName();
         //when
-        Optional<GiftCertificate> result = giftCertificateDao.findByName(name);
+        Optional<GiftCertificate> resultOpt = giftCertificateDao.findByName(testName);
         //then
-        assertEquals(result, expectedResult);
+        assertTrue(resultOpt.isPresent());
+        resultOpt.ifPresent(result -> {
+            assertAll(() -> assertEquals(result.getName(), certificate1.getName()),
+                    () -> assertEquals(result.getDescription(), certificate1.getDescription()),
+                    () -> assertEquals(result.getPrice(), certificate1.getPrice()),
+                    () -> assertEquals(result.getDuration(), certificate1.getDuration()));
+        });
     }
 
     @Test
-    public void testFindByName_EntityWithGivenNameIsNotPresentInDb_ReturnEmptyOptional() {
+    public void testFindByName_EmptyOptional_WhenEntityWithGivenNameIsNotPresentInDb() {
         //given
-        String name = "incorrectName";
-        Optional<GiftCertificate> expectedResult = Optional.empty();
+        String testName = "testName";
         //when
-        Optional<GiftCertificate> result = giftCertificateDao.findByName(name);
+        Optional<GiftCertificate> resultOpt = giftCertificateDao.findByName(testName);
         //then
-        assertEquals(result, expectedResult);
-    }
-
-
-    @Test
-    public void testFindById_EntityWithGivenIdIsPresentInDb_ReturnOptionalWithEntity() {
-        //given
-        Long id = certificate1.getId();
-        Optional<GiftCertificate> expected = Optional.of(GiftCertificateDaoTest.certificate1);
-        //when
-        Optional<GiftCertificate> result = giftCertificateDao.findById(id);
-        //then
-        assertEquals(result, expected);
+        assertFalse(resultOpt.isPresent());
     }
 
     @Test
-    public void testFindById_EntityWithGivenIdIsNotPresentInDb_ReturnEmptyOptional() {
-        //given
-        long incorrectId = 100L;
-        Optional<GiftCertificate> expected = Optional.empty();
-        //when
-        Optional<GiftCertificate> result = giftCertificateDao.findById(incorrectId);
-        //then
-        assertEquals(result, expected);
-    }
-
-    @Test
-    @Transactional
     @Rollback
-    public void testUpdate_EntityWithGivenIdIsPresentInDb_UpdateEntityFields() {
+    public void testSave_Entity() {
         //given
-        Long id = certificate1.getId();
-        GiftCertificate entityWithNewFields = new GiftCertificate();
-        entityWithNewFields.setId(null);
-        entityWithNewFields.setName("certificate4");
-        entityWithNewFields.setDescription("description4");
-        entityWithNewFields.setPrice(new BigDecimal("4.5"));
-        entityWithNewFields.setDuration(40);
-        entityWithNewFields.setCreateDate(null);
-        entityWithNewFields.setLastUpdateDate("2021-03-29 11:30:18");
-
+        GiftCertificate testCertificate = new GiftCertificate();
+        testCertificate.setName("testName");
+        testCertificate.setDescription("testDescription");
+        testCertificate.setPrice(new BigDecimal("130"));
+        testCertificate.setDuration(20);
         //when
-        giftCertificateDao.update(entityWithNewFields, id);
+        GiftCertificate resultCertificate = giftCertificateDao.save(testCertificate);
         //then
-        Optional<GiftCertificate> fromDb = giftCertificateDao.findById(id);
-        GiftCertificate giftCertificateFromDb = fromDb.get();
-        assertAll(
-                () -> assertEquals(entityWithNewFields.getName(), giftCertificateFromDb.getName()),
-                () -> assertEquals(entityWithNewFields.getDescription(), giftCertificateFromDb.getDescription()),
-                () -> assertEquals(entityWithNewFields.getPrice(), giftCertificateFromDb.getPrice()),
-                () -> assertEquals(entityWithNewFields.getDuration(), giftCertificateFromDb.getDuration()),
-                () -> assertEquals(entityWithNewFields.getLastUpdateDate(), giftCertificateFromDb.getLastUpdateDate())
-        );
+        assertAll(() -> assertNotNull(resultCertificate.getId()),
+                () -> assertEquals(resultCertificate.getName(), testCertificate.getName()),
+                () -> assertEquals(resultCertificate.getDescription(), testCertificate.getDescription()),
+                () -> assertEquals(resultCertificate.getPrice(), testCertificate.getPrice()),
+                () -> assertEquals(resultCertificate.getDuration(), testCertificate.getDuration()));
     }
 
     @Test
-    @Transactional
     @Rollback
-    public void testDelete_EntityWithGivenIdIsPresentInDb_ReturnTrue() {
+    public void testUpdate_Entity() {
         //given
-        Long id = certificate1.getId();
+        GiftCertificate testCertificate = new GiftCertificate();
+        testCertificate.setId(certificate1.getId());
+        testCertificate.setName("testName");
+        testCertificate.setDescription("testDescription");
+        testCertificate.setPrice(new BigDecimal("130"));
+        testCertificate.setDuration(20);
         //when
-        boolean result = giftCertificateDao.delete(id);
+        GiftCertificate resultCertificate = giftCertificateDao.update(testCertificate);
         //then
-        assertTrue(result);
+        assertAll(() -> assertEquals(resultCertificate.getId(), certificate1.getId()),
+                () -> assertEquals(resultCertificate.getName(), testCertificate.getName()),
+                () -> assertEquals(resultCertificate.getDescription(), testCertificate.getDescription()),
+                () -> assertEquals(resultCertificate.getPrice(), testCertificate.getPrice()),
+                () -> assertEquals(resultCertificate.getDuration(), testCertificate.getDuration()));
     }
 
     @Test
-    @Transactional
-    @Rollback
-    public void testDelete_EntityWithGivenIdIsNotPresentInDb_ReturnFalse() {
+    public void testFindBy_ListOfAllEntities_ThereAreEntitiesInDb() {
         //given
-        long id = 100L;
+        Map<String, String[]> reqParams = new HashMap<>();
+        int expectedSize = 6;
         //when
-        boolean result = giftCertificateDao.delete(id);
+        List<GiftCertificate> results = giftCertificateDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
-        assertFalse(result);
+        assertFalse(results.isEmpty());
+        assertEquals(results.size(), expectedSize);
     }
 
+    @Test
+    public void testFindBy_ListOfEntitiesWithGivenPartOfNames_ThereAreEntitiesWithGivenPartOfNamesInDb() {
+        //given
+        Map<String, String[]> reqParams = Collections.singletonMap(ApplicationConstants.NAMES_PART_KEY, new String[]{"1n", "2n"});
+        int expectedSize = 2;
+        //when
+        List<GiftCertificate> results = giftCertificateDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        //then
+        assertFalse(results.isEmpty());
+        assertEquals(results.size(), expectedSize);
+    }
+
+    @Test
+    public void testFindBy_ListOfEntitiesWithGivenPartOfDescription_ThereAreEntitiesWithGivenPartOfDescriptionInDb() {
+        //given
+        Map<String, String[]> reqParams = Collections.singletonMap(ApplicationConstants.DESCRIPTION_PART_KEY, new String[]{"1d", "2d"});
+        int expectedSize = 2;
+        //when
+        List<GiftCertificate> results = giftCertificateDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        //then
+        assertFalse(results.isEmpty());
+        assertEquals(results.size(), expectedSize);
+    }
+
+    @Test
+    public void testFindBy_ListOfEntitiesWithGivenTagNames_ThereAreEntitiesWithGivenTagNamesInDb() {
+        //given
+        Map<String, String[]> reqParams = Collections.singletonMap(ApplicationConstants.TAG_NAMES_KEY, new String[]{"tag2"});
+        int expectedSize = 2;
+        //when
+        List<GiftCertificate> results = giftCertificateDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        //then
+        assertFalse(results.isEmpty());
+        assertEquals(results.size(), expectedSize);
+    }
+
+    @Test
+    public void testFindBy_ListOfEntitiesWithGivenTagNamesAndQuery_ThereAreEntitiesWithGivenTagNamesAndQueryInDb() {
+        //given
+        Map<String, String[]> reqParams = Collections.singletonMap(ApplicationConstants.TAG_NAMES_KEY, new String[]{"or:tag1,tag2"});
+        int expectedSize = 4;
+        //when
+        List<GiftCertificate> results = giftCertificateDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        //then
+        assertFalse(results.isEmpty());
+        assertEquals(results.size(), expectedSize);
+    }
 
 }

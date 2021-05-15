@@ -3,8 +3,10 @@ package com.epam.esm.dao.impl;
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.CertificateTagsDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 /**
  * Default implementation of {@link com.epam.esm.dao.CertificateTagsDao} interface.
@@ -14,15 +16,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CertificateTagsDaoImpl implements CertificateTagsDao {
 
-    private final JdbcTemplate template;
+    private final EntityManager entityManager;
 
     @Autowired
-    public CertificateTagsDaoImpl(JdbcTemplate template) {
-        this.template = template;
+    public CertificateTagsDaoImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     /**
-     * This method saves link between GiftCertificate entity and Tag entity.
+     * This method saves a link between GiftCertificate entity and Tag entity.
      *
      * @param certificateId id of GiftCertificate entity
      * @param tagId         id of Tag entity
@@ -30,7 +32,10 @@ public class CertificateTagsDaoImpl implements CertificateTagsDao {
      */
     @Override
     public void save(long certificateId, long tagId) {
-        template.update(ApplicationConstants.SAVE_CERTIFICATE_TAGS_QUERY, certificateId, tagId);
+        Query nativeQuery = entityManager.createNativeQuery(ApplicationConstants.SAVE_CERTIFICATE_TAGS_QUERY);
+        nativeQuery.setParameter(1, certificateId);
+        nativeQuery.setParameter(2, tagId);
+        nativeQuery.executeUpdate();
     }
 
     /**
@@ -40,7 +45,20 @@ public class CertificateTagsDaoImpl implements CertificateTagsDao {
      * @since 1.0
      */
     @Override
-    public void deleteAllTagsForCertificate(long certificateId) {
-        template.update(ApplicationConstants.DELETE_ALL_TAGS_FOR_CERTIFICATE, certificateId);
+    public void deleteAllTagLinksForCertificateId(long certificateId) {
+        entityManager.createNativeQuery(ApplicationConstants.DELETE_ALL_TAGS_FOR_CERTIFICATE)
+                .setParameter(1, certificateId).executeUpdate();
+    }
+
+    /**
+     * This method removes all links between Tag entity and GiftCertificate entity for a specific Tag.
+     *
+     * @param tagId id of Tag entity
+     * @since 2.0
+     */
+    @Override
+    public void deleteAllCertificateLinksForTagId(long tagId) {
+        entityManager.createNativeQuery(ApplicationConstants.DELETE_ALL_CERTIFICATES_FOR_TAG)
+                .setParameter(1, tagId).executeUpdate();
     }
 }

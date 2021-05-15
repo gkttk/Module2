@@ -1,8 +1,6 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.criteria.Criteria;
-import com.epam.esm.criteria.factory.GiftCertificateCriteriaFactory;
 import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
@@ -12,21 +10,16 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.sorting.GiftCertificateSortingHelper;
-import com.epam.esm.sorting.SortingHelper;
-import com.epam.esm.validator.EntityValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -42,58 +35,35 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final TagDao tagDao;
     private final CertificateTagsDao certificateTagsDao;
 
-    private final SortingHelper<GiftCertificate> sortingHelper;
-
-    private final EntityValidator<GiftCertificate> validator;
-
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, ModelMapper modelMapper, TagDao tagDao,
-                                      CertificateTagsDao certificateTagsDao, GiftCertificateSortingHelper sortingHelper,
-                                      EntityValidator<GiftCertificate> giftCertificateEntityValidator) {
+    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, ModelMapper modelMapper,
+                                      TagDao tagDao, CertificateTagsDao certificateTagsDao) {
         this.giftCertificateDao = giftCertificateDao;
         this.modelMapper = modelMapper;
         this.tagDao = tagDao;
         this.certificateTagsDao = certificateTagsDao;
-        this.sortingHelper = sortingHelper;
-        this.validator = giftCertificateEntityValidator;
     }
 
     /**
-     * This method do request to dao layer which depends on argument of the method.
-     * The method uses {@link GiftCertificateCriteriaFactory} for getting a correct {@link Criteria} which is based on passed request parameters.
-     * If the argument of the method additionally contains {@link com.epam.esm.constants.ApplicationConstants} SORT_FIELDS_KEY parameter then
-     * got result by {@link Criteria} will be sorted according to {@link com.epam.esm.constants.ApplicationConstants} ORDER_KEY parameter.
-     * If {@link com.epam.esm.constants.ApplicationConstants} ORDER_KEY parameter is not
-     * present or not equal "DESC" then sorting by ascending order.
+     * This method gets a list of GiftCertificateDto according to request parameters, limit and offset.
      *
      * @param reqParams parameters of a request.
-     * @return List of GiftCertificateDao.
-     * @throws GiftCertificateException if there is no entity in database.
+     * @param limit     for pagination.
+     * @param offset    for pagination.
+     * @return list of GiftCertificateDao.
      * @since 1.0
      */
-
     @Override
-    public List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams) {
+    public List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
 
-        List<GiftCertificate> foundCertificates = giftCertificateDao.findBy(reqParams);
-
-        if (!foundCertificates.isEmpty() && reqParams.containsKey(ApplicationConstants.SORT_FIELDS_KEY)) {
-            String[] sortFields = reqParams.get(ApplicationConstants.SORT_FIELDS_KEY);
-            String[] orders = reqParams.get(ApplicationConstants.ORDER_KEY);
-
-            foundCertificates = sortingHelper.getSorted(sortFields, orders, foundCertificates);
-        }
-
+        List<GiftCertificate> foundCertificates = giftCertificateDao.findBy(reqParams, limit, offset);
         return foundCertificates.stream()
                 .map(certificate -> modelMapper.map(certificate, GiftCertificateDto.class))
-                .peek(this::fillCertificateDtoWithTags)
                 .collect(Collectors.toList());
     }
 
     /**
      * This method gets GiftCertificate entity from dao layer with given id and converts it to GiftCertificateDto.
-     * The method also calls {@link #fillCertificateDtoWithTags(GiftCertificateDto)} for filling gotten GiftCertificateDto
-     * with list of TagDto.
      *
      * @param id id of necessary entity.
      * @return GiftCertificateDto with id and tags.
@@ -102,43 +72,54 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     public GiftCertificateDto findById(long id) {
-        Optional<GiftCertificate> foundCertificateOpt = giftCertificateDao.findById(id);
-
-        GiftCertificate foundCertificate = foundCertificateOpt.orElseThrow(() ->
-                new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("Can't find a certificate with id: %d", id)));
-
-        GiftCertificateDto giftCertificateDto = modelMapper.map(foundCertificate, GiftCertificateDto.class);
-        fillCertificateDtoWithTags(giftCertificateDto);
-        return giftCertificateDto;
+        GiftCertificate foundCertificate = findByIdIfExist(id);
+        return modelMapper.map(foundCertificate, GiftCertificateDto.class);
     }
 
 
     /**
-     * This method set date fields for GiftCertificate entity and saves it in database. Also the method link passed tags with the GiftCertificate
-     * entity and, if the tag doesn't exist in db, creates it.
+     * This method separate passed tags to two lists: the first one are tags for saving(these tags are not present in DB),
+     * the second one are tags for linking(these tags are present in DB). Tags for saving will be set to entity and saved in DB.
+     * Tags for linking will be just bound with new saved GiftCertificate.
      *
-     * @param passedDto GiftCertificate entity without date fields and id for saving.
-     * @return GiftCertificateDto with id and tags.
+     * @param passedDto GiftCertificate for saving.
+     * @return saved GiftCertificate.
      * @since 1.0
      */
     @Override
     @Transactional
     public GiftCertificateDto save(GiftCertificateDto passedDto) {
+        //check certificate name
+        checkIfEntityWithGivenNameExist(passedDto.getName());
 
-        validator.validateIfEntityWithGivenNameExist(passedDto.getName());
+        //collection of tags which dont exist in db
+        List<Tag> tagsForSaving = new ArrayList<>();
+        //collection of tags which exist in db
+        List<Tag> tagsForLinking = new ArrayList<>();
+
+        fillTagLists(tagsForSaving, tagsForLinking, passedDto.getTags());
 
         GiftCertificate giftCertificate = modelMapper.map(passedDto, GiftCertificate.class);
-        long insertedId = giftCertificateDao.save(giftCertificate);
+        //set to saving certificate collection of nonexistent tags in db
+        giftCertificate.setTags(tagsForSaving);
 
-        GiftCertificateDto dto = findDto(insertedId);
-        List<TagDto> tags = findTagsDto(passedDto.getTags(), insertedId);
-        dto.setTags(tags);
-        return dto;
+        //save certificate with tags
+        GiftCertificate savedCertificate = giftCertificateDao.save(giftCertificate);
+
+        //for each tags in list of existing tags in db just save them in many to many table
+        tagsForLinking.forEach(tag -> certificateTagsDao.save(savedCertificate.getId(), tag.getId()));
+
+        //union all tags for returning to client
+        giftCertificate.getTags().addAll(tagsForLinking);
+
+        return modelMapper.map(savedCertificate, GiftCertificateDto.class);
 
     }
 
     /**
-     * This method does full update for GiftCertificate entity with given id.
+     * This method separate passed tags to two lists: the first one are tags for saving(these tags are not present in DB),
+     * the second one are tags for linking(these tags are present in DB). Tags for saving will be set to entity and saved in DB.
+     * Tags for linking will be just bound with new updated GiftCertificate.
      *
      * @param passedDto DTO contains field for updating GiftCertificate entity.
      * @param certId    id of updatable GiftCertificate entity.
@@ -149,26 +130,36 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     public GiftCertificateDto update(GiftCertificateDto passedDto, long certId) {
 
-        validator.validateAndFindByIdIfExist(certId);
+        findByIdIfExist(certId);
 
-        String passedDtoName = passedDto.getName();
+        checkIfAnotherEntityWithGivenNameExist(passedDto.getName(), certId);
 
-        validator.validateIfAnotherEntityWithGivenNameExist(passedDtoName, certId);
+        certificateTagsDao.deleteAllTagLinksForCertificateId(certId);
 
-        GiftCertificate giftCert = modelMapper.map(passedDto, GiftCertificate.class);
-        giftCertificateDao.update(giftCert, certId);
+        //collection of tags which dont exist in db
+        List<Tag> tagsForSaving = new ArrayList<>();
+        //collection of tags which exist in db
+        List<Tag> tagsForLinking = new ArrayList<>();
 
-        certificateTagsDao.deleteAllTagsForCertificate(certId);
+        fillTagLists(tagsForSaving, tagsForLinking, passedDto.getTags());
 
-        GiftCertificateDto dto = findDto(certId);
-        List<TagDto> tags = findTagsDto(passedDto.getTags(), certId);
-        dto.setTags(tags);
-        return dto;
+        passedDto.setId(certId);
+        GiftCertificate giftCertificate = modelMapper.map(passedDto, GiftCertificate.class);
+
+        //set to saving certificate collection of nonexistent tags in db
+        giftCertificate.setTags(tagsForSaving);
+
+        GiftCertificate updatedCertificate = giftCertificateDao.update(giftCertificate);
+
+        tagsForLinking.forEach(tag -> certificateTagsDao.save(updatedCertificate.getId(), tag.getId()));
+
+        updatedCertificate.getTags().addAll(tagsForLinking);
+
+        return modelMapper.map(updatedCertificate, GiftCertificateDto.class);
     }
 
     /**
-     * This method partly updates GiftCertificate entity.Also the method link passed tags with the GiftCertificate
-     * entity and, if the tag doesn't exist in db, creates it.
+     * Partial update of GiftCertificate.
      *
      * @param passedDto DTO contains field for partial updating GiftCertificate entity.
      * @param certId    id of updatable GiftCertificate entity.
@@ -179,24 +170,31 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     public GiftCertificateDto patch(GiftCertificateDto passedDto, long certId) {
 
-        GiftCertificate foundCert = validator.validateAndFindByIdIfExist(certId);//check if id exists
+        GiftCertificate foundCert = findByIdIfExist(certId);//check if id exists
 
         changeEntityFieldsIfPresent(foundCert, passedDto, certId);//fill fields by passed GiftCertificateDto
 
-        giftCertificateDao.update(foundCert, certId); //update
-
-        GiftCertificateDto dto = findDto(certId);
-
         List<TagDto> passedTags = passedDto.getTags();
-        if (passedTags != null) {
-            certificateTagsDao.deleteAllTagsForCertificate(certId);
-            List<TagDto> tagsDto = findTagsDto(passedTags, certId);
-            dto.setTags(tagsDto);
-        } else {
-            fillCertificateDtoWithTags(dto);
+        if (passedTags == null || passedTags.isEmpty()) {
+            GiftCertificate patchedCertificate = giftCertificateDao.update(foundCert);
+            return modelMapper.map(patchedCertificate, GiftCertificateDto.class);
         }
 
-        return dto;
+        //collection of tags which dont exist in db
+        List<Tag> tagsForSaving = new ArrayList<>();
+        //collection of tags which exist in db
+        List<Tag> tagsForLinking = new ArrayList<>();
+
+        fillTagLists(tagsForSaving, tagsForLinking, passedTags);
+
+        foundCert.setTags(tagsForSaving);
+        GiftCertificate patchedCertificate = giftCertificateDao.update(foundCert);//update
+
+        tagsForLinking.forEach(tag -> certificateTagsDao.save(patchedCertificate.getId(), tag.getId()));
+
+        patchedCertificate.getTags().addAll(tagsForLinking);
+
+        return modelMapper.map(patchedCertificate, GiftCertificateDto.class);
     }
 
 
@@ -207,51 +205,16 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @throws GiftCertificateException if GiftCertificate entity with given id doesn't exist in db.
      * @since 1.0
      */
+    @Transactional
     @Override
     public void delete(long id) {
+        certificateTagsDao.deleteAllTagLinksForCertificateId(id);
         boolean isDeleted = giftCertificateDao.delete(id);
         if (!isDeleted) {
             throw new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d doesn't exist in DB", id));
         }
     }
 
-    /**
-     * This method link a tag with a GiftCertificate entity and, if given tag is not present in db, creates it.
-     *
-     * @param tagDto        tag for linking with GiftCertificate entity.
-     * @param certificateId id of GiftCertificate entity.
-     * @return Tag entity from db with id.
-     * @since 1.0
-     */
-    private Tag addTagToCertificate(TagDto tagDto, long certificateId) {
-        Optional<Tag> foundTagOpt = tagDao.findByName(tagDto.getName());
-        Tag tag;
-        if (foundTagOpt.isPresent()) {
-            tag = foundTagOpt.get();
-        } else {
-            Tag tagEntity = modelMapper.map(tagDto, Tag.class);
-            tag = tagDao.save(tagEntity);
-        }
-        Long tagId = tag.getId();
-        certificateTagsDao.save(certificateId, tagId);
-        return tag;
-    }
-
-    /**
-     * This method fills GiftCertificateDto with tags.
-     *
-     * @param giftCertificateDto GiftCertificateDto for filling.
-     * @since 1.0
-     */
-    private void fillCertificateDtoWithTags(GiftCertificateDto giftCertificateDto) {
-        long certificateId = giftCertificateDto.getId();
-        Map<String, String[]> params = Collections.singletonMap(ApplicationConstants.CERTIFICATE_ID_KEY, new String[]{String.valueOf(certificateId)});
-        List<Tag> tags = tagDao.findBy(params);
-        List<TagDto> tagsDto = tags.stream()
-                .map(tag -> modelMapper.map(tag, TagDto.class))
-                .collect(Collectors.toList());
-        giftCertificateDto.setTags(tagsDto);
-    }
 
     /**
      * This method fills {@param targetEntity} param by present fields of {@param fromDto} param and sets an update_time field.
@@ -264,7 +227,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private void changeEntityFieldsIfPresent(GiftCertificate targetEntity, GiftCertificateDto fromDto, long certificateId) {
         String name = fromDto.getName();
         if (name != null) {
-            validator.validateIfAnotherEntityWithGivenNameExist(name, certificateId);
+            checkIfAnotherEntityWithGivenNameExist(name, certificateId);
             targetEntity.setName(name);
         }
         String description = fromDto.getDescription();
@@ -282,40 +245,77 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     }
 
+
     /**
-     * This method finds a GiftCertificate entity and converts it to GiftCertificateDto.
+     * This method fills two given lists with passed Tags depends on necessity of saving or linking the tag.
      *
-     * @param certId GiftCertificate entity's id.
-     * @return GiftCertificateDto
-     * @throws GiftCertificateException when there is no entity with given {@param certId} in DB.
+     * @param tagsForSaving  list of Tags for saving.
+     * @param tagsForLinking list of Tags for linking.
+     * @param passedDtoTags  passed Tags.
      */
-    private GiftCertificateDto findDto(long certId) {
-        Optional<GiftCertificate> certOpt = giftCertificateDao.findById(certId);
-        GiftCertificate certEntity = certOpt.orElseThrow(() ->
-                new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d is not found", certId)));
-        return modelMapper.map(certEntity, GiftCertificateDto.class);
+    private void fillTagLists(List<Tag> tagsForSaving, List<Tag> tagsForLinking, List<TagDto> passedDtoTags) {
+        //filling previous lists
+        if (passedDtoTags != null) {
+            passedDtoTags.stream()
+                    .distinct()
+                    .map(tagDto -> modelMapper.map(tagDto, Tag.class))
+                    .forEach(tag -> {
+                        Optional<Tag> foundTagOpt = tagDao.findByName(tag.getName());
+                        if (!foundTagOpt.isPresent()) {
+                            tagsForSaving.add(tag);
+                        } else {
+                            Tag foundTag = foundTagOpt.get();
+                            tagsForLinking.add(foundTag);
+                        }
+                    });
+        }
     }
 
 
     /**
-     * This method adds each {@param passedTags} in DB and bounds it with GiftCertificate with id = {@param certId}. Or, if a tag is already
-     * present in DB, it just bounds it with GiftCertificate.
+     * This method return an GiftCertificate if it exists.
      *
-     * @param passedTags tags for checking.
-     * @param certId     GiftCertificate entity's id.
-     * @return list of passed TagDto with id for current GiftCertificate
+     * @param id GiftCertificate's id.
+     * @return GiftCertificate entity.
+     * @throws GiftCertificateException if there is no entity with given id in db.
      */
-    private List<TagDto> findTagsDto(List<TagDto> passedTags, long certId) {
-        if (passedTags == null) {
-            return null;
+    private GiftCertificate findByIdIfExist(long id) {
+        Optional<GiftCertificate> certificateOpt = giftCertificateDao.findById(id);
+        return certificateOpt.orElseThrow(() -> new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d doesn't exist in DB",
+                id)));
+    }
+
+    /**
+     * This method checks if a GiftCertificate entity with given name exists in db.
+     *
+     * @param certificateName name of the GiftCertificate entity.
+     * @throws GiftCertificateException if there is GiftCertificate entity with given name in db.
+     * @since 1.0
+     */
+    private void checkIfEntityWithGivenNameExist(String certificateName) {
+        Optional<GiftCertificate> certificateOpt = giftCertificateDao.findByName(certificateName);
+        if (certificateOpt.isPresent()) {
+            throw new GiftCertificateException(ApplicationConstants.CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE, String.format("Gift certificate with name: %s already exits.",
+                    certificateName));
         }
-        Set<TagDto> setPassedTags = new HashSet<>(passedTags);
-        return setPassedTags.stream()
-                .peek(tagDto -> {
-                    Tag tag = addTagToCertificate(tagDto, certId);
-                    tagDto.setId(tag.getId());
-                })
-                .collect(Collectors.toList());
+    }
+
+    /**
+     * This method checks if GiftCertificate entity with given name and another id is present in db.
+     *
+     * @param certificateName name of GiftCertificate entity
+     * @param certificateId   id of GiftCertificate entity
+     * @throws GiftCertificateException when there is another GiftCertificate entity in db with given name.
+     * @since 1.0
+     */
+    private void checkIfAnotherEntityWithGivenNameExist(String certificateName, long certificateId) {
+        Optional<GiftCertificate> certificateOpt = giftCertificateDao.findByName(certificateName);
+        certificateOpt.ifPresent(giftCertificate -> {
+            if (!giftCertificate.getId().equals(certificateId)) {
+                throw new GiftCertificateException(ApplicationConstants.CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE, String.format("Gift certificate with name: %s already exits.",
+                        giftCertificate.getName()));
+            }
+        });
     }
 
 

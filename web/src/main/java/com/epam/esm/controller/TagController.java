@@ -1,10 +1,13 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.assemblers.ModelAssembler;
+import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,37 +21,51 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/tags", produces = "application/json")
+@RequestMapping(path = "/tags", produces = "application/hal+json")
+@Validated
 public class TagController {
 
     private final TagService tagService;
+    private final ModelAssembler<TagDto> assembler;
 
     @Autowired
-    public TagController(TagService tagService) {
+    public TagController(TagService tagService, ModelAssembler<TagDto> assembler) {
         this.tagService = tagService;
+        this.assembler = assembler;
     }
 
     @GetMapping(params = "tagName")
     public ResponseEntity<TagDto> getByName(@RequestParam String tagName) {
         TagDto tag = tagService.findByName(tagName);
-        return ResponseEntity.ok(tag);
+        return ResponseEntity.ok(assembler.toModel(tag));
     }
 
     @GetMapping
-    public ResponseEntity<List<TagDto>> getAll(WebRequest request) {
+    public ResponseEntity<CollectionModel<TagDto>> getAllForQuery(WebRequest request,
+                                                                  @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
+                                                                  @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
-        List<TagDto> tags = tagService.findAllForQuery(reqParams);
-        return ResponseEntity.ok(tags);
+        List<TagDto> tags = tagService.findAllForQuery(reqParams, limit, offset);
+
+        return ResponseEntity.ok(assembler.toCollectionModel(tags, offset, reqParams));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TagDto> getById(@PathVariable long id) {
         TagDto tag = tagService.findById(id);
-        return ResponseEntity.ok(tag);
+        return ResponseEntity.ok(assembler.toModel(tag));
+    }
+
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<TagDto> createTag(@RequestBody @Validated({PatchGroup.class, UpdateGroup.class}) @Valid TagDto tagDto) {
+        TagDto tag = tagService.save(tagDto);
+        return ResponseEntity.ok(assembler.toModel(tag));
     }
 
     @DeleteMapping("/{id}")
@@ -57,12 +74,12 @@ public class TagController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping(consumes = "application/json")
-    public ResponseEntity<TagDto> createTag(@RequestBody @Validated({PatchGroup.class, UpdateGroup.class}) @Valid TagDto tagDto) {
-        TagDto savedTag = tagService.save(tagDto);
-        return ResponseEntity.ok(savedTag);
 
+    @GetMapping("{userId}/most_widely_used_tag")
+    public ResponseEntity<List<TagDto>> getMostWidelyUsedTagOfUser(@PathVariable long userId) {
+        List<TagDto> tags = tagService.findMostWidelyUsed(userId);
+        List<TagDto> tagsWithLinks = tags.stream().map(assembler::toModel).collect(Collectors.toList());
+        return ResponseEntity.ok(tagsWithLinks);
     }
-
 
 }

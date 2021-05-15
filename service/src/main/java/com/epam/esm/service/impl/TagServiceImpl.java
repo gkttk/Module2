@@ -1,14 +1,15 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.criteria.Criteria;
+import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
 import com.epam.esm.exceptions.TagException;
+import com.epam.esm.exceptions.UserException;
 import com.epam.esm.service.TagService;
-import com.epam.esm.sorting.SortingHelper;
-import com.epam.esm.validator.EntityValidator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,39 +29,30 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
 
     private final TagDao tagDao;
+    private final UserDao userDao;
     private final ModelMapper modelMapper;
-    private final SortingHelper<Tag> sortingHelper;
-    private final EntityValidator<Tag> validator;
+    private final CertificateTagsDao certificateTagsDao;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, SortingHelper<Tag> sortingHelper, EntityValidator<Tag> validator) {
+    public TagServiceImpl(TagDao tagDao, UserDao userDao, ModelMapper modelMapper, CertificateTagsDao certificateTagsDao) {
         this.tagDao = tagDao;
+        this.userDao = userDao;
         this.modelMapper = modelMapper;
-        this.sortingHelper = sortingHelper;
-        this.validator = validator;
+        this.certificateTagsDao = certificateTagsDao;
     }
 
     /**
-     * This method do request to dao layer which depends on argument of the method.
-     * The method uses {@link com.epam.esm.criteria.factory.TagCriteriaFactory} for getting a correct {@link Criteria} which is based on passed request parameters.
+     * This method gets a list of TagDto according to request parameters, limit and offset.
      *
      * @param reqParams parameters of a request.
-     * @return List of TagDao.
-     * @throws TagException is there are no tags in db.
+     * @param limit     for pagination.
+     * @param offset    for pagination.
+     * @return list of TagDto.
      * @since 1.0
      */
     @Override
-    public List<TagDto> findAllForQuery(Map<String, String[]> reqParams) {
-
-        List<Tag> foundTags = tagDao.findBy(reqParams);
-
-        if (!foundTags.isEmpty() && reqParams.containsKey(ApplicationConstants.SORT_FIELDS_KEY)) {
-            String[] sortFields = reqParams.get(ApplicationConstants.SORT_FIELDS_KEY);
-            String[] orders = reqParams.get(ApplicationConstants.ORDER_KEY);
-
-            foundTags = sortingHelper.getSorted(sortFields, orders, foundTags);
-        }
-
+    public List<TagDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
+        List<Tag> foundTags = tagDao.findBy(reqParams, limit, offset);
         return foundTags.stream()
                 .map(entity -> modelMapper.map(entity, TagDto.class))
                 .collect(Collectors.toList());
@@ -68,16 +60,15 @@ public class TagServiceImpl implements TagService {
 
 
     /**
-     * This method get TagDto by Tag entity id.
+     * This method gets Tag entity from dao layer with given id and converts it to TagDto.
      *
-     * @param id Tag entity id.
-     * @return TagDto with id.
-     * @throws TagException if there is no Tag entity with given id in db.
+     * @param id id of necessary entity.
+     * @return TagDto.
      * @since 1.0
      */
     @Override
     public TagDto findById(long id) {
-        Tag foundTag = validator.validateAndFindByIdIfExist(id);
+        Tag foundTag = findByIdIfExist(id);
         return modelMapper.map(foundTag, TagDto.class);
     }
 
@@ -85,15 +76,14 @@ public class TagServiceImpl implements TagService {
      * This method saves a TagDto into db.
      *
      * @param tagDto DTO for saving without id.
-     * @return saved DTO with id.
-     * @throws TagException if Tag entity with a name like DTO already exists in db.
+     * @return TagDto.
      * @since 1.0
      */
     @Override
     @Transactional
     public TagDto save(TagDto tagDto) {
-        validator.validateIfEntityWithGivenNameExist(tagDto.getName());
 
+        checkIfEntityWithGivenNameExist(tagDto.getName());
         Tag entity = modelMapper.map(tagDto, Tag.class);
         Tag savedEntity = tagDao.save(entity);
         tagDto.setId(savedEntity.getId());
@@ -102,25 +92,27 @@ public class TagServiceImpl implements TagService {
     }
 
     /**
-     * This method deletes a Tag entity from db.
+     * This method deletes Tag entity with given id from db.
      *
-     * @param id Tag entity's id for deleting.
-     * @throws TagException if there is no Tag entity with given id in db.
+     * @param id id of deletable Tag entity.
+     * @throws TagException if Order entity with given id doesn't exist in db.
      * @since 1.0
      */
+    @Transactional
     @Override
     public void delete(long id) {
-        boolean isDeleted = tagDao.delete(id);
+        certificateTagsDao.deleteAllCertificateLinksForTagId(id);
+        boolean isDeleted = tagDao.deleteById(id);
         if (!isDeleted) {
             throw new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with id: %d is not found in DB", id));
         }
     }
 
     /**
-     * This method gets DTO with given name.
+     * This method gets TagDto with given name.
      *
      * @param tagName name of Tag entity.
-     * @return DTO with id with given name.
+     * @return TagDto.
      * @throws TagException is there is no Tag entity with given name in db.
      * @since 1.0
      */
@@ -130,5 +122,57 @@ public class TagServiceImpl implements TagService {
         Tag foundTag = foundTagOpt.orElseThrow(() -> new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with name: %s is not found in DB",
                 tagName)));
         return modelMapper.map(foundTag, TagDto.class);
+    }
+
+
+    /**
+     * This method gets the most widely used tags of the user with given id.
+     *
+     * @param userId User entity's id.
+     * @return list of TagDto.
+     * @throws UserException is there is no user with given id in DB.
+     * @since 2.0
+     */
+    @Override
+    public List<TagDto> findMostWidelyUsed(long userId) {
+        Optional<User> userOpt = userDao.findById(userId);
+        if (!userOpt.isPresent()) {
+            throw new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE,
+                    String.format("Can't find an user with id: %d", userId));
+        }
+
+        return tagDao.findMaxWidelyUsed(userId)
+                .stream()
+                .map(tag -> modelMapper.map(tag, TagDto.class))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * This method attempts to get an Tag entity from db by it's id.
+     *
+     * @param tagId id of the Tag entity.
+     * @return Tag entity.
+     * @throws TagException when there is no entity with given id in db.
+     * @since 1.0
+     */
+    private Tag findByIdIfExist(long tagId) {
+        Optional<Tag> foundTagOpt = tagDao.findById(tagId);
+        return foundTagOpt.orElseThrow(() ->
+                new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, String.format("Can't find a tag with id: %d", tagId)));
+    }
+
+    /**
+     * This method checks if a Tag entity with given name exists in db.
+     *
+     * @param tagName name of the Tag entity.
+     * @throws TagException if there is Tag entity with given name in db.
+     * @since 1.0
+     */
+    private void checkIfEntityWithGivenNameExist(String tagName) {
+        Optional<Tag> foundTagOpt = tagDao.findByName(tagName);
+        if (foundTagOpt.isPresent()) {
+            throw new TagException(ApplicationConstants.TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE, String.format("Tag with name: %s already exist in DB",
+                    tagName));
+        }
     }
 }

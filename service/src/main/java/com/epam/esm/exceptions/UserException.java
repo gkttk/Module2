@@ -1,16 +1,8 @@
 package com.epam.esm.exceptions;
 
-public class UserException extends RuntimeException {
+public class UserException extends GiftApplicationException {
 
-    private final int errorCode;
-
-    public UserException(int errorCode, String message) {
-        super(message);
-        this.errorCode = errorCode;
-    }
-
-
-    public int getErrorCode() {
-        return errorCode;
+    public UserException(String message, int errorCode, Object...params) {
+        super(message, errorCode, params);
     }
 }

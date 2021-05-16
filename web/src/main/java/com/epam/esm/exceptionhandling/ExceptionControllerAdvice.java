@@ -3,6 +3,7 @@ package com.epam.esm.exceptionhandling;
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.exceptionhandling.error.ErrorResult;
 import com.epam.esm.exceptionhandling.error.enums.ResponseErrorEnum;
+import com.epam.esm.exceptions.GiftApplicationException;
 import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.exceptions.OrderException;
 import com.epam.esm.exceptions.ResponseErrorNotFoundException;
@@ -40,39 +41,25 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         this.messageSource = messageSource;
     }
 
-    private ResponseEntity<ErrorResult> getResponseEntity(int errorCode, Locale locale) {
+    private ResponseEntity<ErrorResult> getResponseEntity(int errorCode, Object[] params, Locale locale) {
         ResponseErrorEnum error = getError(errorCode);
         String message = messageSource.getMessage(error.getPropertyKey(), null, locale);
 
-        return new ResponseEntity<>(new ErrorResult(errorCode, Collections.singletonList(message)), error.getStatus());
+        return new ResponseEntity<>(new ErrorResult(errorCode, Collections.singletonList(String.format(message, params))), error.getStatus());
     }
 
-    @ExceptionHandler(GiftCertificateException.class)
-    public ResponseEntity<ErrorResult> handleGiftCertificateException(GiftCertificateException exception, Locale locale) {
-        return getResponseEntity(exception.getErrorCode(), locale);
-    }
-
-    @ExceptionHandler(TagException.class)
-    public ResponseEntity<ErrorResult> handleTagException(TagException exception, Locale locale) {
-        return getResponseEntity(exception.getErrorCode(), locale);
-    }
-
-    @ExceptionHandler(OrderException.class)
-    public ResponseEntity<ErrorResult> handleOrderException(OrderException exception, Locale locale) {
-        return getResponseEntity(exception.getErrorCode(), locale);
-    }
-
-    @ExceptionHandler(UserException.class)
-    public ResponseEntity<ErrorResult> handleUserException(UserException exception, Locale locale) {
-        return getResponseEntity(exception.getErrorCode(), locale);
+    @ExceptionHandler(value = {GiftCertificateException.class, TagException.class, OrderException.class, UserException.class})
+    public ResponseEntity<ErrorResult> handleGiftCertificateException(GiftApplicationException exception, Locale locale) {
+        return getResponseEntity(exception.getErrorCode(), exception.getParams(), locale);
     }
 
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResult> handleConstraintViolationException(ConstraintViolationException exception) {
+    public ResponseEntity<ErrorResult> handleConstraintViolationException(ConstraintViolationException exception, Locale locale) {
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         List<String> messages = constraintViolations.stream()
-                .map(ConstraintViolation::getMessageTemplate)
+                .map(ConstraintViolation::getMessage)
+                .map(messageTemplate -> messageSource.getMessage(messageTemplate, null, locale))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(new ErrorResult(WebLayerConstants.DEFAULT_VALIDATION_ERROR_CODE, messages), HttpStatus.BAD_REQUEST);
     }

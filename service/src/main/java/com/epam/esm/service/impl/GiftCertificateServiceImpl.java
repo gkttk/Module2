@@ -211,7 +211,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         certificateTagsDao.deleteAllTagLinksForCertificateId(id);
         boolean isDeleted = giftCertificateDao.delete(id);
         if (!isDeleted) {
-            throw new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d doesn't exist in DB", id));
+            throw new GiftCertificateException(String.format("GiftCertificate with id: %d doesn't exist in DB", id),
+                    ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, id);
         }
     }
 
@@ -281,8 +282,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      */
     private GiftCertificate findByIdIfExist(long id) {
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.findById(id);
-        return certificateOpt.orElseThrow(() -> new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d doesn't exist in DB",
-                id)));
+        return certificateOpt.orElseThrow(() -> new GiftCertificateException(String.format("GiftCertificate with id: %d doesn't exist in DB",
+                id), ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, id));
     }
 
     /**
@@ -295,8 +296,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private void checkIfEntityWithGivenNameExist(String certificateName) {
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.findByName(certificateName);
         if (certificateOpt.isPresent()) {
-            throw new GiftCertificateException(ApplicationConstants.CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE, String.format("Gift certificate with name: %s already exits.",
-                    certificateName));
+            throw new GiftCertificateException(String.format("Gift certificate with name: %s already exits.",
+                    certificateName), ApplicationConstants.CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE, certificateName);
         }
     }
 
@@ -312,8 +313,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.findByName(certificateName);
         certificateOpt.ifPresent(giftCertificate -> {
             if (!giftCertificate.getId().equals(certificateId)) {
-                throw new GiftCertificateException(ApplicationConstants.CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE, String.format("Gift certificate with name: %s already exits.",
-                        giftCertificate.getName()));
+                String foundCertificateName = giftCertificate.getName();
+                throw new GiftCertificateException(String.format("Gift certificate with name: %s already exits.",
+                        foundCertificateName), ApplicationConstants.CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE, foundCertificateName);
             }
         });
     }

@@ -57,8 +57,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto findById(long id) {
         Optional<Order> foundOrderOpt = orderDao.findById(id);
-        Order order = foundOrderOpt.orElseThrow(() -> new OrderException(ApplicationConstants.ORDER_NOT_FOUND_ERROR_CODE,
-                String.format("Can't find an order with id: %d", id)));
+        Order order = foundOrderOpt.orElseThrow(() -> new OrderException(String.format("Can't find an order with id: %d", id),
+                ApplicationConstants.ORDER_NOT_FOUND_ERROR_CODE, new Object[]{id}));
 
         return modelMapper.map(order, OrderDto.class);
     }
@@ -115,7 +115,8 @@ public class OrderServiceImpl implements OrderService {
     public void delete(long id) {
         boolean isDeleted = orderDao.deleteById(id);
         if (!isDeleted) {
-            throw new OrderException(ApplicationConstants.ORDER_NOT_FOUND_ERROR_CODE, String.format("Order with id: %d doesn't exist in DB", id));
+            throw new OrderException(String.format("Order with id: %d doesn't exist in DB", id),
+                    ApplicationConstants.ORDER_NOT_FOUND_ERROR_CODE, id);
         }
     }
 
@@ -147,8 +148,8 @@ public class OrderServiceImpl implements OrderService {
      */
     private User findUserByIdIfExist(long id) {
         return userDao.findById(id)
-                .orElseThrow(() -> new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE,
-                        String.format("Can't find an user with id: %d", id)));
+                .orElseThrow(() -> new UserException(String.format("Can't find an user with id: %d", id),
+                        ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, id));
     }
 
     /**
@@ -161,8 +162,8 @@ public class OrderServiceImpl implements OrderService {
      */
     public GiftCertificate checkAndFindGiftCertificateByIdIfExist(long certificateId) {
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.findById(certificateId);
-        return certificateOpt.orElseThrow(() -> new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d doesn't exist in DB",
-                certificateId)));
+        return certificateOpt.orElseThrow(() -> new GiftCertificateException(String.format("GiftCertificate with id: %d doesn't exist in DB",
+                certificateId), ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, certificateId));
     }
 
 

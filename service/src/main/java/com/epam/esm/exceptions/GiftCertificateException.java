@@ -1,16 +1,9 @@
 package com.epam.esm.exceptions;
 
-public class GiftCertificateException extends RuntimeException {
-
-    private final int errorCode;
-
-    public GiftCertificateException(int errorCode, String message) {
-        super(message);
-        this.errorCode = errorCode;
-    }
+public class GiftCertificateException extends GiftApplicationException {
 
 
-    public int getErrorCode() {
-        return errorCode;
+    public GiftCertificateException(String message, int errorCode, Object...params) {
+        super(message, errorCode, params);
     }
 }

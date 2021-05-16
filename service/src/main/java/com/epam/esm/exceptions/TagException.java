@@ -1,16 +1,8 @@
 package com.epam.esm.exceptions;
 
-public class TagException extends RuntimeException {
+public class TagException extends GiftApplicationException {
 
-    private final int errorCode;
-
-    public TagException(int errorCode, String message) {
-        super(message);
-        this.errorCode = errorCode;
-    }
-
-
-    public int getErrorCode() {
-        return errorCode;
+    public TagException(String message, int errorCode, Object...params) {
+        super(message, errorCode, params);
     }
 }

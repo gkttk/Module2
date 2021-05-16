@@ -90,8 +90,8 @@ public class UserServiceImpl implements UserService {
      */
     private User findByIdIfExist(long id) {
         return userDao.findById(id)
-                .orElseThrow(() -> new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE,
-                        String.format("Can't find an user with id: %d", id)));
+                .orElseThrow(() -> new UserException(String.format("Can't find an user with id: %d", id),
+                        ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, id));
     }
 
     /**
@@ -104,7 +104,8 @@ public class UserServiceImpl implements UserService {
     public void checkIfEntityWithGivenNameExist(String login) {
         Optional<User> userOpt = userDao.findByLogin(login);
         if (userOpt.isPresent()) {
-            throw new UserException(ApplicationConstants.USER_SUCH_LOGIN_EXISTS_CODE, String.format("User with login: %s already exists", login));
+            throw new UserException(String.format("User with login: %s already exists", login),
+                    ApplicationConstants.USER_SUCH_LOGIN_EXISTS_CODE, login);
         }
     }
 

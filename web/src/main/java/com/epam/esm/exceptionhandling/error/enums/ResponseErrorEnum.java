@@ -1,36 +1,33 @@
 package com.epam.esm.exceptionhandling.error.enums;
 
 import com.epam.esm.constants.WebLayerConstants;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.http.HttpStatus;
 
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-@JsonIgnoreProperties(value = {"status"})
+
 public enum ResponseErrorEnum {
-    GIFT_CERTIFICATE_NOT_FOUND("Gift certificate is not found", HttpStatus.NOT_FOUND, WebLayerConstants.CERTIFICATE_NOT_FOUND_CODE),
-    GIFT_CERTIFICATE_WITH_SUCH_NAME_EXISTS("Gift certificate already exists", HttpStatus.BAD_REQUEST, WebLayerConstants.CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE),
+    GIFT_CERTIFICATE_NOT_FOUND("gift_certificate_not_found", HttpStatus.NOT_FOUND, WebLayerConstants.CERTIFICATE_NOT_FOUND_CODE),
+    GIFT_CERTIFICATE_WITH_SUCH_NAME_EXISTS("gift_certificate_already_exists", HttpStatus.BAD_REQUEST, WebLayerConstants.CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE),
 
-    TAG_NOT_FOUND("Tag is not found", HttpStatus.NOT_FOUND, WebLayerConstants.TAG_NOT_FOUND_ERROR_CODE),
-    TAG_WITH_SUCH_NAME_EXISTS("Tag already exists", HttpStatus.BAD_REQUEST, WebLayerConstants.TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE),
+    TAG_NOT_FOUND("tag_not_found", HttpStatus.NOT_FOUND, WebLayerConstants.TAG_NOT_FOUND_ERROR_CODE),
+    TAG_WITH_SUCH_NAME_EXISTS("tag_already_exists", HttpStatus.BAD_REQUEST, WebLayerConstants.TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE),
 
-    USER_NOT_FOUND("User is not found", HttpStatus.NOT_FOUND, WebLayerConstants.USER_NOT_FOUND_ERROR_CODE),
-    USER_WITH_SUCH_LOGIN_EXISTS("User already exists", HttpStatus.BAD_REQUEST, WebLayerConstants.USER_SUCH_LOGIN_EXISTS_CODE),
+    USER_NOT_FOUND("user_not_found", HttpStatus.NOT_FOUND, WebLayerConstants.USER_NOT_FOUND_ERROR_CODE),
+    USER_WITH_SUCH_LOGIN_EXISTS("user_already_exists", HttpStatus.BAD_REQUEST, WebLayerConstants.USER_SUCH_LOGIN_EXISTS_CODE),
 
-    ORDER_NOT_FOUND("Order is not found", HttpStatus.NOT_FOUND, WebLayerConstants.ORDER_NOT_FOUND_ERROR_CODE);
+    ORDER_NOT_FOUND("order_not_found", HttpStatus.NOT_FOUND, WebLayerConstants.ORDER_NOT_FOUND_ERROR_CODE);
 
-    private final String message;
+    private final String propertyKey;
     private final int code;
     private final HttpStatus status;
 
-    ResponseErrorEnum(String message, HttpStatus status, int code) {
-        this.message = message;
+    ResponseErrorEnum(String propertyKey, HttpStatus status, int code) {
+        this.propertyKey = propertyKey;
         this.code = code;
         this.status = status;
     }
 
-    public String getMessage() {
-        return message;
+    public String getPropertyKey() {
+        return propertyKey;
     }
 
     public int getCode() {

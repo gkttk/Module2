@@ -71,9 +71,16 @@ public class UserController {
         Map<String, String[]> reqParamMap = new HashMap<>(webRequest.getParameterMap());
         List<OrderDto> orders = orderService.findAllForQuery(userId, reqParamMap, limit, offset);
         CollectionModel<OrderDto> order = CollectionModel.of(orders);
+        int resultSize = orders.size();
+        if(resultSize == 0){
+            return ResponseEntity.ok(order);
+        }
         order.add(linkTo(methodOn(UserController.class)
                 .getAllOrdersForUser(null, userId, WebLayerConstants.DEFAULT_LIMIT, 0))
                 .withRel(WebLayerConstants.FIRST_PAGE));
+        if (resultSize < 5){
+            return ResponseEntity.ok(order);
+        }
         order.add(linkTo(methodOn(UserController.class)
                 .getAllOrdersForUser(null, userId, WebLayerConstants.DEFAULT_LIMIT, offset + WebLayerConstants.DEFAULT_LIMIT))
                 .withRel(WebLayerConstants.NEXT_PAGE));

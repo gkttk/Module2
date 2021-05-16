@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
 /**
  * This DTO is for making an order.
  *
@@ -14,12 +15,12 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SaveOrderDto{
+public class SaveOrderDto {
 
-    @NotNull(message = "CertificateId value must be not null")
+    @NotNull(message = "{save_order_dto_certificate_id_violation_message}")
     private Long certificateId;
 
-    @NotNull(message = "Count value must be greater than 0 and not null")
-    @Min(value = 1, message = "Count value must be greater than 0 and not null")
+    @NotNull(message = "{save_order_dto_count_violation_message}")
+    @Min(value = 1, message = "{save_order_dto_count_violation_message}")
     private Integer count;
 }

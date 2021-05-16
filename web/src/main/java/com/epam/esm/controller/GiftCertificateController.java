@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/certificates", produces = "application/hal+json")
+@RequestMapping(path = "/certificates", produces = {"application/hal+json; charset=UTF-8"})
 @Validated
 public class GiftCertificateController {
 

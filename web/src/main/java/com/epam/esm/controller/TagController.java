@@ -74,12 +74,4 @@ public class TagController {
         return ResponseEntity.noContent().build();
     }
 
-
-    @GetMapping("{userId}/most_widely_used_tag")
-    public ResponseEntity<List<TagDto>> getMostWidelyUsedTagOfUser(@PathVariable long userId) {
-        List<TagDto> tags = tagService.findMostWidelyUsed(userId);
-        List<TagDto> tagsWithLinks = tags.stream().map(assembler::toModel).collect(Collectors.toList());
-        return ResponseEntity.ok(tagsWithLinks);
-    }
-
 }

@@ -9,6 +9,7 @@ import com.epam.esm.exceptions.OrderException;
 import com.epam.esm.exceptions.ResponseErrorNotFoundException;
 import com.epam.esm.exceptions.TagException;
 import com.epam.esm.exceptions.UserException;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -64,6 +65,15 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorResult(WebLayerConstants.DEFAULT_VALIDATION_ERROR_CODE, messages), HttpStatus.BAD_REQUEST);
     }
 
+
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        Object[] params = new Object[]{ex.getValue(), ex.getRequiredType()};
+        ResponseErrorEnum error = getError(WebLayerConstants.MISMATCH_PARAMETER_ERROR_CODE);
+        String message = messageSource.getMessage(error.getPropertyKey(), null, request.getLocale());
+
+        return new ResponseEntity<>(new ErrorResult(error.getCode(), Collections.singletonList(String.format(message, params))), error.getStatus());
+    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,

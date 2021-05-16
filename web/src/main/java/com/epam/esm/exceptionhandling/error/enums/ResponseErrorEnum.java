@@ -14,7 +14,8 @@ public enum ResponseErrorEnum {
     USER_NOT_FOUND("user_not_found", HttpStatus.NOT_FOUND, WebLayerConstants.USER_NOT_FOUND_ERROR_CODE),
     USER_WITH_SUCH_LOGIN_EXISTS("user_already_exists", HttpStatus.BAD_REQUEST, WebLayerConstants.USER_SUCH_LOGIN_EXISTS_CODE),
 
-    ORDER_NOT_FOUND("order_not_found", HttpStatus.NOT_FOUND, WebLayerConstants.ORDER_NOT_FOUND_ERROR_CODE);
+    ORDER_NOT_FOUND("order_not_found", HttpStatus.NOT_FOUND, WebLayerConstants.ORDER_NOT_FOUND_ERROR_CODE),
+    MISMATCH_PARAMETER("mismatch_parameter", HttpStatus.BAD_REQUEST, WebLayerConstants.MISMATCH_PARAMETER_ERROR_CODE);
 
     private final String propertyKey;
     private final int code;

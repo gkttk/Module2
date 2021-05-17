@@ -175,7 +175,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         changeEntityFieldsIfPresent(foundCert, passedDto, certId);//fill fields by passed GiftCertificateDto
 
         List<TagDto> passedTags = passedDto.getTags();
-        if (passedTags == null || passedTags.isEmpty()) {
+        if (passedTags == null) {
             GiftCertificate patchedCertificate = giftCertificateDao.update(foundCert);
             return modelMapper.map(patchedCertificate, GiftCertificateDto.class);
         }

@@ -3,11 +3,15 @@ package com.epam.esm.exceptionhandling;
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.exceptionhandling.error.ErrorResult;
 import com.epam.esm.exceptionhandling.error.enums.ResponseErrorEnum;
+import com.epam.esm.exceptions.GiftApplicationException;
 import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.exceptions.OrderException;
 import com.epam.esm.exceptions.ResponseErrorNotFoundException;
 import com.epam.esm.exceptions.TagException;
 import com.epam.esm.exceptions.UserException;
+import org.springframework.beans.TypeMismatchException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,7 +25,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,44 +35,45 @@ import java.util.stream.Stream;
 @ControllerAdvice
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(GiftCertificateException.class)
-    public ResponseEntity<ResponseErrorEnum> handleGiftCertificateException(GiftCertificateException exception) {
-        int errorCode = exception.getErrorCode();
-        ResponseErrorEnum error = getError(errorCode);
-        return new ResponseEntity<>(error, error.getStatus());
+    private final MessageSource messageSource;
+
+    @Autowired
+    public ExceptionControllerAdvice(MessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 
-    @ExceptionHandler(TagException.class)
-    public ResponseEntity<ResponseErrorEnum> handleTagException(TagException exception) {
-        int errorCode = exception.getErrorCode();
+    private ResponseEntity<ErrorResult> getResponseEntity(int errorCode, Object[] params, Locale locale) {
         ResponseErrorEnum error = getError(errorCode);
-        return new ResponseEntity<>(error, error.getStatus());
+        String message = messageSource.getMessage(error.getPropertyKey(), null, locale);
+
+        return new ResponseEntity<>(new ErrorResult(errorCode, Collections.singletonList(String.format(message, params))), error.getStatus());
     }
 
-    @ExceptionHandler(OrderException.class)
-    public ResponseEntity<ResponseErrorEnum> handleOrderException(OrderException exception) {
-        int errorCode = exception.getErrorCode();
-        ResponseErrorEnum error = getError(errorCode);
-        return new ResponseEntity<>(error, error.getStatus());
-    }
-
-    @ExceptionHandler(UserException.class)
-    public ResponseEntity<ResponseErrorEnum> handleUserException(UserException exception) {
-        int errorCode = exception.getErrorCode();
-        ResponseErrorEnum error = getError(errorCode);
-        return new ResponseEntity<>(error, error.getStatus());
+    @ExceptionHandler(value = {GiftCertificateException.class, TagException.class, OrderException.class, UserException.class})
+    public ResponseEntity<ErrorResult> handleGiftCertificateException(GiftApplicationException exception, Locale locale) {
+        return getResponseEntity(exception.getErrorCode(), exception.getParams(), locale);
     }
 
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResult> handleConstraintViolationException(ConstraintViolationException exception) {
+    public ResponseEntity<ErrorResult> handleConstraintViolationException(ConstraintViolationException exception, Locale locale) {
         Set<ConstraintViolation<?>> constraintViolations = exception.getConstraintViolations();
         List<String> messages = constraintViolations.stream()
-                .map(ConstraintViolation::getMessageTemplate)
+                .map(ConstraintViolation::getMessage)
+                .map(messageTemplate -> messageSource.getMessage(messageTemplate, null, locale))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(new ErrorResult(WebLayerConstants.DEFAULT_VALIDATION_ERROR_CODE, messages), HttpStatus.BAD_REQUEST);
     }
 
+
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        Object[] params = new Object[]{ex.getValue(), ex.getRequiredType()};
+        ResponseErrorEnum error = getError(WebLayerConstants.MISMATCH_PARAMETER_ERROR_CODE);
+        String message = messageSource.getMessage(error.getPropertyKey(), null, request.getLocale());
+
+        return new ResponseEntity<>(new ErrorResult(error.getCode(), Collections.singletonList(String.format(message, params))), error.getStatus());
+    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,

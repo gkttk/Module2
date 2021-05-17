@@ -27,21 +27,21 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @JsonFilter("passwordFilter")
-public class UserDto extends RepresentationModel<UserDto>{
+public class UserDto extends RepresentationModel<UserDto> {
 
-    @Null(message = "User's id value must be null", groups = SaveGroup.class)
+    @Null(message = "{user_dto_id_violation_message}", groups = SaveGroup.class)
     private Long id;
 
-    @NotNull(message = "User's login value must not be null, start with a letter, end with a letter or digit and contain 6-80 symbols", groups = SaveGroup.class)
+    @NotNull(message = "{user_dto_login_violation_message}", groups = SaveGroup.class)
     @Pattern(regexp = "^(?=.*[A-Za-z0-9]$)[A-Za-z][A-Za-z\\d.-]{5,80}$",
-            message = "User's login value must not be null, start with a letter, end with a letter or digit and contain 6-80 symbols", groups = SaveGroup.class)
+            message = "{user_dto_login_violation_message}", groups = SaveGroup.class)
     private String login;
 
-    @NotNull(message = "User's password value must not be null and contain 5-30 symbols", groups = SaveGroup.class)
-    @Pattern(regexp = "^[A-Za-z\\d.-]{5,30}$", message = "User's password value must not be null and contain 5-30 symbols", groups = SaveGroup.class)
+    @NotNull(message = "{user_dto_password_violation_message}", groups = SaveGroup.class)
+    @Pattern(regexp = "^[A-Za-z\\d.-]{5,30}$", message = "{user_dto_password_violation_message}", groups = SaveGroup.class)
     private String password;
 
-    @Pattern(regexp = "(?i)(USER)|(ADMIN)", message = "User's role must be only ADMIN or USER and not be null", groups = SaveGroup.class)
-    @NotBlank(message = "User's role must be only ADMIN or USER and not be null", groups = SaveGroup.class)
+    @Pattern(regexp = "(?i)(USER)|(ADMIN)", message = "{user_dto_role_violation_message}", groups = SaveGroup.class)
+    @NotBlank(message = "{user_dto_role_violation_message}", groups = SaveGroup.class)
     private String role;
 }

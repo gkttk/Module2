@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.bundles.UserDtoBundle;
 import com.epam.esm.entity.User;
 import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.exceptions.UserException;
@@ -57,11 +58,15 @@ public class UserServiceImpl implements UserService {
      * @since 2.0
      */
     @Override
-    public List<UserDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
+    public UserDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
         List<User> foundUsers = userDao.findBy(reqParams, limit, offset);
-        return foundUsers.stream()
+        List<UserDto> userDtos = foundUsers.stream()
                 .map(entity -> modelMapper.map(entity, UserDto.class))
                 .collect(Collectors.toList());
+        long count = userDao.count();
+
+
+        return new UserDtoBundle(userDtos, count);
     }
 
     /**
@@ -90,8 +95,8 @@ public class UserServiceImpl implements UserService {
      */
     private User findByIdIfExist(long id) {
         return userDao.findById(id)
-                .orElseThrow(() -> new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE,
-                        String.format("Can't find an user with id: %d", id)));
+                .orElseThrow(() -> new UserException(String.format("Can't find an user with id: %d", id),
+                        ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, id));
     }
 
     /**
@@ -104,7 +109,8 @@ public class UserServiceImpl implements UserService {
     public void checkIfEntityWithGivenNameExist(String login) {
         Optional<User> userOpt = userDao.findByLogin(login);
         if (userOpt.isPresent()) {
-            throw new UserException(ApplicationConstants.USER_SUCH_LOGIN_EXISTS_CODE, String.format("User with login: %s already exists", login));
+            throw new UserException(String.format("User with login: %s already exists", login),
+                    ApplicationConstants.USER_SUCH_LOGIN_EXISTS_CODE, login);
         }
     }
 

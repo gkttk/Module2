@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.bundles.TagDtoBundle;
 
 import java.util.List;
 import java.util.Map;
@@ -28,10 +29,10 @@ public interface TagService {
      * @param reqParams request parameters.
      * @param limit     for pagination.
      * @param offset    for pagination.
-     * @return list of TagDto.
+     * @return dto which stores information about number of Tag in DB and TagDtos.
      * @since 1.0
      */
-    List<TagDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
+    TagDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
 
     /**
      * Save Tag.

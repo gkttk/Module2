@@ -6,6 +6,7 @@ import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.bundles.GiftCertificateDtoBundle;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exceptions.GiftCertificateException;
@@ -19,6 +20,7 @@ import org.modelmapper.ModelMapper;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -221,35 +223,41 @@ public class GiftServiceImplTest {
     }
 
     @Test
-    public void testFindAllForQuery_ListOfEntities_ThereAreEntitiesInDb() {
+    public void testFindAllForQuery_BundleOfDto_ThereAreEntitiesInDb() {
         //given
         int limit = 5;
         int offset = 0;
         Map<String, String[]> reqParams = Collections.emptyMap();
         when(certDao.findBy(reqParams, limit, offset)).thenReturn(Arrays.asList(testEntity, testEntity));
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
-        int expectedSize = 2;
+        long expectedSize = 2;
+        when(certDao.count()).thenReturn(expectedSize);
+        GiftCertificateDtoBundle expectedBundle = new GiftCertificateDtoBundle(Arrays.asList(testDto, testDto), expectedSize);
         //when
-        List<GiftCertificateDto> result = service.findAllForQuery(reqParams, limit, offset);
+        GiftCertificateDtoBundle result = service.findAllForQuery(reqParams, limit, offset);
         //then
-        assertFalse(result.isEmpty());
-        assertEquals(result.size(), expectedSize);
+        assertEquals(result, expectedBundle);
         verify(certDao).findBy(reqParams, limit, offset);
         verify(modelMapper, times(2)).map(testEntity, GiftCertificateDto.class);
+        verify(certDao).count();
     }
 
     @Test
-    public void testFindAllForQuery_EmptyList_ThereAreNoEntitiesInDb() {
+    public void testFindAllForQuery_BundleWithoutDto_ThereAreNoEntitiesInDb() {
         //given
         int limit = 5;
         int offset = 0;
         Map<String, String[]> reqParams = Collections.emptyMap();
         when(certDao.findBy(reqParams, limit, offset)).thenReturn(Collections.emptyList());
+        long expectedSize = 0L;
+        when(certDao.count()).thenReturn(expectedSize);
+        GiftCertificateDtoBundle expectedBundle = new GiftCertificateDtoBundle(Collections.emptyList(), expectedSize);
         //when
-        List<GiftCertificateDto> result = service.findAllForQuery(reqParams, limit, offset);
+        GiftCertificateDtoBundle result = service.findAllForQuery(reqParams, limit, offset);
         //then
-        assertTrue(result.isEmpty());
+        assertEquals(result, expectedBundle);
         verify(certDao).findBy(reqParams, limit, offset);
+        verify(certDao).count();
     }
 }
 

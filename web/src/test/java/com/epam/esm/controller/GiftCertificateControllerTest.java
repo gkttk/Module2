@@ -4,6 +4,7 @@ package com.epam.esm.controller;
 import com.epam.esm.assemblers.GiftCertificateModelAssembler;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.bundles.GiftCertificateDtoBundle;
 import com.epam.esm.service.GiftCertificateService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,7 @@ public class GiftCertificateControllerTest {
 
     private static final int TEST_LIMIT = 5;
     private static final int TEST_OFFSET = 0;
+    private static final long TEST_COUNT = 1000;
 
     private static GiftCertificateDto defaultCertDto;
     private static GiftCertificateDto testDto;
@@ -76,8 +78,8 @@ public class GiftCertificateControllerTest {
         Map<String, String[]> paramMap = new HashMap<>();
         List<GiftCertificateDto> listDto = Arrays.asList(defaultCertDto, defaultCertDto);
         when(webRequestMock.getParameterMap()).thenReturn(paramMap);
-        when(serviceMock.findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET)).thenReturn(listDto);
-        when(assemblerMock.toCollectionModel(listDto, TEST_OFFSET,paramMap)).thenReturn(CollectionModel.of(listDto));
+        when(serviceMock.findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET)).thenReturn(new GiftCertificateDtoBundle(listDto, TEST_COUNT));
+        when(assemblerMock.toCollectionModel(listDto, TEST_OFFSET, TEST_COUNT, paramMap)).thenReturn(CollectionModel.of(listDto));
         ResponseEntity<CollectionModel<GiftCertificateDto>> expectedResult = ResponseEntity.ok(CollectionModel.of(listDto));
 
         //when
@@ -86,7 +88,7 @@ public class GiftCertificateControllerTest {
         assertEquals(result, expectedResult);
         verify(webRequestMock).getParameterMap();
         verify(serviceMock).findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET);
-        verify(assemblerMock).toCollectionModel(listDto, TEST_OFFSET,paramMap);
+        verify(assemblerMock).toCollectionModel(listDto, TEST_OFFSET, TEST_COUNT, paramMap);
     }
 
 

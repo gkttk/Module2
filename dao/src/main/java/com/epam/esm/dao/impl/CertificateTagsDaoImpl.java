@@ -23,6 +23,10 @@ public class CertificateTagsDaoImpl implements CertificateTagsDao {
         this.entityManager = entityManager;
     }
 
+
+
+
+
     /**
      * This method saves a link between GiftCertificate entity and Tag entity.
      *

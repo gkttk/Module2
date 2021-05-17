@@ -13,6 +13,15 @@ import java.util.Optional;
  * @since 2.0
  */
 public interface OrderDao {
+
+    /**
+     * This method get a number of entity in the db.
+     * @return number of Order entity in DB for User with passed userId.
+     * @param userId Id of User.
+     * @since 2.0
+     */
+    long count(long userId);
+
     /**
      * This method saves Order entity.
      *

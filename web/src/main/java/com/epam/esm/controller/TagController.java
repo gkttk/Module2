@@ -3,6 +3,7 @@ package com.epam.esm.controller;
 import com.epam.esm.assemblers.ModelAssembler;
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.bundles.TagDtoBundle;
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.service.TagService;
@@ -24,7 +25,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/tags", produces = "application/hal+json")
@@ -51,9 +51,11 @@ public class TagController {
                                                                   @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
                                                                   @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
-        List<TagDto> tags = tagService.findAllForQuery(reqParams, limit, offset);
+        TagDtoBundle bundle = tagService.findAllForQuery(reqParams, limit, offset);
+        List<TagDto> tags = bundle.getTags();
+        long count = bundle.getCount();
 
-        return ResponseEntity.ok(assembler.toCollectionModel(tags, offset, reqParams));
+        return ResponseEntity.ok(assembler.toCollectionModel(tags, offset, count, reqParams));
     }
 
     @GetMapping("/{id}")
@@ -72,14 +74,6 @@ public class TagController {
     public ResponseEntity<Void> deleteById(@PathVariable long id) {
         tagService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-
-    @GetMapping("{userId}/most_widely_used_tag")
-    public ResponseEntity<List<TagDto>> getMostWidelyUsedTagOfUser(@PathVariable long userId) {
-        List<TagDto> tags = tagService.findMostWidelyUsed(userId);
-        List<TagDto> tagsWithLinks = tags.stream().map(assembler::toModel).collect(Collectors.toList());
-        return ResponseEntity.ok(tagsWithLinks);
     }
 
 }

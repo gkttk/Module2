@@ -17,12 +17,21 @@ public final class ApplicationConstants {
 
     //GiftCertificate queries
     public final static String FIND_GC_BY_NAME_QUERY = "SELECT gc FROM GiftCertificate gc WHERE gc.name = :name";
+    public final static String COUNT_GC_QUERY = "SELECT count(gc.id) FROM GiftCertificate gc";
 
     //Tag queries
     public final static String GET_TAG_BY_NAME = "SELECT t FROM Tag t WHERE t.name =:name";
+    public final static String COUNT_TAG_QUERY = "SELECT count(t.id) FROM Tag t";
 
     //User queries
     public final static String GET_USER_BY_LOGIN = "SELECT u FROM User u WHERE u.login =:login";
+    public final static String COUNT_USER_QUERY = "SELECT count(u.id) FROM User u";
+
+
+    //Order queries
+    public final static String COUNT_ORDER_BY_USER_ID_QUERY = "SELECT count(o.id) FROM Order o " +
+           " JOIN o.user uo WHERE uo.id =:userId";
+
 
     //certificate_tags queries
     public final static String SAVE_CERTIFICATE_TAGS_QUERY = "INSERT INTO " + CERTIFICATE_TAGS_TABLE_NAME + " VALUES (?,?)";

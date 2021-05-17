@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Transient;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
@@ -36,29 +37,29 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto>{
+public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
 
-    @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "GiftCertificate's id value must be null")
-    @NotNull(groups = {SaveGroup.class}, message = "GiftCertificate's id value must not be null")
+    @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "{gift_certificate_id_violation_message}")
+    @NotNull(groups = {SaveGroup.class}, message = "{gift_certificate_id_violation_message}")
     private Long id;
-    @NotBlank(groups = UpdateGroup.class, message = "GiftCertificate's name value must contain 2-35 characters and not be null")
-    @Pattern(regexp="^[0-9A-Za-z\\s]*$", message = "GiftCertificate's name value must contain 2-35 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})
-    @Size(min = 2, max = 35, message = "GiftCertificate's name value must contain 2-35 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})
+    @NotBlank(groups = UpdateGroup.class, message = "{gift_certificate_name_violation_message}")
+    @Pattern(regexp = "^[0-9A-Za-z\\s]*$", message = "{gift_certificate_name_violation_message}", groups = {UpdateGroup.class, PatchGroup.class})
+    @Size(min = 2, max = 35, message = "{gift_certificate_name_violation_message}", groups = {UpdateGroup.class, PatchGroup.class})
     private String name;
-    @NotBlank(groups = UpdateGroup.class, message = "GiftCertificate's description value must contain 20-150 characters and not be null")
-    @Size(min = 20, max = 150, message = "GiftCertificate's description value must contain 20-150 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})
+    @NotBlank(groups = UpdateGroup.class, message = "{gift_certificate_description_violation_message}")
+    @Size(min = 20, max = 150, message = "{gift_certificate_description_violation_message}", groups = {UpdateGroup.class, PatchGroup.class})
     private String description;
-    @NotNull(groups = UpdateGroup.class, message = "GiftCertificate's price value must be 0.1-1000 and not null")
-    @DecimalMin(value = "0.1", message = "GiftCertificate's price value must be 0.1-1000 and not null", groups = {UpdateGroup.class, PatchGroup.class})
-    @DecimalMax(value = "1000", message = "GiftCertificate's price value must be 0.1-1000 and not null", groups = {UpdateGroup.class, PatchGroup.class})
+    @NotNull(groups = UpdateGroup.class, message = "{gift_certificate_price_violation_message}")
+    @DecimalMin(value = "0.1", message = "{gift_certificate_price_violation_message}", groups = {UpdateGroup.class, PatchGroup.class})
+    @DecimalMax(value = "1000", message = "{gift_certificate_price_violation_message}", groups = {UpdateGroup.class, PatchGroup.class})
     private BigDecimal price;
-    @NotNull(groups = UpdateGroup.class, message = "GiftCertificate's duration value must be 1-100 and not null")
-    @Min(value = 1, groups = {UpdateGroup.class, PatchGroup.class}, message = "GiftCertificate's duration value must be 1-100 and not null")
-    @Max(value = 100, groups = {UpdateGroup.class, PatchGroup.class}, message = "GiftCertificate's duration value must be 1-100 and not null")
+    @NotNull(groups = UpdateGroup.class, message = "{gift_certificate_duration_violation_message}")
+    @Min(value = 1, groups = {UpdateGroup.class, PatchGroup.class}, message = "{gift_certificate_duration_violation_message}")
+    @Max(value = 100, groups = {UpdateGroup.class, PatchGroup.class}, message = "{gift_certificate_duration_violation_message}")
     private Integer duration;
-    @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "GiftCertificate's create date value must be null")
+    @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "{gift_certificate_create_date_violation_message}")
     private String createDate;
-    @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "GiftCertificate's last update date value must be null")
+    @Null(groups = {UpdateGroup.class, PatchGroup.class}, message = "{gift_certificate_last_update_date_violation_message}")
     private String lastUpdateDate;
 
     @Valid

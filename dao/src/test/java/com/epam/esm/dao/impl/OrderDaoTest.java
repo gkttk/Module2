@@ -42,6 +42,18 @@ public class OrderDaoTest {
         order1.setCost(new BigDecimal("300.00"));
     }
 
+
+    @Test
+    public void testCount_ShouldReturnNumberOfEntity_WhenThereAreEntitiesInDb(){
+        //given
+        long expectedResult = 2L;
+        long userId = 3L;
+        //when
+        long result = orderDao.count(userId);
+        //then
+        assertEquals(result, expectedResult);
+    }
+
     @Test
     public void testFindById_EntityWithGivenId_WhenEntityWithGivenIdIsPresentInDb() {
         //given

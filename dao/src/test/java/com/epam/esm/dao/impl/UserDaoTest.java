@@ -52,6 +52,17 @@ public class UserDaoTest {
     }
 
     @Test
+    public void testCount_ShouldReturnNumberOfEntity_WhenThereAreEntitiesInDb(){
+        //given
+        long expectedResult = 3L;
+        //when
+        long result = userDao.count();
+        //then
+        assertEquals(result, expectedResult);
+    }
+
+
+    @Test
     public void testFindBy_ListAllEntities_AtLeastOneEntityWithIsPresentInDb() {
         //given
         Map<String, String[]> reqParams = new HashMap<>();

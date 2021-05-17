@@ -24,13 +24,13 @@ import javax.validation.constraints.Size;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagDto extends RepresentationModel<TagDto>{
+public class TagDto extends RepresentationModel<TagDto> {
 
-    @Null(message = "Tag's id value must be null", groups = {UpdateGroup.class, PatchGroup.class})
+    @Null(message = "{tag_dto_id_violation_message}", groups = {UpdateGroup.class, PatchGroup.class})
     private Long id;
 
-    @NotBlank(message = "Tag's name value must be a word, contain 2-15 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})
-    @Pattern(regexp="^[A-Za-z0-9\\s]*$",message = "Tag's name value must be a word, contain 2-15 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})
-    @Size(min = 2, max = 15, message = "Tag's name value must be a word, contain 2-15 characters and not be null", groups = {UpdateGroup.class, PatchGroup.class})
+    @NotBlank(message = "{tag_dto_name_violation_message}", groups = {UpdateGroup.class, PatchGroup.class})
+    @Pattern(regexp = "^[A-Za-z0-9\\s]*$", message = "{tag_dto_name_violation_message}", groups = {UpdateGroup.class, PatchGroup.class})
+    @Size(min = 2, max = 15, message = "{tag_dto_name_violation_message}", groups = {UpdateGroup.class, PatchGroup.class})
     private String name;
 }

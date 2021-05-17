@@ -15,6 +15,13 @@ import java.util.Optional;
 public interface GiftCertificateDao {
 
     /**
+     * This method get a number of entity in the db.
+     * @return number of GiftCertificate entity in DB.
+     * @since 2.0
+     */
+    long count();
+
+    /**
      * This method combines all getList queries.
      *
      * @param reqParams is a map of all request parameters.

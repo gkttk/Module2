@@ -1,8 +1,8 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.bundles.UserDtoBundle;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,10 +29,10 @@ public interface UserService {
      * @param reqParams request parameters.
      * @param limit     for pagination.
      * @param offset    for pagination.
-     * @return list of UserDto.
+     * @return dto which stores information about number of User in DB and UserDtos.
      * @since 2.0
      */
-    List<UserDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
+    UserDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
 
 
     /**

@@ -5,6 +5,7 @@ import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.bundles.TagDtoBundle;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.exceptions.TagException;
@@ -51,11 +52,15 @@ public class TagServiceImpl implements TagService {
      * @since 1.0
      */
     @Override
-    public List<TagDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
+    public TagDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
         List<Tag> foundTags = tagDao.findBy(reqParams, limit, offset);
-        return foundTags.stream()
+        List<TagDto> tagDtos = foundTags.stream()
                 .map(entity -> modelMapper.map(entity, TagDto.class))
                 .collect(Collectors.toList());
+        long count = tagDao.count();
+
+
+        return new TagDtoBundle(tagDtos, count);
     }
 
 
@@ -104,7 +109,8 @@ public class TagServiceImpl implements TagService {
         certificateTagsDao.deleteAllCertificateLinksForTagId(id);
         boolean isDeleted = tagDao.deleteById(id);
         if (!isDeleted) {
-            throw new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with id: %d is not found in DB", id));
+            throw new TagException(String.format("Tag with id: %d is not found in DB", id),
+                    ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, id);
         }
     }
 
@@ -119,8 +125,8 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagDto findByName(String tagName) {
         Optional<Tag> foundTagOpt = tagDao.findByName(tagName);
-        Tag foundTag = foundTagOpt.orElseThrow(() -> new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, String.format("Tag with name: %s is not found in DB",
-                tagName)));
+        Tag foundTag = foundTagOpt.orElseThrow(() -> new TagException(String.format("Tag with name: %s is not found in DB",
+                tagName), ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, tagName));
         return modelMapper.map(foundTag, TagDto.class);
     }
 
@@ -137,8 +143,8 @@ public class TagServiceImpl implements TagService {
     public List<TagDto> findMostWidelyUsed(long userId) {
         Optional<User> userOpt = userDao.findById(userId);
         if (!userOpt.isPresent()) {
-            throw new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE,
-                    String.format("Can't find an user with id: %d", userId));
+            throw new UserException(String.format("Can't find an user with id: %d", userId),
+                    ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, userId);
         }
 
         return tagDao.findMaxWidelyUsed(userId)
@@ -158,7 +164,8 @@ public class TagServiceImpl implements TagService {
     private Tag findByIdIfExist(long tagId) {
         Optional<Tag> foundTagOpt = tagDao.findById(tagId);
         return foundTagOpt.orElseThrow(() ->
-                new TagException(ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, String.format("Can't find a tag with id: %d", tagId)));
+                new TagException(String.format("Can't find a tag with id: %d", tagId),
+                        ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, tagId));
     }
 
     /**
@@ -171,8 +178,8 @@ public class TagServiceImpl implements TagService {
     private void checkIfEntityWithGivenNameExist(String tagName) {
         Optional<Tag> foundTagOpt = tagDao.findByName(tagName);
         if (foundTagOpt.isPresent()) {
-            throw new TagException(ApplicationConstants.TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE, String.format("Tag with name: %s already exist in DB",
-                    tagName));
+            throw new TagException(String.format("Tag with name: %s already exist in DB",
+                    tagName), ApplicationConstants.TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE, tagName);
         }
     }
 }

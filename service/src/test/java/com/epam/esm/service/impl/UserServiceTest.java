@@ -2,6 +2,8 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.bundles.TagDtoBundle;
+import com.epam.esm.dto.bundles.UserDtoBundle;
 import com.epam.esm.entity.User;
 import com.epam.esm.exceptions.UserException;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,33 +85,41 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testFindAllForQuery_ListOfDto_ThereAreEntitiesInDb() {
+    public void testFindAllForQuery_BundleOfDto_ThereAreEntitiesInDb() {
         //given
         Map<String, String[]> reqParams = Collections.emptyMap();
         when(userDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Arrays.asList(user, user));
         when(modelMapper.map(user, UserDto.class)).thenReturn(userDto);
 
         List<UserDto> expectedResult = Arrays.asList(userDto, userDto);
+        long expectedSize = 2;
+        when(userDao.count()).thenReturn(expectedSize);
+        UserDtoBundle expectedBundle = new UserDtoBundle(expectedResult, expectedSize);
         //when
-        List<UserDto> result = userService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
+        UserDtoBundle result = userService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
-        assertEquals(result, expectedResult);
+        assertEquals(result, expectedBundle);
         verify(userDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
         verify(modelMapper, times(2)).map(user, UserDto.class);
+        verify(userDao).count();
     }
 
     @Test
-    public void testFindAllForQuery_EmptyList_ThereAreNoEntitiesInDb() {
+    public void testFindAllForQuery_BundleWithoutDto_ThereAreNoEntitiesInDb() {
         //given
         Map<String, String[]> reqParams = Collections.emptyMap();
         when(userDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Collections.emptyList());
 
         List<UserDto> expectedResult = Collections.emptyList();
+        long expectedSize = 0L;
+        when(userDao.count()).thenReturn(expectedSize);
+        UserDtoBundle expectedBundle = new UserDtoBundle(expectedResult, expectedSize);
         //when
-        List<UserDto> result = userService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
+        UserDtoBundle result = userService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
-        assertEquals(result, expectedResult);
+        assertEquals(result, expectedBundle);
         verify(userDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
+        verify(userDao).count();
     }
 
     @Test

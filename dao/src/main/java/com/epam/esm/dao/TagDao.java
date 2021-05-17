@@ -15,12 +15,19 @@ import java.util.Optional;
 public interface TagDao {
 
     /**
+     * This method get a number of entity in the db.
+     * @return number of Tag entity in DB.
+     * @since 2.0
+     */
+    long count();
+
+    /**
      * Find Tag the most widely used tags of user with given id.
      *
      * @return List with Tags entity.
      * @since 2.0
      */
-   List<Tag> findMaxWidelyUsed(long userId);
+    List<Tag> findMaxWidelyUsed(long userId);
 
 
     /**

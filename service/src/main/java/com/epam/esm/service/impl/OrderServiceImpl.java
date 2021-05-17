@@ -6,6 +6,7 @@ import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.SaveOrderDto;
+import com.epam.esm.dto.bundles.OrderDtoBundle;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
@@ -57,8 +58,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto findById(long id) {
         Optional<Order> foundOrderOpt = orderDao.findById(id);
-        Order order = foundOrderOpt.orElseThrow(() -> new OrderException(ApplicationConstants.ORDER_NOT_FOUND_ERROR_CODE,
-                String.format("Can't find an order with id: %d", id)));
+        Order order = foundOrderOpt.orElseThrow(() -> new OrderException(String.format("Can't find an order with id: %d", id),
+                ApplicationConstants.ORDER_NOT_FOUND_ERROR_CODE, id));
 
         return modelMapper.map(order, OrderDto.class);
     }
@@ -115,7 +116,8 @@ public class OrderServiceImpl implements OrderService {
     public void delete(long id) {
         boolean isDeleted = orderDao.deleteById(id);
         if (!isDeleted) {
-            throw new OrderException(ApplicationConstants.ORDER_NOT_FOUND_ERROR_CODE, String.format("Order with id: %d doesn't exist in DB", id));
+            throw new OrderException(String.format("Order with id: %d doesn't exist in DB", id),
+                    ApplicationConstants.ORDER_NOT_FOUND_ERROR_CODE, id);
         }
     }
 
@@ -129,13 +131,17 @@ public class OrderServiceImpl implements OrderService {
      * @since 2.0
      */
     @Override
-    public List<OrderDto> findAllForQuery(long userId, Map<String, String[]> reqParams, int limit, int offset) {
+    public OrderDtoBundle findAllForQuery(long userId, Map<String, String[]> reqParams, int limit, int offset) {
         findUserByIdIfExist(userId);
         reqParams.put(ApplicationConstants.USER_ID_KEY, new String[]{String.valueOf(userId)});
         List<Order> foundOrders = orderDao.findBy(reqParams, limit, offset);
-        return foundOrders.stream()
+        List<OrderDto> ordersDto = foundOrders.stream()
                 .map(entity -> modelMapper.map(entity, OrderDto.class))
                 .collect(Collectors.toList());
+
+        long count = orderDao.count(userId);
+
+        return new OrderDtoBundle(ordersDto, count);
     }
 
     /**
@@ -147,8 +153,8 @@ public class OrderServiceImpl implements OrderService {
      */
     private User findUserByIdIfExist(long id) {
         return userDao.findById(id)
-                .orElseThrow(() -> new UserException(ApplicationConstants.USER_NOT_FOUND_ERROR_CODE,
-                        String.format("Can't find an user with id: %d", id)));
+                .orElseThrow(() -> new UserException(String.format("Can't find an user with id: %d", id),
+                        ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, id));
     }
 
     /**
@@ -161,8 +167,8 @@ public class OrderServiceImpl implements OrderService {
      */
     public GiftCertificate checkAndFindGiftCertificateByIdIfExist(long certificateId) {
         Optional<GiftCertificate> certificateOpt = giftCertificateDao.findById(certificateId);
-        return certificateOpt.orElseThrow(() -> new GiftCertificateException(ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, String.format("GiftCertificate with id: %d doesn't exist in DB",
-                certificateId)));
+        return certificateOpt.orElseThrow(() -> new GiftCertificateException(String.format("GiftCertificate with id: %d doesn't exist in DB",
+                certificateId), ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, certificateId));
     }
 
 

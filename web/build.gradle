@@ -40,7 +40,7 @@ dependencies {
     implementation project(':service')
     implementation 'org.springframework.boot:spring-boot-starter-tomcat'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.4.5'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     compileOnly 'org.projectlombok:lombok'

@@ -1,8 +1,8 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.bundles.GiftCertificateDtoBundle;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,10 +64,10 @@ public interface GiftCertificateService {
      * @param reqParams request parameters.
      * @param limit     for pagination.
      * @param offset    for pagination.
-     * @return list of GiftCertificateDto.
+     * @return dto which stores information about number of GiftCertificates in DB and GiftCertificateDtos.
      * @since 1.0
      */
-    List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
+    GiftCertificateDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
 
 
 }

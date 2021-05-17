@@ -6,6 +6,8 @@ import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.SaveOrderDto;
+import com.epam.esm.dto.bundles.GiftCertificateDtoBundle;
+import com.epam.esm.dto.bundles.OrderDtoBundle;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
@@ -112,37 +114,41 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testFindAllForQuery_ListOfDto_ThereAreEntitiesInDb() {
+    public void testFindAllForQuery_BundleOfDto_ThereAreEntitiesInDb() {
         //given
         long userId = 1;
         Map<String, String[]> reqParams = new HashMap<>();
         when(userDao.findById(userId)).thenReturn(Optional.of(user));
         when(orderDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Arrays.asList(order, order));
         when(modelMapper.map(order, OrderDto.class)).thenReturn(orderDto);
-
-        List<OrderDto> expectedResult = Arrays.asList(orderDto, orderDto);
+        long expectedSize = 2;
+        when(orderDao.count(userId)).thenReturn(expectedSize);
+        OrderDtoBundle expectedBundle = new OrderDtoBundle(Arrays.asList(orderDto, orderDto), expectedSize);
         //when
-        List<OrderDto> result = orderService.findAllForQuery(userId,reqParams, TEST_LIMIT, TEST_OFFSET);
+        OrderDtoBundle result = orderService.findAllForQuery(userId, reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
-        assertEquals(result, expectedResult);
+        assertEquals(result, expectedBundle);
         verify(orderDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
         verify(modelMapper, times(2)).map(order, OrderDto.class);
+        verify(orderDao).count(userId);
     }
 
     @Test
-    public void testFindAllForQuery_EmptyList_ThereAreNoEntitiesInDb() {
+    public void testFindAllForQuery_BundleWithoutDto_ThereAreNoEntitiesInDb() {
         //given
         long userId = 1;
         Map<String, String[]> reqParams = new HashMap<>();
         when(userDao.findById(userId)).thenReturn(Optional.of(user));
         when(orderDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Collections.emptyList());
-
-        List<OrderDto> expectedResult = Collections.emptyList();
+        long expectedSize = 0L;
+        when(orderDao.count(userId)).thenReturn(expectedSize);
+        OrderDtoBundle expectedBundle = new OrderDtoBundle(Collections.emptyList(), expectedSize);
         //when
-        List<OrderDto> result = orderService.findAllForQuery(userId,reqParams, TEST_LIMIT, TEST_OFFSET);
+        OrderDtoBundle result = orderService.findAllForQuery(userId, reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
-        assertEquals(result, expectedResult);
+        assertEquals(result, expectedBundle);
         verify(orderDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
+        verify(orderDao).count(userId);
     }
 
 

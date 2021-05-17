@@ -92,6 +92,19 @@ public class TagDaoImpl implements TagDao {
         return tagOpt;
     }
 
+    /**
+     * This method get a number of entity in the db.
+     *
+     * @return number of Tag entity in DB.
+     * @since 2.0
+     */
+    @Override
+    public long count() {
+        TypedQuery<Long> query = entityManager.createQuery(ApplicationConstants.COUNT_TAG_QUERY, Long.class);
+        return query.getSingleResult();
+
+    }
+
 
     /**
      * Find Tag the most widely used tags of user with given id.
@@ -103,7 +116,7 @@ public class TagDaoImpl implements TagDao {
     public List<Tag> findMaxWidelyUsed(long userId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         //start of subSelect
-               CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<User> countRoot = countQuery.from(User.class);
 
         ListJoin<User, com.epam.esm.entity.Order> countJoin1 = countRoot.join(User_.orders);
@@ -119,8 +132,8 @@ public class TagDaoImpl implements TagDao {
                 .setMaxResults(1)
                 .getResultStream()
                 .findFirst();
-        
-        if (!countStream.isPresent()){
+
+        if (!countStream.isPresent()) {
             return Collections.emptyList();
         }
         Long countResult = countStream.get();

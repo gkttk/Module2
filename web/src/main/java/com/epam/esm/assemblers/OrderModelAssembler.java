@@ -1,6 +1,7 @@
 package com.epam.esm.assemblers;
 
 import com.epam.esm.constants.WebLayerConstants;
+import com.epam.esm.controller.GiftCertificateController;
 import com.epam.esm.controller.OrderController;
 import com.epam.esm.controller.UserController;
 import com.epam.esm.dto.OrderDto;
@@ -27,7 +28,7 @@ public class OrderModelAssembler extends AbstractModelAssembler<OrderDto> {
     @Override
     protected void addFirstPage(CollectionModel<OrderDto> collectionModel, UriBuilderResult uriBuilderResult) {
         collectionModel.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, null, uriBuilderResult.getLimit(), WebLayerConstants.DEFAULT_OFFSET))
+                .getAllOrdersForUser(null, 0, uriBuilderResult.getLimit(), WebLayerConstants.DEFAULT_OFFSET)) //todo
                 .slash(uriBuilderResult.getParamString())
                 .withRel(WebLayerConstants.FIRST_PAGE));
     }
@@ -37,9 +38,19 @@ public class OrderModelAssembler extends AbstractModelAssembler<OrderDto> {
         int limit = uriBuilderResult.getLimit();
         int offset = uriBuilderResult.getOffset();
         collectionModel.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, null, limit, offset + limit))
+                .getAllOrdersForUser(null, 0, limit, offset + limit)) //todo
                 .slash(uriBuilderResult.getParamString())
                 .withRel(WebLayerConstants.NEXT_PAGE));
+    }
+
+    @Override
+    protected void addLastPage(CollectionModel<OrderDto> collectionModel, UriBuilderResult uriBuilderResult, long count) {
+        int limit = uriBuilderResult.getLimit();
+        collectionModel.add(linkTo(methodOn(UserController.class)
+                .getAllOrdersForUser(null, 0,limit, (int)count - limit)) //todo
+                .slash(uriBuilderResult.getParamString())
+                .withRel(WebLayerConstants.LAST_PAGE));
+
     }
 
     @Override

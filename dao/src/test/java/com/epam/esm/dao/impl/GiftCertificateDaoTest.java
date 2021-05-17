@@ -13,11 +13,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +45,16 @@ public class GiftCertificateDaoTest {
         certificate1.setDescription("1description20Symbols");
         certificate1.setPrice(new BigDecimal("100.00"));
         certificate1.setDuration(10);
+    }
+
+    @Test
+    public void testCount_ShouldReturnNumberOfEntity_WhenThereAreEntitiesInDb(){
+        //given
+        long expectedResult = 6L;
+        //when
+        long result = giftCertificateDao.count();
+        //then
+        assertEquals(result, expectedResult);
     }
 
     @Test

@@ -42,6 +42,15 @@ public class GiftCertificateModelAssembler extends AbstractModelAssembler<GiftCe
     }
 
     @Override
+    protected void addLastPage(CollectionModel<GiftCertificateDto> collectionModel, UriBuilderResult uriBuilderResult, long count) {
+        int limit = uriBuilderResult.getLimit();
+        collectionModel.add(linkTo(methodOn(GiftCertificateController.class)
+                .getAllForQuery(null, limit, (int)count - limit))
+                .slash(uriBuilderResult.getParamString())
+                .withRel(WebLayerConstants.LAST_PAGE));
+    }
+
+    @Override
     protected void addModelLinks(GiftCertificateDto dto) {
         Long modelId = dto.getId();
         dto.add(linkTo(methodOn(GiftCertificateController.class).getById(modelId)).withSelfRel());

@@ -2,6 +2,7 @@ package com.epam.esm.assemblers;
 
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.controller.TagController;
+import com.epam.esm.controller.UserController;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.uri_builder.UriBuilder;
 import com.epam.esm.uri_builder.result.UriBuilderResult;
@@ -43,6 +44,15 @@ public class TagModelAssembler extends AbstractModelAssembler<TagDto> {
                 .getAllForQuery(null, limit, offset + limit))
                 .slash(uriBuilderResult.getParamString())
                 .withRel(WebLayerConstants.NEXT_PAGE));
+    }
+
+    @Override
+    protected void addLastPage(CollectionModel<TagDto> collectionModel, UriBuilderResult uriBuilderResult, long count) {
+        int limit = uriBuilderResult.getLimit();
+        collectionModel.add(linkTo(methodOn(TagController.class)
+                .getAllForQuery(null, limit, (int)count - limit))
+                .slash(uriBuilderResult.getParamString())
+                .withRel(WebLayerConstants.LAST_PAGE));
     }
 
 

@@ -3,6 +3,7 @@ package com.epam.esm.controller;
 import com.epam.esm.assemblers.TagModelAssembler;
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.bundles.TagDtoBundle;
 import com.epam.esm.service.TagService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,7 @@ public class TagControllerTest {
 
     private static final int TEST_LIMIT = 5;
     private static final int TEST_OFFSET = 0;
+    private static final int TEST_COUNT = 1000;
 
     @BeforeAll
     static void init() {
@@ -71,8 +73,8 @@ public class TagControllerTest {
         Map<String, String[]> paramMap = new HashMap<>();
         List<TagDto> listDto = Arrays.asList(defaultTagDto, defaultTagDto);
         when(webRequestMock.getParameterMap()).thenReturn(paramMap);
-        when(serviceMock.findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET)).thenReturn(listDto);
-        when(assemblerMock.toCollectionModel(listDto, TEST_OFFSET,paramMap)).thenReturn(CollectionModel.of(listDto));
+        when(serviceMock.findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET)).thenReturn(new TagDtoBundle(listDto, TEST_COUNT));
+        when(assemblerMock.toCollectionModel(listDto, TEST_OFFSET,TEST_COUNT,paramMap)).thenReturn(CollectionModel.of(listDto));
         ResponseEntity<CollectionModel<TagDto>> expectedResult = ResponseEntity.ok(CollectionModel.of(listDto));
 
         //when
@@ -81,7 +83,7 @@ public class TagControllerTest {
         assertEquals(result, expectedResult);
         verify(webRequestMock).getParameterMap();
         verify(serviceMock).findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET);
-        verify(assemblerMock).toCollectionModel(listDto, TEST_OFFSET,paramMap);
+        verify(assemblerMock).toCollectionModel(listDto, TEST_OFFSET,TEST_COUNT,paramMap);
     }
 
     @Test
@@ -124,21 +126,7 @@ public class TagControllerTest {
         verify(serviceMock).save(createdTag);
     }
 
-    @Test
-    public void testGetMostWidelyUsedTagsOfUser_ReturnHttpStatusOkWithDto() {
-        //given
-        long userId = 1;
-        List<TagDto> listTags = Collections.singletonList(defaultTagDto);
-        when(serviceMock.findMostWidelyUsed(userId)).thenReturn(listTags);
-        when(assemblerMock.toModel(defaultTagDto)).thenReturn(defaultTagDto);
-        ResponseEntity<List<TagDto>> expectedResult = ResponseEntity.ok(listTags);
-        //when
-        ResponseEntity<List<TagDto>> result = tagController.getMostWidelyUsedTagOfUser(userId);
-        //then
-        assertEquals(result, expectedResult);
-        verify(serviceMock).findMostWidelyUsed(userId);
-        verify(assemblerMock).toModel(defaultTagDto);
-    }
+
 
 
 }

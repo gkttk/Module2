@@ -4,6 +4,7 @@ import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.bundles.TagDtoBundle;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.exceptions.TagException;
@@ -92,7 +93,7 @@ public class TagServiceImplTest {
 
 
     @Test
-    public void testFindAllForQuery_ReturnListOfDto_EntitiesArePresentInDb() {
+    public void testFindAllForQuery_BundleOfDto_EntitiesArePresentInDb() {
         //given
         Map<String, String[]> reqParams = Collections.emptyMap();
 
@@ -101,27 +102,37 @@ public class TagServiceImplTest {
 
         when(tagDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(expectedEntitiesList);
         when(modelMapper.map(testEntity, TagDto.class)).thenReturn(testDto);
+        long expectedSize = 3;
+        when(tagDao.count()).thenReturn(expectedSize);
+        TagDtoBundle expectedBundle = new TagDtoBundle(expectedResult, expectedSize);
+
         //when
-        List<TagDto> result = tagService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
+        TagDtoBundle result = tagService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
+        assertEquals(result, expectedBundle);
         verify(tagDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
         verify(modelMapper, times(expectedEntitiesList.size())).map(testEntity, TagDto.class);
-        assertEquals(result, expectedResult);
+        verify(tagDao).count();
     }
 
     @Test
-    public void testFindAllForQuery_ReturnEmptyList_ThereIsNoEntitiesInDb() {
+    public void testFindAllForQuery_BundleWithoutDto_ThereIsNoEntitiesInDb() {
         //given
         Map<String, String[]> reqParams = Collections.emptyMap();
 
         List<Tag> expectedEntitiesList = Collections.emptyList();
         when(tagDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(expectedEntitiesList);
         List<TagDto> expectedResult = Collections.emptyList();
+        long expectedSize = 0L;
+        when(tagDao.count()).thenReturn(expectedSize);
+        TagDtoBundle expectedBundle = new TagDtoBundle(expectedResult, expectedSize);
+
         //when
-        List<TagDto> result = tagService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
+        TagDtoBundle result = tagService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
-        assertEquals(result, expectedResult);
+        assertEquals(result, expectedBundle);
         verify(tagDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
+        verify(tagDao).count();
     }
 
     @Test

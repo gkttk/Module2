@@ -13,6 +13,14 @@ import java.util.Optional;
  * @since 2.0
  */
 public interface UserDao {
+
+    /**
+     * This method get a number of entity in the db.
+     * @return number of User entity in DB.
+     * @since 2.0
+     */
+    long count();
+
     /**
      * This method get User entity by id.
      *

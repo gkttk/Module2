@@ -41,6 +41,17 @@ public class TagDaoTest {
         tag.setName("tag1");
     }
 
+
+    @Test
+    public void testCount_ShouldReturnNumberOfEntity_WhenThereAreEntitiesInDb(){
+        //given
+        long expectedResult = 6L;
+        //when
+        long result = tagDao.count();
+        //then
+        assertEquals(result, expectedResult);
+    }
+
     @Test
     public void testFindById_OptionalWithEntity_EntityWithGivenIdIsPresentInDb() {
         //given

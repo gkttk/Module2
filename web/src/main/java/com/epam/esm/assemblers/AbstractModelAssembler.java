@@ -33,7 +33,7 @@ public abstract class AbstractModelAssembler<T> implements ModelAssembler<T> {
     }
 
     /**
-     * {@link com.epam.esm.assemblers.ModelAssembler#toCollectionModel(Iterable, Integer, Map)} (Object)}
+     * {@link com.epam.esm.assemblers.ModelAssembler#toCollectionModel(Iterable, Integer, long, Map)}
      *
      * @param entities  DTOs for links.
      * @param offset    offset for pagination.
@@ -41,7 +41,7 @@ public abstract class AbstractModelAssembler<T> implements ModelAssembler<T> {
      * @return list of DTOs with links.
      */
     public CollectionModel<T> toCollectionModel(Iterable<T> entities,
-                                                Integer offset, Map<String, String[]> reqParams) {
+                                                Integer offset, long count, Map<String, String[]> reqParams) {
         CollectionModel<T> collectionModel = CollectionModel.of(entities);
         int size = collectionModel.getContent().size();
         if (size == 0) {
@@ -49,16 +49,23 @@ public abstract class AbstractModelAssembler<T> implements ModelAssembler<T> {
         }
         UriBuilderResult uriBuilderResult = uriBuilder.buildRequestParams(reqParams);
         addFirstPage(collectionModel, uriBuilderResult);
-        if (size < 5) {
-            return collectionModel;
+
+        int delta = (int) count - offset;
+        int limit = uriBuilderResult.getLimit();
+        if (limit < delta) {
+            addNextPage(collectionModel, uriBuilderResult);
         }
-        addNextPage(collectionModel, uriBuilderResult);
+
+        addLastPage(collectionModel, uriBuilderResult, count);
+
         return collectionModel;
     }
 
     protected abstract void addFirstPage(CollectionModel<T> collectionModel, UriBuilderResult uriBuilderResult);
 
     protected abstract void addNextPage(CollectionModel<T> collectionModel, UriBuilderResult uriBuilderResult);
+
+    protected abstract void addLastPage(CollectionModel<T> collectionModel, UriBuilderResult uriBuilderResult, long count);
 
     protected abstract void addModelLinks(T dto);
 

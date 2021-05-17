@@ -16,6 +16,7 @@ public class WebLayerConstants {
     public final static String DELETE = "delete";
     public final static String FIRST_PAGE = "firstPage";
     public final static String NEXT_PAGE = "nextPage";
+    public final static String LAST_PAGE = "lastPage";
     public final static String MAKE_ORDER = "make_an_order";
 
     //Codes

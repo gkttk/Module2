@@ -5,6 +5,7 @@ import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.bundles.TagDtoBundle;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.exceptions.TagException;
@@ -51,11 +52,15 @@ public class TagServiceImpl implements TagService {
      * @since 1.0
      */
     @Override
-    public List<TagDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
+    public TagDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
         List<Tag> foundTags = tagDao.findBy(reqParams, limit, offset);
-        return foundTags.stream()
+        List<TagDto> tagDtos = foundTags.stream()
                 .map(entity -> modelMapper.map(entity, TagDto.class))
                 .collect(Collectors.toList());
+        long count = tagDao.count();
+
+
+        return new TagDtoBundle(tagDtos, count);
     }
 
 

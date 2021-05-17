@@ -5,6 +5,7 @@ import com.epam.esm.dao.CertificateTagsDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.bundles.GiftCertificateDtoBundle;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
@@ -50,16 +51,19 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @param reqParams parameters of a request.
      * @param limit     for pagination.
      * @param offset    for pagination.
-     * @return list of GiftCertificateDao.
+     * @return dto which stores information about count of GiftCertificates in DB and GiftCertificateDtos.
      * @since 1.0
      */
     @Override
-    public List<GiftCertificateDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
+    public GiftCertificateDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
 
         List<GiftCertificate> foundCertificates = giftCertificateDao.findBy(reqParams, limit, offset);
-        return foundCertificates.stream()
+        long count = giftCertificateDao.count();
+
+        List<GiftCertificateDto> giftCertificatesDto = foundCertificates.stream()
                 .map(certificate -> modelMapper.map(certificate, GiftCertificateDto.class))
                 .collect(Collectors.toList());
+        return new GiftCertificateDtoBundle(giftCertificatesDto, count);
     }
 
     /**

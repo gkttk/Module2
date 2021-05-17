@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @ExtendWith(SpringExtension.class)
 public abstract class AbstractModelAssemblerTest<T extends RepresentationModel<T>> {
 
+    private static final long TEST_COUNT = 1000;
+
     protected abstract T getDto();
 
     protected abstract ModelAssembler<T> getModelAssembler();
@@ -37,7 +39,7 @@ public abstract class AbstractModelAssemblerTest<T extends RepresentationModel<T
         //given
         ModelAssembler<T> modelAssembler = getModelAssembler();
         //when
-        CollectionModel<T> result = modelAssembler.toCollectionModel(Arrays.asList(getDto(), getDto()), WebLayerConstants.DEFAULT_OFFSET, Collections.emptyMap());
+        CollectionModel<T> result = modelAssembler.toCollectionModel(Arrays.asList(getDto(), getDto()), WebLayerConstants.DEFAULT_OFFSET, TEST_COUNT, Collections.emptyMap());
         //then
         assertFalse(result.getLinks().isEmpty());
     }

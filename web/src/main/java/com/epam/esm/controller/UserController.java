@@ -6,6 +6,8 @@ import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.SaveOrderDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.bundles.OrderDtoBundle;
+import com.epam.esm.dto.bundles.UserDtoBundle;
 import com.epam.esm.dto.groups.SaveGroup;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.TagService;
@@ -66,32 +68,41 @@ public class UserController {
                                                                    @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
                                                                    @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
-        List<UserDto> users = userService.findAllForQuery(reqParams, limit, offset);
-        return ResponseEntity.ok(userAssembler.toCollectionModel(users, offset, reqParams));
+        UserDtoBundle bundle = userService.findAllForQuery(reqParams, limit, offset);
+        List<UserDto> users = bundle.getUsers();
+        long count = bundle.getCount();
+        return ResponseEntity.ok(userAssembler.toCollectionModel(users, offset, count, reqParams));
     }
 
 
     @GetMapping(path = "/{userId}/orders")
-    public ResponseEntity<CollectionModel<OrderDto>> getAllOrdersForUser(WebRequest webRequest, @PathVariable Long userId,
+    public ResponseEntity<CollectionModel<OrderDto>> getAllOrdersForUser(WebRequest webRequest, @PathVariable long userId,
                                                                          @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
                                                                          @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParamMap = new HashMap<>(webRequest.getParameterMap());
-        List<OrderDto> orders = orderService.findAllForQuery(userId, reqParamMap, limit, offset);
+        OrderDtoBundle bundle = orderService.findAllForQuery(userId, reqParamMap, limit, offset);
+        List<OrderDto> orders = bundle.getOrders();
+        long count = bundle.getCount();
+
         CollectionModel<OrderDto> order = CollectionModel.of(orders);
         int resultSize = orders.size();
-        if(resultSize == 0){
+        if (resultSize == 0) {
             return ResponseEntity.ok(order);
         }
         order.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, userId, WebLayerConstants.DEFAULT_LIMIT, 0))
+                .getAllOrdersForUser(null, userId, limit, WebLayerConstants.DEFAULT_OFFSET))
                 .withRel(WebLayerConstants.FIRST_PAGE));
-        if (resultSize < 5){
-            return ResponseEntity.ok(order);
-        }
-        order.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, userId, WebLayerConstants.DEFAULT_LIMIT, offset + WebLayerConstants.DEFAULT_LIMIT))
-                .withRel(WebLayerConstants.NEXT_PAGE));
 
+       int delta = (int)count-offset;
+       if (limit < delta){
+           order.add(linkTo(methodOn(UserController.class)
+                   .getAllOrdersForUser(null, userId, limit, offset + limit))
+                   .withRel(WebLayerConstants.NEXT_PAGE));
+       }
+
+        order.add(linkTo(methodOn(UserController.class)
+                .getAllOrdersForUser(null, userId, limit, (int)count - limit))
+                .withRel(WebLayerConstants.LAST_PAGE));
         return ResponseEntity.ok(order);
     }
 
@@ -116,7 +127,6 @@ public class UserController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(tagsWithLinks);
     }
-
 
 
 }

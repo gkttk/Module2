@@ -4,6 +4,7 @@ import com.epam.esm.assemblers.GiftCertificateModelAssembler;
 import com.epam.esm.assemblers.ModelAssembler;
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.bundles.GiftCertificateDtoBundle;
 import com.epam.esm.dto.groups.PatchGroup;
 import com.epam.esm.dto.groups.UpdateGroup;
 import com.epam.esm.service.GiftCertificateService;
@@ -47,8 +48,10 @@ public class GiftCertificateController {
                                                                               @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
                                                                               @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> parameterMap = webRequest.getParameterMap();
-        List<GiftCertificateDto> certificates = giftCertificateService.findAllForQuery(parameterMap, limit, offset);
-        return ResponseEntity.ok(assembler.toCollectionModel(certificates, offset, parameterMap));
+        GiftCertificateDtoBundle bundle = giftCertificateService.findAllForQuery(parameterMap, limit, offset);
+        List<GiftCertificateDto> certificates = bundle.getGiftCertificates();
+        long count = bundle.getCount();
+        return ResponseEntity.ok(assembler.toCollectionModel(certificates, offset, count, parameterMap));
     }
 
     @GetMapping("/{id}")

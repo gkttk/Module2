@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.bundles.UserDtoBundle;
 import com.epam.esm.entity.User;
 import com.epam.esm.exceptions.GiftCertificateException;
 import com.epam.esm.exceptions.UserException;
@@ -57,11 +58,15 @@ public class UserServiceImpl implements UserService {
      * @since 2.0
      */
     @Override
-    public List<UserDto> findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
+    public UserDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
         List<User> foundUsers = userDao.findBy(reqParams, limit, offset);
-        return foundUsers.stream()
+        List<UserDto> userDtos = foundUsers.stream()
                 .map(entity -> modelMapper.map(entity, UserDto.class))
                 .collect(Collectors.toList());
+        long count = userDao.count();
+
+
+        return new UserDtoBundle(userDtos, count);
     }
 
     /**

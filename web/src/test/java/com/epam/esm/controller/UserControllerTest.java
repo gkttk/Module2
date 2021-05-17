@@ -3,11 +3,14 @@ package com.epam.esm.controller;
 import com.epam.esm.assemblers.ModelAssembler;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.SaveOrderDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.bundles.OrderDtoBundle;
+import com.epam.esm.dto.bundles.UserDtoBundle;
 import com.epam.esm.service.OrderService;
+import com.epam.esm.service.TagService;
 import com.epam.esm.service.UserService;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,20 +48,26 @@ public class UserControllerTest {
     private OrderService orderServiceMock;
 
     @Mock
+    private TagService tagServiceMock;
+
+    @Mock
     private WebRequest webRequestMock;
 
     @InjectMocks
     private UserController userController;
     private static UserDto userDto;
     private static OrderDto orderDto;
+    private static TagDto tagDto;
 
     private static final int TEST_LIMIT = 5;
     private static final int TEST_OFFSET = 0;
+    private static final int TEST_COUNT = 1000;
 
     @BeforeAll
     static void init() {
         userDto = new UserDto(1L, "log", "pass", "ADMIN");
         orderDto = new OrderDto(1L, BigDecimal.TEN, null, null);
+        tagDto = new TagDto(100L, "testTag");
     }
 
     @Test
@@ -82,9 +91,9 @@ public class UserControllerTest {
         Map<String, String[]> paramMap = new HashMap<>();
         List<UserDto> listDto = Arrays.asList(userDto, userDto);
         when(webRequestMock.getParameterMap()).thenReturn(paramMap);
-        when(userServiceMock.findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET)).thenReturn(listDto);
+        when(userServiceMock.findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET)).thenReturn(new UserDtoBundle(listDto, TEST_COUNT));
         CollectionModel<UserDto> collectionModel = CollectionModel.of(listDto);
-        when(assemblerMock.toCollectionModel(listDto, TEST_OFFSET,paramMap)).thenReturn(collectionModel);
+        when(assemblerMock.toCollectionModel(listDto, TEST_OFFSET, TEST_COUNT, paramMap)).thenReturn(collectionModel);
         ResponseEntity<CollectionModel<UserDto>> expectedResult = ResponseEntity.ok(collectionModel);
 
         //when
@@ -93,7 +102,7 @@ public class UserControllerTest {
         assertEquals(result, expectedResult);
         verify(webRequestMock).getParameterMap();
         verify(userServiceMock).findAllForQuery(paramMap, TEST_LIMIT, TEST_OFFSET);
-        verify(assemblerMock).toCollectionModel(listDto, TEST_OFFSET,paramMap);
+        verify(assemblerMock).toCollectionModel(listDto, TEST_OFFSET, TEST_COUNT, paramMap);
     }
 
     @Test
@@ -101,7 +110,7 @@ public class UserControllerTest {
         long userId = userDto.getId();
         List<OrderDto> listDto = Arrays.asList(orderDto, orderDto);
 
-        when(orderServiceMock.findAllForQuery(eq(userId),  anyMap(), eq(TEST_LIMIT), eq(TEST_OFFSET))).thenReturn(listDto);
+        when(orderServiceMock.findAllForQuery(eq(userId), anyMap(), eq(TEST_LIMIT), eq(TEST_OFFSET))).thenReturn(new OrderDtoBundle(listDto, TEST_COUNT));
         //when
         ResponseEntity<CollectionModel<OrderDto>> result = userController.getAllOrdersForUser(webRequestMock, userId, TEST_LIMIT, TEST_OFFSET);
         //then
@@ -109,7 +118,7 @@ public class UserControllerTest {
             assertAll(() -> assertEquals(order.getId(), orderDto.getId()),
                     () -> assertEquals(order.getCost(), orderDto.getCost()));
         });
-        verify(orderServiceMock).findAllForQuery(eq(userId),anyMap(), eq(TEST_LIMIT), eq(TEST_OFFSET));
+        verify(orderServiceMock).findAllForQuery(eq(userId), anyMap(), eq(TEST_LIMIT), eq(TEST_OFFSET));
     }
 
     @Test
@@ -142,6 +151,22 @@ public class UserControllerTest {
         assertEquals(result, expected);
         verify(userServiceMock).save(userDto);
         verify(assemblerMock).toModel(userDto);
+    }
+
+    @Test
+    public void testGetMostWidelyUsedTagsOfUser_ReturnHttpStatusOkWithDto() {
+        //given
+        long userId = 1;
+        List<TagDto> listTags = Collections.singletonList(tagDto);
+        when(tagServiceMock.findMostWidelyUsed(userId)).thenReturn(listTags);
+        when(assemblerMock.toModel(tagDto)).thenReturn(tagDto);
+        ResponseEntity<List<TagDto>> expectedResult = ResponseEntity.ok(listTags);
+        //when
+        ResponseEntity<List<TagDto>> result = userController.getMostWidelyUsedTagOfUser(userId);
+        //then
+        assertEquals(result, expectedResult);
+        verify(tagServiceMock).findMostWidelyUsed(userId);
+        verify(assemblerMock).toModel(tagDto);
     }
 
 }

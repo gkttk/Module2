@@ -42,6 +42,15 @@ public class UserModelAssembler extends AbstractModelAssembler<UserDto> {
     }
 
     @Override
+    protected void addLastPage(CollectionModel<UserDto> collectionModel, UriBuilderResult uriBuilderResult, long count) {
+        int limit = uriBuilderResult.getLimit();
+        collectionModel.add(linkTo(methodOn(UserController.class)
+                .getAllForQuery(null, limit, (int)count - limit))
+                .slash(uriBuilderResult.getParamString())
+                .withRel(WebLayerConstants.LAST_PAGE));
+    }
+
+    @Override
     protected void addModelLinks(UserDto dto) {
         Long id = dto.getId();
         dto.add(linkTo(methodOn(UserController.class).getById(id)).withSelfRel());

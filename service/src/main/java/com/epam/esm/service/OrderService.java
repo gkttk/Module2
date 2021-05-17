@@ -2,6 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.SaveOrderDto;
+import com.epam.esm.dto.bundles.OrderDtoBundle;
 
 import java.util.List;
 import java.util.Map;
@@ -44,12 +45,12 @@ public interface OrderService {
     /**
      * Get list of OrderDto according to passed request parameters.
      *
+     * @param userId    id of User.
      * @param reqParams request parameters.
      * @param limit     for pagination.
      * @param offset    for pagination.
-     * @param userId    id of User.
-     * @return list of OrderDto.
+     * @return dto which stores information about number of Orders in DB and OrderDtos.
      * @since 2.0
      */
-    List<OrderDto> findAllForQuery(long userId, Map<String, String[]> reqParams, int limit, int offset);
+    OrderDtoBundle findAllForQuery(long userId, Map<String, String[]> reqParams, int limit, int offset);
 }

@@ -1,5 +1,6 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.entity.Order;
 import com.epam.esm.querybuilder.QueryBuilder;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,19 @@ public class OrderDaoImpl implements OrderDao {
     public OrderDaoImpl(EntityManager entityManager, QueryBuilder<Order> queryBuilder) {
         this.entityManager = entityManager;
         this.queryBuilder = queryBuilder;
+    }
+
+    /**
+     * This method get a number of entity in the db.
+     * @return number of Order entity in DB for User with passed userId.
+     * @param userId Id of User.
+     * @since 2.0
+     */
+    @Override
+    public long count(long userId) {
+        TypedQuery<Long> query = entityManager.createQuery(ApplicationConstants.COUNT_ORDER_BY_USER_ID_QUERY, Long.class);
+        query.setParameter("userId", userId);
+        return query.getSingleResult();
     }
 
     /**

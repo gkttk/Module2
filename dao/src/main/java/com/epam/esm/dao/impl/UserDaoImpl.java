@@ -49,6 +49,17 @@ public class UserDaoImpl implements UserDao {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * This method get a number of entity in the db.
+     * @return number of User entity in DB.
+     * @since 2.0
+     */
+    @Override
+    public long count() {
+        TypedQuery<Long> query = entityManager.createQuery(ApplicationConstants.COUNT_USER_QUERY, Long.class);
+        return query.getSingleResult();
+
+    }
 
     /**
      * This method get User entity by id.

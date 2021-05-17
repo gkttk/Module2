@@ -32,6 +32,17 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     /**
+     * This method get a number of entity in the db.
+     * @return number of GiftCertificate entity in DB.
+     * @since 2.0
+     */
+    @Override
+    public long count() {
+        TypedQuery<Long> query = entityManager.createQuery(ApplicationConstants.COUNT_GC_QUERY, Long.class);
+        return query.getSingleResult();
+    }
+
+    /**
      * This method combines all getList queries.
      *
      * @param reqParams is a map of all request parameters.

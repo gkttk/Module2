@@ -11,6 +11,7 @@ import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,7 @@ public class GiftCertificateController {
         this.giftCertificateService = giftCertificateService;
         this.assembler = assembler;
     }
+
 
     @GetMapping
     public ResponseEntity<CollectionModel<GiftCertificateDto>> getAllForQuery(WebRequest webRequest,

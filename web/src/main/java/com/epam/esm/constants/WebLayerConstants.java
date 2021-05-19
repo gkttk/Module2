@@ -30,4 +30,9 @@ public class WebLayerConstants {
     public final static int DEFAULT_VALIDATION_ERROR_CODE = 50000;
     public final static int MISMATCH_PARAMETER_ERROR_CODE = 50001;
 
+
+    //security
+    public static final String AUTH_HEADER = "Authorization";
+    public static final String BEARER_PREFIX = "Bearer";
+
 }

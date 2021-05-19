@@ -105,10 +105,14 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Optional<User> findByLogin(String login) {
         TypedQuery<User> query = entityManager.createQuery(ApplicationConstants.GET_USER_BY_LOGIN, User.class)
-                .setParameter(ApplicationConstants.LOGIN_NAME_FIELD, login);
-        Optional<User> userOpt = query.getResultStream().findFirst();
-        userOpt.ifPresent(entityManager::detach);
+                .setParameter(ApplicationConstants.LOGIN_NAME_FIELD, login).setParameter("login", login);
+        User user = query.getSingleResult();
+        if (user != null){
+           entityManager.detach(user);
+           return Optional.of(user);
+        }
 
-        return userOpt;
+
+        return Optional.empty();
     }
 }

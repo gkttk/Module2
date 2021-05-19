@@ -36,6 +36,21 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * This method gets User entity from dao layer with given login and converts it to UserDto.
+     *
+     * @param login login of necessary entity.
+     * @return UserDto.
+     * @since 3.0
+     */
+    @Override
+    public UserDto findByLogin(String login) {
+        User foundUser = userDao.findByLogin(login)
+                .orElseThrow(() -> new UserException(String.format("User with login : %s was not found", login),
+                        ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, login));
+        return modelMapper.map(foundUser, UserDto.class);
+    }
+
+    /**
      * This method gets User entity from dao layer with given id and converts it to UserDto.
      *
      * @param id id of necessary entity.

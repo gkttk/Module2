@@ -14,6 +14,9 @@ import java.util.Map;
  */
 public interface UserService {
 
+
+    UserDto findByLogin(String login);
+
     /**
      * Find User by id and map it to UserDto.
      *

@@ -52,7 +52,28 @@ public class UserDaoTest {
     }
 
     @Test
-    public void testCount_ShouldReturnNumberOfEntity_WhenThereAreEntitiesInDb(){
+    public void testFindByLogin_ShouldReturnOptionalWithUser_WhenUserExistsInDb() {
+        //given
+        String login = "u2Login";
+        //when
+        Optional<User> result = userDao.findByLogin(login);
+        //then
+        assertTrue(result.isPresent());
+        result.ifPresent(userResult -> assertEquals(userResult, user3));
+    }
+
+    @Test
+    public void testFindByLogin_ShouldReturnEmptyOptional_WhenUserDoesNotExistInDb() {
+        //given
+        String login = "randomLogin";
+        //when
+        Optional<User> result = userDao.findByLogin(login);
+        //then
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void testCount_ShouldReturnNumberOfEntity_WhenThereAreEntitiesInDb() {
         //given
         long expectedResult = 3L;
         //when

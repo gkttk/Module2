@@ -1,6 +1,7 @@
 package com.epam.esm.dao;
 
 import com.epam.esm.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,9 @@ import java.util.Optional;
  *
  * @since 2.0
  */
-public interface UserDao {
+public interface UserDao{
+
+
 
     /**
      * This method get a number of entity in the db.

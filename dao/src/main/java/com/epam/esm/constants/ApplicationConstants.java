@@ -96,4 +96,15 @@ public final class ApplicationConstants {
 
     //Parameter parser
     public static final String REGEX_FOR_SPLIT_PARAMETERS = ",(?!$)";
+
+    //JWT
+    public static final String ACCESS_TOKEN_SECRET = "$2a$04$dt10Yo.GcZ3SrqBzYIPrr.j1TvSkbjSFd.P.vR8D0H2BxE51.SOL6";
+    public static final String REFRESH_TOKEN_SECRET = "$2a$04$a3SxC0GgQv0srAfaOeDdO..qM6QD0CAfApBhbhhBz5dSMXP0gElHG";
+    public static final long ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS = 600000;
+    public static final long REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS = 3600000;
+
+    public static final String AUTH_HEADER = "Authorization";
+    public static final String BEARER_PREFIX = "Bearer";
+
+
 }

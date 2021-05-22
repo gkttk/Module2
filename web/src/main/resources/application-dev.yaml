@@ -7,7 +7,7 @@ spring:
   datasource:
     hikari:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://localhost:3306/gifts
+      jdbc-url: jdbc:mysql://localhost:3306/gifts?serverTimezone=Europe/Moscow
       maximum-pool-size: 15
       password: admin
       username: root

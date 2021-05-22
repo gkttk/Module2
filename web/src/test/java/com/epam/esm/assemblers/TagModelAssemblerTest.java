@@ -1,7 +1,7 @@
 package com.epam.esm.assemblers;
 
 
-import com.epam.esm.dto.TagDto;
+import com.epam.esm.domain.dto.TagDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 

@@ -1,14 +1,15 @@
 package com.epam.esm.exceptionhandling;
 
 import com.epam.esm.constants.WebLayerConstants;
+import com.epam.esm.domain.exceptions.GiftApplicationException;
+import com.epam.esm.domain.exceptions.GiftCertificateException;
+import com.epam.esm.domain.exceptions.OrderException;
+import com.epam.esm.domain.exceptions.ResponseErrorNotFoundException;
+import com.epam.esm.domain.exceptions.TagException;
+import com.epam.esm.domain.exceptions.UserException;
 import com.epam.esm.exceptionhandling.error.ErrorResult;
 import com.epam.esm.exceptionhandling.error.enums.ResponseErrorEnum;
-import com.epam.esm.exceptions.GiftApplicationException;
-import com.epam.esm.exceptions.GiftCertificateException;
-import com.epam.esm.exceptions.OrderException;
-import com.epam.esm.exceptions.ResponseErrorNotFoundException;
-import com.epam.esm.exceptions.TagException;
-import com.epam.esm.exceptions.UserException;
+import com.epam.esm.security.exceptions.JwtAuthenticationException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -49,7 +50,8 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorResult(errorCode, Collections.singletonList(String.format(message, params))), error.getStatus());
     }
 
-    @ExceptionHandler(value = {GiftCertificateException.class, TagException.class, OrderException.class, UserException.class})
+    @ExceptionHandler(value = {GiftCertificateException.class, TagException.class, OrderException.class, UserException.class,
+            JwtAuthenticationException.class})
     public ResponseEntity<ErrorResult> handleGiftCertificateException(GiftApplicationException exception, Locale locale) {
         return getResponseEntity(exception.getErrorCode(), exception.getParams(), locale);
     }

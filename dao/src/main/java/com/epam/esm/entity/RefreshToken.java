@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -29,8 +31,9 @@ public class RefreshToken {
     @Column(name = "refresh_token", nullable = false)
     private String refreshToken;
 
-    @CreationTimestamp
+
     @Column(name = "expired_time", nullable = false)
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date expiredTime;
 
 

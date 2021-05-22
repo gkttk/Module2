@@ -2,7 +2,7 @@ package com.epam.esm.assemblers;
 
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.controller.GiftCertificateController;
-import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.domain.dto.GiftCertificateDto;
 import com.epam.esm.uri_builder.UriBuilder;
 import com.epam.esm.uri_builder.result.UriBuilderResult;
 import org.springframework.beans.factory.annotation.Autowired;

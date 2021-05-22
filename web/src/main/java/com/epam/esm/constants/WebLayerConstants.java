@@ -29,10 +29,15 @@ public class WebLayerConstants {
     public final static int TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE = 42000;
     public final static int DEFAULT_VALIDATION_ERROR_CODE = 50000;
     public final static int MISMATCH_PARAMETER_ERROR_CODE = 50001;
-
+    public final static int REFRESH_TOKEN_EXPIRED = 30010;
+    public final static int ACCESS_TOKEN_EXPIRED = 30011;
+    public final static int ACCESS_TOKEN_INVALID = 30200;
 
     //security
     public static final String AUTH_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer";
+    public static final String ALL_URL_REGEX_PATTERN = "/**";
+    public static final String ALL_AUTH_URL_REGEX_PATTERN = "/auth/**";
+
 
 }

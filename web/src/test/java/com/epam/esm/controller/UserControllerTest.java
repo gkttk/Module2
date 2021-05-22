@@ -1,15 +1,15 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.assemblers.ModelAssembler;
-import com.epam.esm.dto.OrderDto;
-import com.epam.esm.dto.SaveOrderDto;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.UserDto;
-import com.epam.esm.dto.bundles.OrderDtoBundle;
-import com.epam.esm.dto.bundles.UserDtoBundle;
-import com.epam.esm.service.OrderService;
-import com.epam.esm.service.TagService;
-import com.epam.esm.service.UserService;
+import com.epam.esm.domain.dto.OrderDto;
+import com.epam.esm.domain.dto.SaveOrderDto;
+import com.epam.esm.domain.dto.TagDto;
+import com.epam.esm.domain.dto.UserDto;
+import com.epam.esm.domain.dto.bundles.OrderDtoBundle;
+import com.epam.esm.domain.dto.bundles.UserDtoBundle;
+import com.epam.esm.domain.service.OrderService;
+import com.epam.esm.domain.service.TagService;
+import com.epam.esm.domain.service.UserService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

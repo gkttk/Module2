@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Default implementation of {@link com.epam.esm.dao.UserDao} interface.
@@ -105,8 +106,8 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Optional<User> findByLogin(String login) {
         TypedQuery<User> query = entityManager.createQuery(ApplicationConstants.GET_USER_BY_LOGIN, User.class)
-                .setParameter(ApplicationConstants.LOGIN_NAME_FIELD, login).setParameter("login", login);
-        User user = query.getSingleResult();
+                .setParameter(ApplicationConstants.LOGIN_NAME_FIELD, login);
+        User user = query.getResultStream().findAny().orElse(null);
         if (user != null){
            entityManager.detach(user);
            return Optional.of(user);

@@ -93,7 +93,10 @@ public final class ApplicationConstants {
     public final static int CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE = 42010;
     public final static int USER_SUCH_LOGIN_EXISTS_CODE = 42011;
     public final static int TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE = 42000;
-
+    public final static int REFRESH_TOKEN_EXPIRED = 30010;
+    public final static int ACCESS_TOKEN_EXPIRED = 30011;
+    public final static int ACCESS_TOKEN_INVALID = 30200;
+    public final static int ACCESS_DENIED_ERROR_CODE = 40343;
     //Parameter parser
     public static final String REGEX_FOR_SPLIT_PARAMETERS = ",(?!$)";
 

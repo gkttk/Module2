@@ -2,11 +2,11 @@ package com.epam.esm.controller;
 
 import com.epam.esm.assemblers.ModelAssembler;
 import com.epam.esm.constants.WebLayerConstants;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.bundles.TagDtoBundle;
-import com.epam.esm.dto.groups.PatchGroup;
-import com.epam.esm.dto.groups.UpdateGroup;
-import com.epam.esm.service.TagService;
+import com.epam.esm.domain.dto.TagDto;
+import com.epam.esm.domain.dto.bundles.TagDtoBundle;
+import com.epam.esm.domain.dto.groups.PatchGroup;
+import com.epam.esm.domain.dto.groups.UpdateGroup;
+import com.epam.esm.domain.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;

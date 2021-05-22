@@ -2,10 +2,10 @@ package com.epam.esm.controller;
 
 
 import com.epam.esm.assemblers.GiftCertificateModelAssembler;
-import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.bundles.GiftCertificateDtoBundle;
-import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.domain.dto.GiftCertificateDto;
+import com.epam.esm.domain.dto.TagDto;
+import com.epam.esm.domain.dto.bundles.GiftCertificateDtoBundle;
+import com.epam.esm.domain.service.GiftCertificateService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -14,7 +14,23 @@ import java.util.Map;
  */
 public interface UserService {
 
+    /**
+     * Find User by login and password and map it to UserDto.
+     *
+     * @param login User login.
+     * @param password User password.
+     * @return UserDto
+     * @since 4.0
+     */
+    UserDto findByLoginAndPassword(String login, String password);
 
+    /**
+     * Find User by login and map it to UserDto.
+     *
+     * @param login User login.
+     * @return UserDto
+     * @since 3.0
+     */
     UserDto findByLogin(String login);
 
     /**

@@ -10,7 +10,7 @@ import com.epam.esm.domain.exceptions.UserException;
 import com.epam.esm.exceptionhandling.error.ErrorResult;
 import com.epam.esm.exceptionhandling.error.enums.ResponseErrorEnum;
 import com.epam.esm.security.exceptions.GiftApplicationAccessDeniedException;
-import com.epam.esm.security.exceptions.GiftApplicationUnauthorizedException;
+import com.epam.esm.security.exceptions.GiftApplicationAuthorizationException;
 import com.epam.esm.security.exceptions.JwtAuthenticationException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = {GiftCertificateException.class, TagException.class, OrderException.class, UserException.class,
-            JwtAuthenticationException.class, GiftApplicationAccessDeniedException.class, GiftApplicationUnauthorizedException.class})
+            JwtAuthenticationException.class, GiftApplicationAccessDeniedException.class, GiftApplicationAuthorizationException.class})
     public ResponseEntity<ErrorResult> handleGiftCertificateException(GiftApplicationException exception, Locale locale) {
         return getResponseEntity(exception.getErrorCode(), exception.getParams(), locale);
     }

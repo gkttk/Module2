@@ -3,11 +3,14 @@ package com.epam.esm.controller;
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.domain.dto.login.JwtTokenDto;
 import com.epam.esm.domain.dto.login.LoginPasswordDto;
+import com.epam.esm.domain.exceptions.GiftApplicationException;
 import com.epam.esm.security.JwtTokenProvider;
+import com.epam.esm.security.exceptions.GiftApplicationAuthorizationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,9 +35,15 @@ public class AuthenticateController {
     public ResponseEntity<JwtTokenDto> authenticate(@RequestBody LoginPasswordDto loginPasswordDto) {
         String login = loginPasswordDto.getLogin();
         String password = loginPasswordDto.getPassword();
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, password));
-        JwtTokenDto token = tokenProvider.createToken(login);
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, password));
+            JwtTokenDto token = tokenProvider.createToken(login);
+            return new ResponseEntity<>(token, HttpStatus.OK);
+        } catch (BadCredentialsException ex) {
+            throw new GiftApplicationAuthorizationException("Invalid credentials", WebLayerConstants.INVALID_CREDENTIALS_ERROR_CODE,
+                    login, password);
+        }
+
     }
 
     @PostMapping("/refresh_token")

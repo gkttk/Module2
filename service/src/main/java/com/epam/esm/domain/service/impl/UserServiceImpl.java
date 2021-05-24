@@ -40,10 +40,27 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * This method gets User entity from dao layer with given login and converts it to UserDto.
+     * Find User by login and password and map it to UserDto.
      *
-     * @param login login of necessary entity.
-     * @return UserDto.
+     * @param login User login.
+     * @param password User password.
+     * @return UserDto
+     * @since 4.0
+     */
+    @Override
+    public UserDto findByLoginAndPassword(String login, String password) {
+        User foundUser = userDao.findByLoginAndPassword(login, password)
+                .orElseThrow(() -> new UserException(String.format("Invalid user credentials: login: %s, password: %s.",
+                        login, password), ApplicationConstants.INVALID_CREDENTIALS_ERROR_CODE, login, password));
+
+        return modelMapper.map(foundUser, UserDto.class);
+    }
+
+    /**
+     * Find User by login and map it to UserDto.
+     *
+     * @param login User login.
+     * @return UserDto
      * @since 3.0
      */
     @Override

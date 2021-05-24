@@ -1,11 +1,13 @@
-package com.epam.esm.dao;
+package com.epam.esm.dao.relation;
 
+
+import com.epam.esm.dao.relation.impl.CertificateTagsDaoImpl;
 
 /**
  * This interface represents an api to interact with the link between GiftCertificate entity
  * and Tag entity in database.
  * <p>
- * Implementations : {@link com.epam.esm.dao.impl.CertificateTagsDaoImpl} classes.
+ * Implementations : {@link CertificateTagsDaoImpl} classes.
  *
  * @since 1.0
  */

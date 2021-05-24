@@ -1,7 +1,8 @@
 package com.epam.esm.domain.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.UserDao;
+import com.epam.esm.dao.domain.CriteriaFindAllDao;
+import com.epam.esm.dao.domain.UserDao;
 import com.epam.esm.domain.dto.UserDto;
 import com.epam.esm.domain.dto.bundles.UserDtoBundle;
 import com.epam.esm.entity.User;
@@ -10,6 +11,7 @@ import com.epam.esm.domain.exceptions.UserException;
 import com.epam.esm.domain.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,11 +29,13 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
+    private final CriteriaFindAllDao<User> findAllDao;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, ModelMapper modelMapper) {
+    public UserServiceImpl(UserDao userDao, @Qualifier("userCriteriaFindAllDao") CriteriaFindAllDao<User> findAllDao, ModelMapper modelMapper) {
         this.userDao = userDao;
+        this.findAllDao = findAllDao;
         this.modelMapper = modelMapper;
     }
 
@@ -74,7 +78,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
-        List<User> foundUsers = userDao.findBy(reqParams, limit, offset);
+        List<User> foundUsers = findAllDao.findBy(reqParams, limit, offset);
         List<UserDto> userDtos = foundUsers.stream()
                 .map(entity -> modelMapper.map(entity, UserDto.class))
                 .collect(Collectors.toList());

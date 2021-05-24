@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @since 2.0
  */
-@Component
+@Component("giftCertificateQueryBuilder")
 public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertificate> implements QueryBuilder<GiftCertificate> {
 
 

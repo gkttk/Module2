@@ -1,7 +1,6 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.entity.Order;
 import org.junit.jupiter.api.BeforeAll;

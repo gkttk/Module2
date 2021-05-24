@@ -27,7 +27,6 @@ public abstract class AbstractQueryBuilder<T> {
     protected final EntityManager entityManager;
     protected final ParameterParser parser;
 
-    @Autowired
     protected AbstractQueryBuilder(EntityManager entityManager, ParameterParser parser) {
         this.entityManager = entityManager;
         this.parser = parser;

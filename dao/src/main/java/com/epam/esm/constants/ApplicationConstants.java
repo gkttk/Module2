@@ -23,6 +23,21 @@ public final class ApplicationConstants {
     public final static String GET_TAG_BY_NAME = "SELECT t FROM Tag t WHERE t.name =:name";
     public final static String COUNT_TAG_QUERY = "SELECT count(t.id) FROM Tag t";
 
+    public final static String FIND_MAX_WIDELY_USED_QUERY = "SELECT t.id, t.name from tag t " +
+            "JOIN certificates_tags ct on t.id = ct.tag_id " +
+            "JOIN orders_certificates oc on ct.certificate_id = oc.certificate_id " +
+            "JOIN users_orders uo on oc.order_id = uo.order_id " +
+            "WHERE uo.user_id = :userId " +
+            "GROUP BY t.id " +
+            "HAVING count(t.id)  = (SELECT count(t.id) as c from tag t " +
+            "JOIN certificates_tags ct on t.id = ct.tag_id " +
+            "JOIN orders_certificates oc on ct.certificate_id = oc.certificate_id " +
+            "JOIN users_orders uo on oc.order_id = uo.order_id " +
+            "WHERE uo.user_id = :userId " +
+            "GROUP BY t.id order by c desc LIMIT 1)";
+
+
+
     //User queries
     public final static String GET_USER_BY_LOGIN = "SELECT u FROM User u WHERE u.login =:login";
     public final static String COUNT_USER_QUERY = "SELECT count(u.id) FROM User u";

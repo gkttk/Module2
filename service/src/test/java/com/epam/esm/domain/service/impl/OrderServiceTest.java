@@ -1,8 +1,5 @@
 package com.epam.esm.domain.service.impl;
 
-import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.OrderDao;
-import com.epam.esm.dao.UserDao;
 import com.epam.esm.domain.dto.GiftCertificateDto;
 import com.epam.esm.domain.dto.OrderDto;
 import com.epam.esm.domain.dto.SaveOrderDto;

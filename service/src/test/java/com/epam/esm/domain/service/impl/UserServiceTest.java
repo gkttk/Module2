@@ -1,6 +1,5 @@
 package com.epam.esm.domain.service.impl;
 
-import com.epam.esm.dao.UserDao;
 import com.epam.esm.domain.dto.UserDto;
 import com.epam.esm.domain.dto.bundles.UserDtoBundle;
 import com.epam.esm.entity.User;

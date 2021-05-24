@@ -1,18 +1,20 @@
 package com.epam.esm.domain.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.CertificateTagsDao;
-import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.relation.CertificateTagsDao;
+import com.epam.esm.dao.domain.CriteriaFindAllDao;
+import com.epam.esm.dao.domain.GiftCertificateDao;
+import com.epam.esm.dao.domain.TagDao;
 import com.epam.esm.domain.dto.GiftCertificateDto;
-import com.epam.esm.domain.dto.bundles.GiftCertificateDtoBundle;
 import com.epam.esm.domain.dto.TagDto;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.domain.dto.bundles.GiftCertificateDtoBundle;
 import com.epam.esm.domain.exceptions.GiftCertificateException;
 import com.epam.esm.domain.service.GiftCertificateService;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,14 +36,19 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final ModelMapper modelMapper;
     private final GiftCertificateDao giftCertificateDao;
     private final TagDao tagDao;
+    private final CriteriaFindAllDao<GiftCertificate> findAllDao;
+
     private final CertificateTagsDao certificateTagsDao;
 
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, ModelMapper modelMapper,
-                                      TagDao tagDao, CertificateTagsDao certificateTagsDao) {
+                                      TagDao tagDao,
+                                      @Qualifier("giftCertificateCriteriaFindAllDao") CriteriaFindAllDao<GiftCertificate> findAllDao,
+                                      CertificateTagsDao certificateTagsDao) {
         this.giftCertificateDao = giftCertificateDao;
         this.modelMapper = modelMapper;
         this.tagDao = tagDao;
+        this.findAllDao = findAllDao;
         this.certificateTagsDao = certificateTagsDao;
     }
 
@@ -57,7 +64,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public GiftCertificateDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
 
-        List<GiftCertificate> foundCertificates = giftCertificateDao.findBy(reqParams, limit, offset);
+        List<GiftCertificate> foundCertificates = findAllDao.findBy(reqParams, limit, offset);
         long count = giftCertificateDao.count();
 
         List<GiftCertificateDto> giftCertificatesDto = foundCertificates.stream()
@@ -153,7 +160,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         //set to saving certificate collection of nonexistent tags in db
         giftCertificate.setTags(tagsForSaving);
 
-        GiftCertificate updatedCertificate = giftCertificateDao.update(giftCertificate);
+        GiftCertificate updatedCertificate = giftCertificateDao.save(giftCertificate);
 
         tagsForLinking.forEach(tag -> certificateTagsDao.save(updatedCertificate.getId(), tag.getId()));
 
@@ -180,7 +187,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         List<TagDto> passedTags = passedDto.getTags();
         if (passedTags == null) {
-            GiftCertificate patchedCertificate = giftCertificateDao.update(foundCert);
+            GiftCertificate patchedCertificate = giftCertificateDao.save(foundCert);
             return modelMapper.map(patchedCertificate, GiftCertificateDto.class);
         }
 
@@ -192,7 +199,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         fillTagLists(tagsForSaving, tagsForLinking, passedTags);
 
         foundCert.setTags(tagsForSaving);
-        GiftCertificate patchedCertificate = giftCertificateDao.update(foundCert);//update
+        GiftCertificate patchedCertificate = giftCertificateDao.save(foundCert);//update
 
         tagsForLinking.forEach(tag -> certificateTagsDao.save(patchedCertificate.getId(), tag.getId()));
 
@@ -213,8 +220,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public void delete(long id) {
         certificateTagsDao.deleteAllTagLinksForCertificateId(id);
-        boolean isDeleted = giftCertificateDao.delete(id);
-        if (!isDeleted) {
+        if (giftCertificateDao.existsById(id)) {
+            giftCertificateDao.deleteById(id);
+        } else {
             throw new GiftCertificateException(String.format("GiftCertificate with id: %d doesn't exist in DB", id),
                     ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, id);
         }

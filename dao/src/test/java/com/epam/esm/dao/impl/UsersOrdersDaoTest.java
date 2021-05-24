@@ -1,7 +1,6 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.dao.UserDao;
-import com.epam.esm.dao.UsersOrdersDao;
+import com.epam.esm.dao.relation.UsersOrdersDao;
 import com.epam.esm.dao.config.DaoTestConfig;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;

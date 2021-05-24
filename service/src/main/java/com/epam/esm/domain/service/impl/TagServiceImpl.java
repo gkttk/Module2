@@ -1,18 +1,20 @@
 package com.epam.esm.domain.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.CertificateTagsDao;
-import com.epam.esm.dao.TagDao;
-import com.epam.esm.dao.UserDao;
+import com.epam.esm.dao.relation.CertificateTagsDao;
+import com.epam.esm.dao.domain.CriteriaFindAllDao;
+import com.epam.esm.dao.domain.TagDao;
+import com.epam.esm.dao.domain.UserDao;
 import com.epam.esm.domain.dto.TagDto;
 import com.epam.esm.domain.dto.bundles.TagDtoBundle;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
 import com.epam.esm.domain.exceptions.TagException;
 import com.epam.esm.domain.exceptions.UserException;
 import com.epam.esm.domain.service.TagService;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,13 +35,16 @@ public class TagServiceImpl implements TagService {
     private final UserDao userDao;
     private final ModelMapper modelMapper;
     private final CertificateTagsDao certificateTagsDao;
+    private final CriteriaFindAllDao<Tag> findAllDao;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, UserDao userDao, ModelMapper modelMapper, CertificateTagsDao certificateTagsDao) {
+    public TagServiceImpl(TagDao tagDao, UserDao userDao, ModelMapper modelMapper, CertificateTagsDao certificateTagsDao,
+                          @Qualifier("tagCriteriaFindAllDao") CriteriaFindAllDao<Tag> findAllDao) {
         this.tagDao = tagDao;
         this.userDao = userDao;
         this.modelMapper = modelMapper;
         this.certificateTagsDao = certificateTagsDao;
+        this.findAllDao = findAllDao;
     }
 
     /**
@@ -53,7 +58,7 @@ public class TagServiceImpl implements TagService {
      */
     @Override
     public TagDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset) {
-        List<Tag> foundTags = tagDao.findBy(reqParams, limit, offset);
+        List<Tag> foundTags = findAllDao.findBy(reqParams, limit, offset);
         List<TagDto> tagDtos = foundTags.stream()
                 .map(entity -> modelMapper.map(entity, TagDto.class))
                 .collect(Collectors.toList());
@@ -101,14 +106,15 @@ public class TagServiceImpl implements TagService {
      *
      * @param id id of deletable Tag entity.
      * @throws TagException if Order entity with given id doesn't exist in db.
-     * @since 1.0
+     * @since 4.0
      */
     @Transactional
     @Override
     public void delete(long id) {
         certificateTagsDao.deleteAllCertificateLinksForTagId(id);
-        boolean isDeleted = tagDao.deleteById(id);
-        if (!isDeleted) {
+        if (tagDao.existsById(id)) {
+            tagDao.deleteById(id);
+        } else {
             throw new TagException(String.format("Tag with id: %d is not found in DB", id),
                     ApplicationConstants.TAG_NOT_FOUND_ERROR_CODE, id);
         }

@@ -1,7 +1,7 @@
-package com.epam.esm.dao.impl;
+package com.epam.esm.dao.relation.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.UsersOrdersDao;
+import com.epam.esm.dao.relation.UsersOrdersDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 /**
- * Default implementation of {@link com.epam.esm.dao.UsersOrdersDao} interface.
+ * Default implementation of {@link UsersOrdersDao} interface.
  *
  * @since 2.0
  */

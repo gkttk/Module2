@@ -1,9 +1,7 @@
 
 package com.epam.esm.domain.service.impl;
 
-import com.epam.esm.dao.CertificateTagsDao;
-import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.relation.CertificateTagsDao;
 import com.epam.esm.domain.dto.GiftCertificateDto;
 import com.epam.esm.domain.dto.TagDto;
 import com.epam.esm.domain.dto.bundles.GiftCertificateDtoBundle;

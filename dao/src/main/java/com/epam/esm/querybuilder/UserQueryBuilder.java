@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * @since 2.0
  */
-@Component
+@Component("userQueryBuilder")
 public class UserQueryBuilder extends AbstractQueryBuilder<User> implements QueryBuilder<User> {
 
     public UserQueryBuilder(EntityManager entityManager, ParameterParser parser) {

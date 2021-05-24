@@ -1,7 +1,7 @@
-package com.epam.esm.dao.impl;
+package com.epam.esm.dao.relation.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.CertificateTagsDao;
+import com.epam.esm.dao.relation.CertificateTagsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 /**
- * Default implementation of {@link com.epam.esm.dao.CertificateTagsDao} interface.
+ * Default implementation of {@link CertificateTagsDao} interface.
  *
  * @since 1.0
  */

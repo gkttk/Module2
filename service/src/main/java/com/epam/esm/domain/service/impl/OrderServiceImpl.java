@@ -1,21 +1,24 @@
 package com.epam.esm.domain.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.OrderDao;
-import com.epam.esm.dao.UserDao;
+import com.epam.esm.dao.domain.CriteriaFindAllDao;
+import com.epam.esm.dao.domain.GiftCertificateDao;
+import com.epam.esm.dao.domain.OrderDao;
+import com.epam.esm.dao.domain.UserDao;
 import com.epam.esm.domain.dto.OrderDto;
 import com.epam.esm.domain.dto.SaveOrderDto;
 import com.epam.esm.domain.dto.bundles.OrderDtoBundle;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.User;
 import com.epam.esm.domain.exceptions.GiftCertificateException;
 import com.epam.esm.domain.exceptions.OrderException;
 import com.epam.esm.domain.exceptions.UserException;
 import com.epam.esm.domain.service.OrderService;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Order;
+import com.epam.esm.entity.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,13 +40,17 @@ public class OrderServiceImpl implements OrderService {
     private final OrderDao orderDao;
     private final UserDao userDao;
     private final GiftCertificateDao giftCertificateDao;
+    private final CriteriaFindAllDao<Order> findAllDao;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public OrderServiceImpl(OrderDao orderDao, UserDao userDao, GiftCertificateDao giftCertificateDao, ModelMapper modelMapper) {
+    public OrderServiceImpl(OrderDao orderDao, UserDao userDao, GiftCertificateDao giftCertificateDao,
+                            @Qualifier("orderCriteriaFindAllDao") CriteriaFindAllDao<Order> findAllDao,
+                            ModelMapper modelMapper) {
         this.orderDao = orderDao;
         this.userDao = userDao;
         this.giftCertificateDao = giftCertificateDao;
+        this.findAllDao = findAllDao;
         this.modelMapper = modelMapper;
     }
 
@@ -114,8 +121,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void delete(long id) {
-        boolean isDeleted = orderDao.deleteById(id);
-        if (!isDeleted) {
+        if (orderDao.existsById(id)) {
+            orderDao.deleteById(id);
+        } else {
             throw new OrderException(String.format("Order with id: %d doesn't exist in DB", id),
                     ApplicationConstants.ORDER_NOT_FOUND_ERROR_CODE, id);
         }
@@ -134,12 +142,12 @@ public class OrderServiceImpl implements OrderService {
     public OrderDtoBundle findAllForQuery(long userId, Map<String, String[]> reqParams, int limit, int offset) {
         findUserByIdIfExist(userId);
         reqParams.put(ApplicationConstants.USER_ID_KEY, new String[]{String.valueOf(userId)});
-        List<Order> foundOrders = orderDao.findBy(reqParams, limit, offset);
+        List<Order> foundOrders = findAllDao.findBy(reqParams, limit, offset);
         List<OrderDto> ordersDto = foundOrders.stream()
                 .map(entity -> modelMapper.map(entity, OrderDto.class))
                 .collect(Collectors.toList());
 
-        long count = orderDao.count(userId);
+        long count = orderDao.count(Example.of(new Order()));//todo
 
         return new OrderDtoBundle(ordersDto, count);
     }

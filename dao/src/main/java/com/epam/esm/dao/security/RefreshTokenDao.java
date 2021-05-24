@@ -1,4 +1,4 @@
-package com.epam.esm.dao;
+package com.epam.esm.dao.security;
 
 import com.epam.esm.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;

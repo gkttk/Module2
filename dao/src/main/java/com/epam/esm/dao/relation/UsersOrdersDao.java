@@ -1,10 +1,12 @@
-package com.epam.esm.dao;
+package com.epam.esm.dao.relation;
+
+import com.epam.esm.dao.relation.impl.UsersOrdersDaoImpl;
 
 /**
  * This interface represents an api to interact with the link between User entity
  * and Order entity in database.
  *
- * Implementations : {@link com.epam.esm.dao.impl.UsersOrdersDaoImpl} classes.
+ * Implementations : {@link UsersOrdersDaoImpl} classes.
  *
  * @since 1.0
  */

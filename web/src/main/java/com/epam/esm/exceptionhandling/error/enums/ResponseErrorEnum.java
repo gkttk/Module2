@@ -18,7 +18,9 @@ public enum ResponseErrorEnum {
     MISMATCH_PARAMETER("mismatch_parameter", HttpStatus.BAD_REQUEST, WebLayerConstants.MISMATCH_PARAMETER_ERROR_CODE),
     REFRESH_TOKEN_EXPIRED("refresh_token_expired", HttpStatus.FORBIDDEN, WebLayerConstants.REFRESH_TOKEN_EXPIRED),
     ACCESS_TOKEN_EXPIRED("access_token_expired", HttpStatus.FORBIDDEN, WebLayerConstants.ACCESS_TOKEN_EXPIRED),
-    ACCESS_TOKEN_INVALID("access_token_invalid", HttpStatus.FORBIDDEN, WebLayerConstants.ACCESS_TOKEN_INVALID);
+    ACCESS_TOKEN_INVALID("access_token_invalid", HttpStatus.FORBIDDEN, WebLayerConstants.ACCESS_TOKEN_INVALID),
+    ACCESS_DENIED("access_denied", HttpStatus.FORBIDDEN, WebLayerConstants.ACCESS_DENIED_ERROR_CODE),
+    UNAUTHORIZED("unauthorized", HttpStatus.UNAUTHORIZED, WebLayerConstants.UNAUTHORIZED_ERROR_CODE);
 
 
     private final String propertyKey;

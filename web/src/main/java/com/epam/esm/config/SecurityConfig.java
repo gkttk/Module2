@@ -2,6 +2,8 @@ package com.epam.esm.config;
 
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.security.JwtTokenProvider;
+import com.epam.esm.security.accessdeniedhandler.GiftApplicationAccessDeniedHandler;
+import com.epam.esm.security.authentrypoint.UnauthorizedEntryPoint;
 import com.epam.esm.security.filters.JwtTokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,8 +18,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
@@ -47,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web){
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers(WebLayerConstants.ALL_AUTH_URL_REGEX_PATTERN).and();
     }
 
@@ -70,7 +72,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, WebLayerConstants.ALL_URL_REGEX_PATTERN).hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
+                .exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler())
+                .authenticationEntryPoint(authenticationEntryPoint())
+
+                .and()
                 .addFilterBefore(new JwtTokenAuthenticationFilter(tokenProvider, resolver), BasicAuthenticationFilter.class);
     }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new GiftApplicationAccessDeniedHandler();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new UnauthorizedEntryPoint();
+    }
+
 
 }

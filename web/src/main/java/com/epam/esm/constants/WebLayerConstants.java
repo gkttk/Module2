@@ -32,6 +32,8 @@ public class WebLayerConstants {
     public final static int REFRESH_TOKEN_EXPIRED = 30010;
     public final static int ACCESS_TOKEN_EXPIRED = 30011;
     public final static int ACCESS_TOKEN_INVALID = 30200;
+    public final static int ACCESS_DENIED_ERROR_CODE = 40343;
+    public final static int UNAUTHORIZED_ERROR_CODE = 40141;
 
     //security
     public static final String AUTH_HEADER = "Authorization";

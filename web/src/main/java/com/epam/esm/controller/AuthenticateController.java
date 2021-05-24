@@ -6,6 +6,7 @@ import com.epam.esm.domain.dto.login.LoginPasswordDto;
 import com.epam.esm.domain.exceptions.GiftApplicationException;
 import com.epam.esm.security.JwtTokenProvider;
 import com.epam.esm.security.exceptions.GiftApplicationAuthorizationException;
+import com.epam.esm.security.exceptions.JwtAuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
 
 @RestController
 @RequestMapping(path = "/auth", produces = {"application/json; charset=UTF-8"})
@@ -47,15 +49,14 @@ public class AuthenticateController {
     }
 
     @PostMapping("/refresh_token")
-    public ResponseEntity<JwtTokenDto> refreshToken(@RequestHeader(value = WebLayerConstants.AUTH_HEADER) String authHeader) {
-
+    public ResponseEntity<JwtTokenDto> refreshToken(WebRequest request) {
+        String authHeader = request.getHeader(WebLayerConstants.AUTH_HEADER);
         if (authHeader != null && authHeader.startsWith(WebLayerConstants.BEARER_PREFIX)) {
             String oldAccessToken = authHeader.substring(7);
             JwtTokenDto newToken = tokenProvider.refreshToken(oldAccessToken);
             return ResponseEntity.ok(newToken);
-
         }
-        throw new IllegalStateException("");//todo
+        throw new JwtAuthenticationException("Missing access token in request.", WebLayerConstants.ACCESS_TOKEN_NOT_FOUND);
     }
 
 }

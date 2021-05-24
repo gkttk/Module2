@@ -21,8 +21,8 @@ public enum ResponseErrorEnum {
     ACCESS_TOKEN_INVALID("access_token_invalid", HttpStatus.FORBIDDEN, WebLayerConstants.ACCESS_TOKEN_INVALID),
     ACCESS_DENIED("access_denied", HttpStatus.FORBIDDEN, WebLayerConstants.ACCESS_DENIED_ERROR_CODE),
     UNAUTHORIZED("unauthorized", HttpStatus.UNAUTHORIZED, WebLayerConstants.UNAUTHORIZED_ERROR_CODE),
-    INVALID_USER_CREDENTIALS("invalid_user_credentials", HttpStatus.BAD_REQUEST, WebLayerConstants.INVALID_CREDENTIALS_ERROR_CODE);
-
+    INVALID_USER_CREDENTIALS("invalid_user_credentials", HttpStatus.BAD_REQUEST, WebLayerConstants.INVALID_CREDENTIALS_ERROR_CODE),
+    ACCESS_TOKEN_NOT_FOUND("access_token_not_found", HttpStatus.BAD_REQUEST, WebLayerConstants.ACCESS_TOKEN_NOT_FOUND);
 
 
     private final String propertyKey;

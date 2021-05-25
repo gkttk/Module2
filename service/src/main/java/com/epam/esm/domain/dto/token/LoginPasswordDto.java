@@ -1,4 +1,4 @@
-package com.epam.esm.domain.dto.login;
+package com.epam.esm.domain.dto.token;
 
 import lombok.Data;
 

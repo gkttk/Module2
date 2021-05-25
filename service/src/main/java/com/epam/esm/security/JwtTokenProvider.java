@@ -2,7 +2,7 @@ package com.epam.esm.security;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.security.RefreshTokenDao;
-import com.epam.esm.domain.dto.login.JwtTokenDto;
+import com.epam.esm.domain.dto.token.JwtTokenDto;
 import com.epam.esm.domain.dto.token.TokenDto;
 import com.epam.esm.entity.RefreshToken;
 import com.epam.esm.security.exceptions.JwtAuthenticationException;

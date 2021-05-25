@@ -1,9 +1,8 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.constants.WebLayerConstants;
-import com.epam.esm.domain.dto.login.JwtTokenDto;
-import com.epam.esm.domain.dto.login.LoginPasswordDto;
-import com.epam.esm.domain.exceptions.GiftApplicationException;
+import com.epam.esm.domain.dto.token.JwtTokenDto;
+import com.epam.esm.domain.dto.token.LoginPasswordDto;
 import com.epam.esm.security.JwtTokenProvider;
 import com.epam.esm.security.exceptions.GiftApplicationAuthorizationException;
 import com.epam.esm.security.exceptions.JwtAuthenticationException;
@@ -15,7 +14,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;

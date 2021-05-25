@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Primary;
 @ComponentScan(basePackages = {"com.epam.esm"})
 public class ServiceConfig {
 
+
     @Bean
     public ModelMapper getModelMapper() {
         return new ModelMapper();

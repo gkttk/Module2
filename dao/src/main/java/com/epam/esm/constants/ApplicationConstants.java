@@ -36,17 +36,16 @@ public final class ApplicationConstants {
             "WHERE uo.user_id = :userId " +
             "GROUP BY t.id order by c desc LIMIT 1)";
 
-
-
     //User queries
     public final static String GET_USER_BY_LOGIN = "SELECT u FROM User u WHERE u.login =:login";
     public final static String COUNT_USER_QUERY = "SELECT count(u.id) FROM User u";
-
 
     //Order queries
     public final static String COUNT_ORDER_BY_USER_ID_QUERY = "SELECT count(o.id) FROM Order o " +
            " JOIN o.user uo WHERE uo.id =:userId";
 
+    //Refresh token queries
+    public final static String DELETE_ALL_BY_DATE_BEFORE = "DELETE FROM RefreshToken t WHERE t.expiredTime <= :date";
 
     //certificate_tags queries
     public final static String SAVE_CERTIFICATE_TAGS_QUERY = "INSERT INTO " + CERTIFICATE_TAGS_TABLE_NAME + " VALUES (?,?)";

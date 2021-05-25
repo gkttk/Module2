@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
     public UserDto findByLogin(String login) {
         User foundUser = userDao.findByLogin(login)
                 .orElseThrow(() -> new UserException(String.format("User with login : %s was not found", login),
-                        ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, login));
+                        ApplicationConstants.USER_NOT_FOUND_BY_LOGIN_ERROR_CODE, login));
         return modelMapper.map(foundUser, UserDto.class);
     }
 
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
     private User findByIdIfExist(long id) {
         return userDao.findById(id)
                 .orElseThrow(() -> new UserException(String.format("Can't find an user with id: %d", id),
-                        ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, id));
+                        ApplicationConstants.USER_NOT_FOUND_BY_ID_ERROR_CODE, id));
     }
 
     /**

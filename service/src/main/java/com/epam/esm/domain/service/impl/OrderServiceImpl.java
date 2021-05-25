@@ -162,7 +162,7 @@ public class OrderServiceImpl implements OrderService {
     private User findUserByIdIfExist(long id) {
         return userDao.findById(id)
                 .orElseThrow(() -> new UserException(String.format("Can't find an user with id: %d", id),
-                        ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, id));
+                        ApplicationConstants.USER_NOT_FOUND_BY_ID_ERROR_CODE, id));
     }
 
     /**

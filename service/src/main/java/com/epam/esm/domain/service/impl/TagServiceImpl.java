@@ -150,7 +150,7 @@ public class TagServiceImpl implements TagService {
         Optional<User> userOpt = userDao.findById(userId);
         if (!userOpt.isPresent()) {
             throw new UserException(String.format("Can't find an user with id: %d", userId),
-                    ApplicationConstants.USER_NOT_FOUND_ERROR_CODE, userId);
+                    ApplicationConstants.USER_NOT_FOUND_BY_ID_ERROR_CODE, userId);
         }
 
         return tagDao.findMaxWidelyUsed(userId)

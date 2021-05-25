@@ -22,7 +22,8 @@ public class WebLayerConstants {
     //Codes
     public final static int CERTIFICATE_NOT_FOUND_CODE = 40401;
     public final static int TAG_NOT_FOUND_ERROR_CODE = 40402;
-    public final static int USER_NOT_FOUND_ERROR_CODE = 40403;
+    public final static int USER_NOT_FOUND_BY_ID_ERROR_CODE = 40403;
+    public final static int USER_NOT_FOUND_BY_LOGIN_ERROR_CODE = 40405;
     public final static int ORDER_NOT_FOUND_ERROR_CODE = 40404;
     public final static int CERTIFICATE_WITH_SUCH_NAME_EXISTS_CODE = 42010;
     public final static int USER_SUCH_LOGIN_EXISTS_CODE = 42011;

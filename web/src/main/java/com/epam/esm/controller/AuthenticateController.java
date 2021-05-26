@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +37,8 @@ public class AuthenticateController {
         String login = loginPasswordDto.getLogin();
         String password = loginPasswordDto.getPassword();
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, password));
-            JwtTokenDto token = tokenProvider.createToken(login);
+            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, password));
+            JwtTokenDto token = tokenProvider.createToken(authenticate);
             return new ResponseEntity<>(token, HttpStatus.OK);
         } catch (BadCredentialsException ex) {
             throw new GiftApplicationAuthorizationException("Invalid credentials", WebLayerConstants.INVALID_CREDENTIALS_ERROR_CODE,

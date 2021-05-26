@@ -15,7 +15,7 @@ public class JwtUserMapper implements JwtObjectMapper<UserDto> {
     @Override
     public JwtUserDetails toJwtUserDetails(UserDto user) {
         return new JwtUserDetails(
-                user.getLogin(),
+                user.getId().toString(), user.getLogin(),
                 user.getPassword(),
                 getGrantedAuthorities(user)
         );

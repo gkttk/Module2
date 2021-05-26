@@ -9,11 +9,13 @@ import java.util.Set;
 
 public class JwtUserDetails implements UserDetails {
 
+    private final String id;
     private final String login;
     private final String password;
     private final Set<GrantedAuthority> authorities;
 
-    public JwtUserDetails(String login, String password, Set<GrantedAuthority> grantedAuthorities) {
+    public JwtUserDetails(String id, String login, String password, Set<GrantedAuthority> grantedAuthorities) {
+        this.id = id;
         this.login = login;
         this.password = password;
         this.authorities = grantedAuthorities;
@@ -22,6 +24,11 @@ public class JwtUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
+    }
+
+
+    public String getId() {
+        return id;
     }
 
     @Override

@@ -37,13 +37,14 @@ public class JwtTokenProvider {
         this.userDetailsService = userDetailsService;
     }
 
-    private TokenDto generateToken(String userName, String currentSecret, long expiredTime) {
+    private TokenDto generateToken(String userName, String userId, String currentSecret, long expiredTime) {
         Claims claims = Jwts.claims().setSubject(userName);
         Date now = new Date();
         Date validity = new Date(now.getTime() + expiredTime);
 
         String tokenStr = Jwts.builder()
                 .setClaims(claims)
+                .setId(userId)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, currentSecret)
@@ -59,8 +60,9 @@ public class JwtTokenProvider {
             Date expiredTime = foundToken.getExpiredTime();
             if (!expiredTime.before(new Date())) {
                 String userName = getUserName(oldAccessToken, ApplicationConstants.ACCESS_TOKEN_SECRET);
-                TokenDto accessToken = generateToken(userName, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
-                TokenDto refreshToken = generateToken(userName, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
+                String userId = getUserId(oldAccessToken, ApplicationConstants.ACCESS_TOKEN_SECRET);
+                TokenDto accessToken = generateToken(userName, userId, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
+                TokenDto refreshToken = generateToken(userName, userId, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
 
                 foundToken.setAccessToken(accessToken.getToken());
                 foundToken.setRefreshToken(refreshToken.getToken());
@@ -74,9 +76,13 @@ public class JwtTokenProvider {
     }
 
     @Transactional
-    public JwtTokenDto createToken(String userName) {
-        TokenDto accessToken = generateToken(userName, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
-        TokenDto refreshToken = generateToken(userName, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
+    public JwtTokenDto createToken(Authentication authenticate) {
+        JwtUserDetails user = (JwtUserDetails) authenticate.getPrincipal();
+        String id = user.getId();
+
+        String userName = user.getLogin();
+        TokenDto accessToken = generateToken(userName, id, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
+        TokenDto refreshToken = generateToken(userName, id, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
 
         refreshTokenDao.save(new RefreshToken(accessToken.getToken(), refreshToken.getToken(), refreshToken.getExpiredTime()));
         return new JwtTokenDto(accessToken.getToken(), refreshToken.getToken(), accessToken.getExpiredTime());
@@ -92,6 +98,10 @@ public class JwtTokenProvider {
         return Jwts.parser().setSigningKey(currentSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
+
+    private String getUserId(String token, String currentSecret) {
+        return Jwts.parser().setSigningKey(currentSecret).parseClaimsJws(token).getBody().getId();
+    }
 
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(ApplicationConstants.AUTH_HEADER);

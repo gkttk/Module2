@@ -12,6 +12,7 @@ public interface RefreshTokenDao extends JpaRepository<RefreshToken, Long> {
 
     RefreshToken findByAccessToken(String accessToken);
 
+
     @Transactional
     void removeAllByExpiredTimeLessThan(Date date);
 

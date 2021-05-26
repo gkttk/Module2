@@ -5,6 +5,8 @@ import com.epam.esm.dao.security.RefreshTokenDao;
 import com.epam.esm.domain.dto.token.JwtTokenDto;
 import com.epam.esm.domain.dto.token.TokenDto;
 import com.epam.esm.entity.RefreshToken;
+import com.epam.esm.security.blacklist.JwtTokenBlackList;
+import com.epam.esm.security.blacklist.JwtTokenBlackListImpl;
 import com.epam.esm.security.exceptions.JwtAuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -29,15 +31,22 @@ public class JwtTokenProvider {
 
     private final RefreshTokenDao refreshTokenDao;
     private final UserDetailsService userDetailsService;
+    private final JwtTokenBlackList jwtTokenBlackList;
 
     @Autowired
     public JwtTokenProvider(RefreshTokenDao refreshTokenDao,
-                            @Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
+                            @Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService, JwtTokenBlackList jwtTokenBlackList) {
         this.refreshTokenDao = refreshTokenDao;
         this.userDetailsService = userDetailsService;
+        this.jwtTokenBlackList = jwtTokenBlackList;
     }
 
+
     private TokenDto generateToken(String userName, String userId, String currentSecret, long expiredTime) {
+        if (jwtTokenBlackList.containsId(userId)) {
+            jwtTokenBlackList.remove(userId);
+        }
+
         Claims claims = Jwts.claims().setSubject(userName);
         Date now = new Date();
         Date validity = new Date(now.getTime() + expiredTime);
@@ -116,8 +125,10 @@ public class JwtTokenProvider {
             Jws<Claims> claims = Jwts.parser()
                     .setSigningKey(ApplicationConstants.ACCESS_TOKEN_SECRET)
                     .parseClaimsJws(token);
-
-            return !claims.getBody().getExpiration().before(new Date());
+            String jwtId = claims.getBody().getId();
+            boolean isTokenBlocked = jwtTokenBlackList.containsId(jwtId);
+            boolean isTokenExpired = claims.getBody().getExpiration().before(new Date());
+            return !isTokenExpired && !isTokenBlocked;
         } catch (ExpiredJwtException ex) {
             throw new JwtAuthenticationException("JWT access token is expired", ApplicationConstants.ACCESS_TOKEN_EXPIRED);
         } catch (JwtException | IllegalArgumentException e) {

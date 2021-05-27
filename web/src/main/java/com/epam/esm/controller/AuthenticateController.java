@@ -4,7 +4,6 @@ import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.domain.dto.token.JwtTokenDto;
 import com.epam.esm.domain.dto.token.LoginPasswordDto;
 import com.epam.esm.security.JwtTokenProvider;
-import com.epam.esm.security.blacklist.JwtTokenBlackList;
 import com.epam.esm.security.exceptions.GiftApplicationAuthorizationException;
 import com.epam.esm.security.exceptions.JwtAuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +25,11 @@ public class AuthenticateController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
-    private final JwtTokenBlackList jwtTokenBlackList;
 
     @Autowired
-    public AuthenticateController(AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider, JwtTokenBlackList jwtTokenBlackList) {
+    public AuthenticateController(AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
-        this.jwtTokenBlackList = jwtTokenBlackList;
     }
 
     @PostMapping("/authenticate")
@@ -60,7 +57,7 @@ public class AuthenticateController {
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(WebRequest request) {
         String tokenFromRequest = getTokenFromRequest(request);
-        jwtTokenBlackList.add(tokenFromRequest);
+        tokenProvider.removeToken(tokenFromRequest);
         return ResponseEntity.noContent().build();
     }
 
@@ -72,5 +69,6 @@ public class AuthenticateController {
         }
         throw new JwtAuthenticationException("Missing access token in request.", WebLayerConstants.ACCESS_TOKEN_NOT_FOUND);
     }
+
 
 }

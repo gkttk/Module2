@@ -1,6 +1,6 @@
 package com.epam.esm.security.eventlistener;
 
-import com.epam.esm.dao.security.RefreshTokenDao;
+import com.epam.esm.dao.security.TokenPairDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStoppedEvent;
@@ -15,18 +15,18 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RefreshTokenEventListener {
 
-    private final RefreshTokenDao refreshTokenDao;
+    private final TokenPairDao refreshTokenDao;
     private ScheduledExecutorService executorService;
 
     @Autowired
-    public RefreshTokenEventListener(RefreshTokenDao refreshTokenDao) {
+    public RefreshTokenEventListener(TokenPairDao refreshTokenDao) {
         this.refreshTokenDao = refreshTokenDao;
     }
 
     @EventListener
     public void handleContextRefreshEvent(ContextRefreshedEvent event) {
         this.executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(() -> refreshTokenDao.removeAllByExpiredTimeLessThan(new Date()),
+        executorService.scheduleAtFixedRate(() -> refreshTokenDao.removeAllByRefreshTokenExpiredTimeLessThan(new Date()),
                 0, 11, TimeUnit.MINUTES);
     }
 

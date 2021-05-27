@@ -2,7 +2,6 @@ package com.epam.esm.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,14 +11,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.time.LocalDate;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "refresh_token")
-public class RefreshToken {
+@Table(name = "token_pair")
+public class TokenPair {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,14 +30,14 @@ public class RefreshToken {
     private String refreshToken;
 
 
-    @Column(name = "expired_time", nullable = false)
+    @Column(name = "refresh_token_expired_time", nullable = false)
     @Temporal(value = TemporalType.TIMESTAMP)
-    private Date expiredTime;
+    private Date refreshTokenExpiredTime;
 
 
-    public RefreshToken(String accessToken, String refreshToken, Date expiredTime) {
+    public TokenPair(String accessToken, String refreshToken, Date expiredTime) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        this.expiredTime = expiredTime;
+        this.refreshTokenExpiredTime = expiredTime;
     }
 }

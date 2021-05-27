@@ -1,12 +1,10 @@
 package com.epam.esm.security;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.security.RefreshTokenDao;
+import com.epam.esm.dao.security.TokenPairDao;
 import com.epam.esm.domain.dto.token.JwtTokenDto;
 import com.epam.esm.domain.dto.token.TokenDto;
-import com.epam.esm.entity.RefreshToken;
-import com.epam.esm.security.blacklist.JwtTokenBlackList;
-import com.epam.esm.security.blacklist.JwtTokenBlackListImpl;
+import com.epam.esm.entity.TokenPair;
 import com.epam.esm.security.exceptions.JwtAuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -29,31 +27,23 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private final RefreshTokenDao refreshTokenDao;
+    private final TokenPairDao refreshTokenDao;
     private final UserDetailsService userDetailsService;
-    private final JwtTokenBlackList jwtTokenBlackList;
 
     @Autowired
-    public JwtTokenProvider(RefreshTokenDao refreshTokenDao,
-                            @Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService, JwtTokenBlackList jwtTokenBlackList) {
+    public JwtTokenProvider(TokenPairDao refreshTokenDao,
+                            @Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
         this.refreshTokenDao = refreshTokenDao;
         this.userDetailsService = userDetailsService;
-        this.jwtTokenBlackList = jwtTokenBlackList;
     }
 
 
-    private TokenDto generateToken(String userName, String userId, String currentSecret, long expiredTime) {
-        if (jwtTokenBlackList.containsId(userId)) {
-            jwtTokenBlackList.remove(userId);
-        }
-
+    private TokenDto generateToken(String userName, String currentSecret, long expiredTime) {
         Claims claims = Jwts.claims().setSubject(userName);
         Date now = new Date();
         Date validity = new Date(now.getTime() + expiredTime);
-
         String tokenStr = Jwts.builder()
                 .setClaims(claims)
-                .setId(userId)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, currentSecret)
@@ -64,14 +54,13 @@ public class JwtTokenProvider {
 
     @Transactional
     public JwtTokenDto refreshToken(String oldAccessToken) {
-        RefreshToken foundToken = refreshTokenDao.findByAccessToken(oldAccessToken);
+        TokenPair foundToken = refreshTokenDao.findByAccessToken(oldAccessToken);
         if (foundToken != null) {
-            Date expiredTime = foundToken.getExpiredTime();
+            Date expiredTime = foundToken.getRefreshTokenExpiredTime();
             if (!expiredTime.before(new Date())) {
                 String userName = getUserName(oldAccessToken, ApplicationConstants.ACCESS_TOKEN_SECRET);
-                String userId = getUserId(oldAccessToken, ApplicationConstants.ACCESS_TOKEN_SECRET);
-                TokenDto accessToken = generateToken(userName, userId, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
-                TokenDto refreshToken = generateToken(userName, userId, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
+                TokenDto accessToken = generateToken(userName, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
+                TokenDto refreshToken = generateToken(userName, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
 
                 foundToken.setAccessToken(accessToken.getToken());
                 foundToken.setRefreshToken(refreshToken.getToken());
@@ -87,13 +76,12 @@ public class JwtTokenProvider {
     @Transactional
     public JwtTokenDto createToken(Authentication authenticate) {
         JwtUserDetails user = (JwtUserDetails) authenticate.getPrincipal();
-        String id = user.getId();
 
         String userName = user.getLogin();
-        TokenDto accessToken = generateToken(userName, id, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
-        TokenDto refreshToken = generateToken(userName, id, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
+        TokenDto accessToken = generateToken(userName, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
+        TokenDto refreshToken = generateToken(userName, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
 
-        refreshTokenDao.save(new RefreshToken(accessToken.getToken(), refreshToken.getToken(), refreshToken.getExpiredTime()));
+        refreshTokenDao.save(new TokenPair(accessToken.getToken(), refreshToken.getToken(), refreshToken.getExpiredTime()));
         return new JwtTokenDto(accessToken.getToken(), refreshToken.getToken(), accessToken.getExpiredTime());
     }
 
@@ -105,11 +93,6 @@ public class JwtTokenProvider {
 
     private String getUserName(String token, String currentSecret) {
         return Jwts.parser().setSigningKey(currentSecret).parseClaimsJws(token).getBody().getSubject();
-    }
-
-
-    private String getUserId(String token, String currentSecret) {
-        return Jwts.parser().setSigningKey(currentSecret).parseClaimsJws(token).getBody().getId();
     }
 
     public String resolveToken(HttpServletRequest request) {
@@ -125,16 +108,20 @@ public class JwtTokenProvider {
             Jws<Claims> claims = Jwts.parser()
                     .setSigningKey(ApplicationConstants.ACCESS_TOKEN_SECRET)
                     .parseClaimsJws(token);
-            String jwtId = claims.getBody().getId();
-            boolean isTokenBlocked = jwtTokenBlackList.containsId(jwtId);
+            boolean isTokenExist = refreshTokenDao.existsByAccessToken(token);
             boolean isTokenExpired = claims.getBody().getExpiration().before(new Date());
-            return !isTokenExpired && !isTokenBlocked;
+            return !isTokenExpired && isTokenExist;
         } catch (ExpiredJwtException ex) {
             throw new JwtAuthenticationException("JWT access token is expired", ApplicationConstants.ACCESS_TOKEN_EXPIRED);
         } catch (JwtException | IllegalArgumentException e) {
             throw new JwtAuthenticationException("JWT token is invalid ", ApplicationConstants.ACCESS_TOKEN_INVALID);
         }
 
+    }
+
+    @Transactional
+    public void removeToken(String token) {
+        refreshTokenDao.deleteAllByAccessToken(token);
     }
 
 

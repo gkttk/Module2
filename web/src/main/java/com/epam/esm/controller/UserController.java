@@ -12,9 +12,13 @@ import com.epam.esm.domain.dto.groups.SaveGroup;
 import com.epam.esm.domain.service.OrderService;
 import com.epam.esm.domain.service.TagService;
 import com.epam.esm.domain.service.UserService;
+import com.epam.esm.security.JwtUserDetails;
+import com.epam.esm.security.exceptions.GiftApplicationAccessDeniedException;
+import com.epam.esm.security.exceptions.GiftApplicationAuthorizationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -93,15 +97,15 @@ public class UserController {
                 .getAllOrdersForUser(null, userId, limit, WebLayerConstants.DEFAULT_OFFSET))
                 .withRel(WebLayerConstants.FIRST_PAGE));
 
-       int delta = (int)count-offset;
-       if (limit < delta){
-           order.add(linkTo(methodOn(UserController.class)
-                   .getAllOrdersForUser(null, userId, limit, offset + limit))
-                   .withRel(WebLayerConstants.NEXT_PAGE));
-       }
+        int delta = (int) count - offset;
+        if (limit < delta) {
+            order.add(linkTo(methodOn(UserController.class)
+                    .getAllOrdersForUser(null, userId, limit, offset + limit))
+                    .withRel(WebLayerConstants.NEXT_PAGE));
+        }
 
         order.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, userId, limit, (int)count - limit))
+                .getAllOrdersForUser(null, userId, limit, (int) count - limit))
                 .withRel(WebLayerConstants.LAST_PAGE));
         return ResponseEntity.ok(order);
     }
@@ -109,9 +113,20 @@ public class UserController {
     @PostMapping(path = "/{userId}/orders")
     public ResponseEntity<OrderDto> createOrder(@PathVariable Long userId,
                                                 @RequestBody @Valid List<SaveOrderDto> saveOrderDtoList) {
-        OrderDto order = orderService.save(saveOrderDtoList, userId);
-        return ResponseEntity.ok(orderAssembler.toModel(order));
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal == null) {
+            throw new GiftApplicationAuthorizationException("User is not authorized.", WebLayerConstants.UNAUTHORIZED_ERROR_CODE);
+        } else {
+            JwtUserDetails user = (JwtUserDetails) principal;
+            if (user.getId().equals(userId)) {
+                OrderDto order = orderService.save(saveOrderDtoList, userId);
+                return ResponseEntity.ok(orderAssembler.toModel(order));
+
+            }
+            throw new GiftApplicationAccessDeniedException("Access denied", WebLayerConstants.ACCESS_DENIED_ERROR_CODE);
+        }
     }
+
 
     @PostMapping
     public ResponseEntity<UserDto> saveUser(@RequestBody @Validated(SaveGroup.class) @Valid UserDto user) {

@@ -1,10 +1,10 @@
 package com.epam.esm.domain.service.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.relation.CertificateTagsDao;
 import com.epam.esm.dao.domain.CriteriaFindAllDao;
 import com.epam.esm.dao.domain.GiftCertificateDao;
 import com.epam.esm.dao.domain.TagDao;
+import com.epam.esm.dao.relation.CertificateTagsDao;
 import com.epam.esm.domain.dto.GiftCertificateDto;
 import com.epam.esm.domain.dto.TagDto;
 import com.epam.esm.domain.dto.bundles.GiftCertificateDtoBundle;

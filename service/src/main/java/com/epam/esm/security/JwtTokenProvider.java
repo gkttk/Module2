@@ -24,6 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
+/**
+ * This class is responsible for access and refresh tokens managing.
+ *
+ * @since 4.0
+ */
 @Component
 public class JwtTokenProvider {
 
@@ -37,21 +42,14 @@ public class JwtTokenProvider {
         this.userDetailsService = userDetailsService;
     }
 
-
-    private TokenDto generateToken(String userName, String currentSecret, long expiredTime) {
-        Claims claims = Jwts.claims().setSubject(userName);
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + expiredTime);
-        String tokenStr = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, currentSecret)
-                .compact();
-
-        return new TokenDto(tokenStr, validity);
-    }
-
+    /**
+     * This method checks validity of refresh token in DB(if it exists there) and generates a new token pair(access+refresh)
+     * for returning to client.
+     *
+     * @param oldAccessToken expired access token for searching the relevant refresh token in DB.
+     * @return new pair access + refresh token.
+     * @since 4.0
+     */
     @Transactional
     public JwtTokenDto refreshToken(String oldAccessToken) {
         TokenPair foundToken = refreshTokenDao.findByAccessToken(oldAccessToken);
@@ -73,6 +71,13 @@ public class JwtTokenProvider {
         throw new JwtAuthenticationException("Refresh token is expired", ApplicationConstants.REFRESH_TOKEN_EXPIRED);
     }
 
+    /**
+     * This method create a token pair(access+refresh).
+     *
+     * @param authenticate for getting a principal.
+     * @return new pair access + refresh token.
+     * @since 4.0
+     */
     @Transactional
     public JwtTokenDto createToken(Authentication authenticate) {
         JwtUserDetails user = (JwtUserDetails) authenticate.getPrincipal();
@@ -85,16 +90,12 @@ public class JwtTokenProvider {
         return new JwtTokenDto(accessToken.getToken(), refreshToken.getToken(), accessToken.getExpiredTime());
     }
 
-    public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserName(token, ApplicationConstants.ACCESS_TOKEN_SECRET));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-
-    }
-
-    private String getUserName(String token, String currentSecret) {
-        return Jwts.parser().setSigningKey(currentSecret).parseClaimsJws(token).getBody().getSubject();
-    }
-
+    /**
+     * This method pull out an access token from given HttpServletRequest.
+     *
+     * @return access token.
+     * @since 4.0
+     */
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(ApplicationConstants.AUTH_HEADER);
         if (bearerToken != null && bearerToken.startsWith(ApplicationConstants.BEARER_PREFIX)) {
@@ -103,6 +104,12 @@ public class JwtTokenProvider {
         return null;
     }
 
+    /**
+     * This method validates a given token.
+     *
+     * @return is the given token valid.
+     * @since 4.0
+     */
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser()
@@ -116,12 +123,42 @@ public class JwtTokenProvider {
         } catch (JwtException | IllegalArgumentException e) {
             throw new JwtAuthenticationException("JWT token is invalid ", ApplicationConstants.ACCESS_TOKEN_INVALID);
         }
-
     }
 
+    /**
+     * This method removes token pair(access+refresh) from DB by given access token.
+     *
+     * @param token access token
+     * @since 4.0
+     */
     @Transactional
     public void removeToken(String token) {
         refreshTokenDao.deleteAllByAccessToken(token);
+    }
+
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserName(token, ApplicationConstants.ACCESS_TOKEN_SECRET));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+
+    }
+
+    private String getUserName(String token, String currentSecret) {
+        return Jwts.parser().setSigningKey(currentSecret).parseClaimsJws(token).getBody().getSubject();
+    }
+
+
+    private TokenDto generateToken(String userName, String currentSecret, long expiredTime) {
+        Claims claims = Jwts.claims().setSubject(userName);
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + expiredTime);
+        String tokenStr = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS256, currentSecret)
+                .compact();
+
+        return new TokenDto(tokenStr, validity);
     }
 
 

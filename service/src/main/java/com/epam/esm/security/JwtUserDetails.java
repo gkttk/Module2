@@ -6,7 +6,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Set;
 
-
+/**
+ * Implementation of {@link org.springframework.security.core.userdetails.UserDetails}.
+ */
 public class JwtUserDetails implements UserDetails {
 
     private final Long id;

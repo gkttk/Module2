@@ -13,7 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
+/**
+ * This filter gets an access token from a request and validate it.
+ * If token is not expired and valid, user will be authenticated.
+ *
+ * @since 4.0
+ */
 public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;

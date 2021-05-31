@@ -12,6 +12,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+
+/**
+ * This listener starts a thread which cleans expired tokens from DB every 11 minutes.
+ *
+ * @since 4.0
+ */
 @Component
 public class RefreshTokenEventListener {
 

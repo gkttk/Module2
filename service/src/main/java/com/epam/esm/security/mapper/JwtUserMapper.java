@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.Set;
 
+/**
+ * Default implementation of {@link com.epam.esm.security.mapper.JwtObjectMapper}
+ */
 @Component
 public class JwtUserMapper implements JwtObjectMapper<UserDto> {
 

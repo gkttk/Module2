@@ -46,24 +46,25 @@ public class JwtTokenProvider {
      * This method checks validity of refresh token in DB(if it exists there) and generates a new token pair(access+refresh)
      * for returning to client.
      *
-     * @param oldAccessToken expired access token for searching the relevant refresh token in DB.
+     * @param currentRefreshToken refresh token for searching the relevant refresh token in DB.
      * @return new pair access + refresh token.
      * @since 4.0
      */
     @Transactional
-    public JwtTokenDto refreshToken(String oldAccessToken) {
-        TokenPair foundToken = refreshTokenDao.findByAccessToken(oldAccessToken);
+    public JwtTokenDto refreshToken(String currentRefreshToken) {
+        TokenPair foundToken = refreshTokenDao.findByRefreshToken(currentRefreshToken);
         if (foundToken != null) {
             Date expiredTime = foundToken.getRefreshTokenExpiredTime();
             if (!expiredTime.before(new Date())) {
+                String oldAccessToken = foundToken.getAccessToken();
                 String userName = getUserName(oldAccessToken, ApplicationConstants.ACCESS_TOKEN_SECRET);
                 TokenDto accessToken = generateToken(userName, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
-                TokenDto refreshToken = generateToken(userName, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
+                TokenDto newRefreshToken = generateToken(userName, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
 
                 foundToken.setAccessToken(accessToken.getToken());
-                foundToken.setRefreshToken(refreshToken.getToken());
+                foundToken.setRefreshToken(newRefreshToken.getToken());
                 refreshTokenDao.save(foundToken);
-                return new JwtTokenDto(accessToken.getToken(), refreshToken.getToken(), accessToken.getExpiredTime());
+                return new JwtTokenDto(accessToken.getToken(), newRefreshToken.getToken(), accessToken.getExpiredTime());
             } else {
                 refreshTokenDao.delete(foundToken);
             }

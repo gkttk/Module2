@@ -9,8 +9,7 @@ import java.util.Date;
 
 @Repository
 public interface TokenPairDao extends JpaRepository<TokenPair, Long> {
-
-    TokenPair findByAccessToken(String accessToken);
+    TokenPair findByRefreshToken(String refreshToken);
 
     boolean existsByAccessToken(String accessToken);
 

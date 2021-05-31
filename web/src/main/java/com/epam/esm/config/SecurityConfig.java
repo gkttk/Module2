@@ -50,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers(WebLayerConstants.ALL_AUTH_URL_REGEX_PATTERN).and();
+        web.ignoring().antMatchers(WebLayerConstants.ALL_AUTH_URL_REGEX_PATTERN);
     }
 
 
@@ -62,7 +62,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(WebLayerConstants.ALL_AUTH_URL_REGEX_PATTERN).permitAll()
                 .antMatchers(HttpMethod.GET, "/certificates/**").permitAll()
                 .regexMatchers(HttpMethod.POST, "/users/(\\d+)/orders").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers(HttpMethod.GET, WebLayerConstants.ALL_URL_REGEX_PATTERN).hasAnyAuthority("USER", "ADMIN")
@@ -75,7 +74,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler())
                 .authenticationEntryPoint(authenticationEntryPoint())
-
                 .and()
                 .addFilterBefore(new JwtTokenAuthenticationFilter(tokenProvider, resolver), BasicAuthenticationFilter.class);
     }

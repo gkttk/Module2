@@ -19,6 +19,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -56,6 +57,12 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
             JwtAuthenticationException.class, GiftApplicationAccessDeniedException.class, GiftApplicationAuthorizationException.class})
     public ResponseEntity<ErrorResult> handleGiftCertificateException(GiftApplicationException exception, Locale locale) {
         return getResponseEntity(exception.getErrorCode(), exception.getParams(), locale);
+    }
+
+
+    @ExceptionHandler(BadCredentialsException.class)
+        public ResponseEntity<ErrorResult> handleBadCredentialsException(BadCredentialsException exception, Locale locale){
+        return getResponseEntity(WebLayerConstants.INVALID_CREDENTIALS_ERROR_CODE, null, locale);
     }
 
 

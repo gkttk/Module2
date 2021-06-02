@@ -23,7 +23,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -52,10 +51,7 @@ public class TagController {
                                                                   @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
         TagDtoBundle bundle = tagService.findAllForQuery(reqParams, limit, offset);
-        List<TagDto> tags = bundle.getTags();
-        long count = bundle.getCount();
-
-        return ResponseEntity.ok(assembler.toCollectionModel(tags, offset, count, reqParams));
+        return ResponseEntity.ok(assembler.toCollectionModel(bundle.getTags(), offset, bundle.getCount(), reqParams));
     }
 
     @GetMapping("/{id}")

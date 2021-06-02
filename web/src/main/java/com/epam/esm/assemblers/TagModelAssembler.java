@@ -29,14 +29,14 @@ public class TagModelAssembler extends AbstractModelAssembler<TagDto> {
         dto.add(linkTo(methodOn(TagController.class).deleteById(id)).withRel(WebLayerConstants.DELETE));
     }
 
-    public void addFirstPage(CollectionModel<TagDto> collectionModel, UriBuilderResult uriBuilderResult) {
+    public void addFirstPage(CollectionModel<TagDto> collectionModel, UriBuilderResult uriBuilderResult, String[] urlParts) {
         collectionModel.add(linkTo(methodOn(TagController.class)
                 .getAllForQuery(null, uriBuilderResult.getLimit(), WebLayerConstants.DEFAULT_OFFSET))
                 .slash(uriBuilderResult.getParamString())
                 .withRel(WebLayerConstants.FIRST_PAGE));
     }
 
-    public void addNextPage(CollectionModel<TagDto> collectionModel, UriBuilderResult uriBuilderResult) {
+    public void addNextPage(CollectionModel<TagDto> collectionModel, UriBuilderResult uriBuilderResult, String[] urlParts) {
         int limit = uriBuilderResult.getLimit();
         int offset = uriBuilderResult.getOffset();
         collectionModel.add(linkTo(methodOn(TagController.class)
@@ -46,7 +46,7 @@ public class TagModelAssembler extends AbstractModelAssembler<TagDto> {
     }
 
     @Override
-    protected void addLastPage(CollectionModel<TagDto> collectionModel, UriBuilderResult uriBuilderResult, long count) {
+    protected void addLastPage(CollectionModel<TagDto> collectionModel, UriBuilderResult uriBuilderResult, long count, String[] urlParts) {
         int limit = uriBuilderResult.getLimit();
         collectionModel.add(linkTo(methodOn(TagController.class)
                 .getAllForQuery(null, limit, (int)count - limit))

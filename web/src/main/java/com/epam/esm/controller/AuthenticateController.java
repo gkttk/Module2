@@ -4,13 +4,11 @@ import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.domain.dto.token.JwtTokenDto;
 import com.epam.esm.domain.dto.token.LoginPasswordDto;
 import com.epam.esm.security.JwtTokenProvider;
-import com.epam.esm.security.exceptions.GiftApplicationAuthorizationException;
 import com.epam.esm.security.exceptions.JwtAuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,17 +32,10 @@ public class AuthenticateController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<JwtTokenDto> authenticate(@RequestBody LoginPasswordDto loginPasswordDto) {
-        String login = loginPasswordDto.getLogin();
-        String password = loginPasswordDto.getPassword();
-        try {
-            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, password));
-            JwtTokenDto token = tokenProvider.createToken(authenticate);
-            return new ResponseEntity<>(token, HttpStatus.OK);
-        } catch (BadCredentialsException ex) {
-            throw new GiftApplicationAuthorizationException("Invalid credentials", WebLayerConstants.INVALID_CREDENTIALS_ERROR_CODE,
-                    login, password);
-        }
-
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginPasswordDto.getLogin(),
+                loginPasswordDto.getPassword()));
+        JwtTokenDto token = tokenProvider.createToken(authenticate);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @PostMapping("/refresh_token")

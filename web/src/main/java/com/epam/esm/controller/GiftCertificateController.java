@@ -43,16 +43,13 @@ public class GiftCertificateController {
         this.assembler = assembler;
     }
 
-
     @GetMapping
     public ResponseEntity<CollectionModel<GiftCertificateDto>> getAllForQuery(WebRequest webRequest,
                                                                               @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_LIMIT + "") @Min(value = 0, message = "Limit parameter must be greater or equal 0") Integer limit,
                                                                               @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> parameterMap = webRequest.getParameterMap();
         GiftCertificateDtoBundle bundle = giftCertificateService.findAllForQuery(parameterMap, limit, offset);
-        List<GiftCertificateDto> certificates = bundle.getGiftCertificates();
-        long count = bundle.getCount();
-        return ResponseEntity.ok(assembler.toCollectionModel(certificates, offset, count, parameterMap));
+        return ResponseEntity.ok(assembler.toCollectionModel(bundle.getGiftCertificates(), offset, bundle.getCount(), parameterMap));
     }
 
     @GetMapping("/{id}")

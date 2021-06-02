@@ -56,8 +56,8 @@ public class JwtTokenProvider {
         if (foundToken != null) {
             Date expiredTime = foundToken.getRefreshTokenExpiredTime();
             if (!expiredTime.before(new Date())) {
-                String oldAccessToken = foundToken.getAccessToken();
-                String userName = getUserName(oldAccessToken, ApplicationConstants.ACCESS_TOKEN_SECRET);
+                String refreshToken = foundToken.getRefreshToken();
+                String userName = getUserName(refreshToken, ApplicationConstants.REFRESH_TOKEN_SECRET);
                 TokenDto accessToken = generateToken(userName, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
                 TokenDto newRefreshToken = generateToken(userName, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
 

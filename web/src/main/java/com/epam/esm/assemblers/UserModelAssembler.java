@@ -24,7 +24,7 @@ public class UserModelAssembler extends AbstractModelAssembler<UserDto> {
     }
 
     @Override
-    protected void addFirstPage(CollectionModel<UserDto> collectionModel, UriBuilderResult uriBuilderResult) {
+    protected void addFirstPage(CollectionModel<UserDto> collectionModel, UriBuilderResult uriBuilderResult, String[] urlParts) {
         collectionModel.add(linkTo(methodOn(UserController.class)
                 .getAllForQuery(null, uriBuilderResult.getLimit(), WebLayerConstants.DEFAULT_OFFSET))
                 .slash(uriBuilderResult.getParamString())
@@ -32,7 +32,7 @@ public class UserModelAssembler extends AbstractModelAssembler<UserDto> {
     }
 
     @Override
-    protected void addNextPage(CollectionModel<UserDto> collectionModel, UriBuilderResult uriBuilderResult) {
+    protected void addNextPage(CollectionModel<UserDto> collectionModel, UriBuilderResult uriBuilderResult, String[] urlParts) {
         int limit = uriBuilderResult.getLimit();
         int offset = uriBuilderResult.getOffset();
         collectionModel.add(linkTo(methodOn(UserController.class)
@@ -42,7 +42,7 @@ public class UserModelAssembler extends AbstractModelAssembler<UserDto> {
     }
 
     @Override
-    protected void addLastPage(CollectionModel<UserDto> collectionModel, UriBuilderResult uriBuilderResult, long count) {
+    protected void addLastPage(CollectionModel<UserDto> collectionModel, UriBuilderResult uriBuilderResult, long count, String[] urlParts) {
         int limit = uriBuilderResult.getLimit();
         collectionModel.add(linkTo(methodOn(UserController.class)
                 .getAllForQuery(null, limit, (int)count - limit))

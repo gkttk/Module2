@@ -127,4 +127,9 @@ public final class ApplicationConstants {
     public static final String BEARER_PREFIX = "Bearer";
 
 
+    //filters
+    public static final String MAKE_ORDER_URI = "/users/*/orders";
+    public static final String USER_ID_MAKE_ORDER_REGEX = "(?<=users/)\\d+(?=/orders)";
+
+
 }

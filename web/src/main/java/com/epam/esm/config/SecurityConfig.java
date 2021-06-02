@@ -5,6 +5,7 @@ import com.epam.esm.security.JwtTokenProvider;
 import com.epam.esm.security.accessdeniedhandler.GiftApplicationAccessDeniedHandler;
 import com.epam.esm.security.authentrypoint.UnauthorizedEntryPoint;
 import com.epam.esm.security.filters.JwtTokenAuthenticationFilter;
+import com.epam.esm.security.filters.UserIdFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
@@ -62,9 +64,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/certificates/**").permitAll()
-                .regexMatchers(HttpMethod.POST, "/users/(\\d+)/orders").hasAnyAuthority("USER", "ADMIN")
-                .antMatchers(HttpMethod.GET, WebLayerConstants.ALL_URL_REGEX_PATTERN).hasAnyAuthority("USER", "ADMIN")
+                .antMatchers(HttpMethod.GET, WebLayerConstants.ALL_CERTIFICATES_URL_REGEX_PATTERN).permitAll()
+                .regexMatchers(HttpMethod.POST, WebLayerConstants.MAKE_ORDER_URL_REGEX_PATTERN).hasAnyAuthority("USER", "ADMIN")
+                .antMatchers(HttpMethod.GET, WebLayerConstants.ALL_TAGS_URL_REGEX_PATTERN).hasAnyAuthority("USER")
+                .antMatchers(HttpMethod.GET, WebLayerConstants.ALL_URL_REGEX_PATTERN).hasAnyAuthority("ADMIN")
                 .antMatchers(HttpMethod.POST, WebLayerConstants.ALL_URL_REGEX_PATTERN).hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.PUT, WebLayerConstants.ALL_URL_REGEX_PATTERN).hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.PATCH, WebLayerConstants.ALL_URL_REGEX_PATTERN).hasAuthority("ADMIN")
@@ -75,7 +78,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(accessDeniedHandler())
                 .authenticationEntryPoint(authenticationEntryPoint())
                 .and()
-                .addFilterBefore(new JwtTokenAuthenticationFilter(tokenProvider, resolver), BasicAuthenticationFilter.class);
+                .addFilterBefore(new JwtTokenAuthenticationFilter(tokenProvider, resolver), BasicAuthenticationFilter.class)
+                .addFilterAfter(new UserIdFilter(),  BasicAuthenticationFilter.class);
+        ;
     }
 
     @Bean

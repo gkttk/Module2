@@ -44,5 +44,9 @@ public class WebLayerConstants {
     public static final String ALL_URL_REGEX_PATTERN = "/**";
     public static final String ALL_AUTH_URL_REGEX_PATTERN = "/auth/**";
 
+    public static final String ALL_CERTIFICATES_URL_REGEX_PATTERN = "/certificates/**";
+    public static final String ALL_TAGS_URL_REGEX_PATTERN = "/tags/**";
+    public static final String MAKE_ORDER_URL_REGEX_PATTERN = "/users/(\\d+)/orders";
+
 
 }

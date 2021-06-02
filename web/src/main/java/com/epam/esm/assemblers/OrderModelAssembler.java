@@ -25,28 +25,31 @@ public class OrderModelAssembler extends AbstractModelAssembler<OrderDto> {
     }
 
     @Override
-    protected void addFirstPage(CollectionModel<OrderDto> collectionModel, UriBuilderResult uriBuilderResult) {
+    protected void addFirstPage(CollectionModel<OrderDto> collectionModel, UriBuilderResult uriBuilderResult, String[] urlParts) {
+        long userId = Long.parseLong(urlParts[0]);
         collectionModel.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, 0, uriBuilderResult.getLimit(), WebLayerConstants.DEFAULT_OFFSET)) //todo
+                .getAllOrdersForUser(null, userId, uriBuilderResult.getLimit(), WebLayerConstants.DEFAULT_OFFSET))
                 .slash(uriBuilderResult.getParamString())
                 .withRel(WebLayerConstants.FIRST_PAGE));
     }
 
     @Override
-    protected void addNextPage(CollectionModel<OrderDto> collectionModel, UriBuilderResult uriBuilderResult) {
+    protected void addNextPage(CollectionModel<OrderDto> collectionModel, UriBuilderResult uriBuilderResult, String[] urlParts) {
         int limit = uriBuilderResult.getLimit();
         int offset = uriBuilderResult.getOffset();
+        long userId = Long.parseLong(urlParts[0]);
         collectionModel.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, 0, limit, offset + limit)) //todo
+                .getAllOrdersForUser(null, userId, limit, offset + limit))
                 .slash(uriBuilderResult.getParamString())
                 .withRel(WebLayerConstants.NEXT_PAGE));
     }
 
     @Override
-    protected void addLastPage(CollectionModel<OrderDto> collectionModel, UriBuilderResult uriBuilderResult, long count) {
+    protected void addLastPage(CollectionModel<OrderDto> collectionModel, UriBuilderResult uriBuilderResult, long count, String[] urlParts) {
         int limit = uriBuilderResult.getLimit();
+        long userId = Long.parseLong(urlParts[0]);
         collectionModel.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, 0,limit, (int)count - limit)) //todo
+                .getAllOrdersForUser(null, userId, limit, (int) count - limit))
                 .slash(uriBuilderResult.getParamString())
                 .withRel(WebLayerConstants.LAST_PAGE));
 
@@ -58,5 +61,6 @@ public class OrderModelAssembler extends AbstractModelAssembler<OrderDto> {
         dto.add(linkTo(methodOn(OrderController.class).getById(id)).withSelfRel());
         dto.add(linkTo(methodOn(OrderController.class).deleteById(id)).withRel(WebLayerConstants.DELETE));
     }
+
 
 }

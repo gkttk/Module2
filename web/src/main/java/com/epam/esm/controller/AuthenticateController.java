@@ -45,14 +45,6 @@ public class AuthenticateController {
         return ResponseEntity.ok(newToken);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(WebRequest request) {
-        String tokenFromRequest = getTokenFromRequest(request);
-        tokenProvider.removeToken(tokenFromRequest);
-        return ResponseEntity.noContent().build();
-    }
-
-
     private String getTokenFromRequest(WebRequest request) {
         String authHeader = request.getHeader(WebLayerConstants.AUTH_HEADER);
         if (authHeader != null && authHeader.startsWith(WebLayerConstants.BEARER_PREFIX)) {

@@ -4,7 +4,6 @@ import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.querybuilder.parameterparser.ParameterParser;
 import com.epam.esm.querybuilder.parameterparser.enums.Operators;
 import com.epam.esm.querybuilder.parameterparser.parserresult.ParserResult;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -196,7 +195,7 @@ public abstract class AbstractQueryBuilder<T> {
      * This method gets predicate for equal operation with joining between two tables.
      * All predicates reduces as OR statement.
      *
-     * @param param        passed param for join.
+     * @param param         passed param for join.
      * @param attributeName attribute of entity for joining.
      * @param fieldName     the field with which to compare.
      * @return reduced predicate with equal operations.
@@ -224,6 +223,4 @@ public abstract class AbstractQueryBuilder<T> {
      * @return class of entity.
      */
     protected abstract Class<T> getGenericClass();
-
-
 }

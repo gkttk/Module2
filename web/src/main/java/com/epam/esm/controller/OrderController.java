@@ -35,6 +35,4 @@ public class OrderController {
         orderService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }

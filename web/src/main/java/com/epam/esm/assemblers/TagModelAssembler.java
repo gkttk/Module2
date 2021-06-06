@@ -53,6 +53,4 @@ public class TagModelAssembler extends AbstractModelAssembler<TagDto> {
                 .slash(uriBuilderResult.getParamString())
                 .withRel(WebLayerConstants.LAST_PAGE));
     }
-
-
 }

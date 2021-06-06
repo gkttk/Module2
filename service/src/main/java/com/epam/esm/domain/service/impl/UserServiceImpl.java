@@ -5,10 +5,10 @@ import com.epam.esm.dao.domain.CriteriaFindAllDao;
 import com.epam.esm.dao.domain.UserDao;
 import com.epam.esm.domain.dto.UserDto;
 import com.epam.esm.domain.dto.bundles.UserDtoBundle;
-import com.epam.esm.entity.User;
 import com.epam.esm.domain.exceptions.GiftCertificateException;
 import com.epam.esm.domain.exceptions.UserException;
 import com.epam.esm.domain.service.UserService;
+import com.epam.esm.entity.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Find User by login and password and map it to UserDto.
      *
-     * @param login User login.
+     * @param login    User login.
      * @param password User password.
      * @return UserDto
      * @since 4.0
@@ -149,6 +149,4 @@ public class UserServiceImpl implements UserService {
                     ApplicationConstants.USER_SUCH_LOGIN_EXISTS_CODE, login);
         }
     }
-
-
 }

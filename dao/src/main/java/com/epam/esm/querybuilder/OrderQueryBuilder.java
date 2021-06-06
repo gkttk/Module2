@@ -87,6 +87,4 @@ public class OrderQueryBuilder extends AbstractQueryBuilder<Order> implements Qu
             }
         }
     }
-
-
 }

@@ -5,14 +5,8 @@ package com.epam.esm.constants;
  * This class contains all application constants.
  */
 public final class ApplicationConstants {
-
-
-
-
     //defaults
     public final static String APPLICATION_NAME = "GiftsApplication";
-
-
     public final static int MAX_LIMIT = Integer.MAX_VALUE;
     public final static int DEFAULT_LIMIT = 5;
     public final static int DEFAULT_OFFSET = 0;
@@ -48,7 +42,7 @@ public final class ApplicationConstants {
 
     //Order queries
     public final static String COUNT_ORDER_BY_USER_ID_QUERY = "SELECT count(o.id) FROM Order o " +
-           " JOIN o.user uo WHERE uo.id =:userId";
+            " JOIN o.user uo WHERE uo.id =:userId";
 
     //Refresh token queries
     public final static String DELETE_ALL_BY_DATE_BEFORE = "DELETE FROM RefreshToken t WHERE t.expiredTime <= :date";
@@ -116,7 +110,7 @@ public final class ApplicationConstants {
     public final static int TAG_WITH_SUCH_NAME_EXISTS_ERROR_CODE = 42000;
     public final static int REFRESH_TOKEN_EXPIRED = 30010;
     public final static int ACCESS_TOKEN_EXPIRED = 30011;
-    public final static int ACCESS_TOKEN_INVALID = 30200;
+    public final static int TOKEN_INVALID = 30200;
     public final static int ACCESS_DENIED_ERROR_CODE = 40343;
     public final static int UNAUTHORIZED_ERROR_CODE = 40141;
     public final static int INVALID_CREDENTIALS_ERROR_CODE = 40000;
@@ -132,10 +126,7 @@ public final class ApplicationConstants {
     public static final String AUTH_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer";
 
-
     //filters
     public static final String MAKE_ORDER_URI = "/users/*/orders";
     public static final String USER_ID_MAKE_ORDER_REGEX = "(?<=users/)\\d+(?=/orders)";
-
-
 }

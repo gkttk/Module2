@@ -26,7 +26,6 @@ public class TagQueryBuilder extends AbstractQueryBuilder<Tag> implements QueryB
     @Autowired
     public TagQueryBuilder(EntityManager entityManager, ParameterParser parser) {
         super(entityManager, parser);
-
     }
 
     /**
@@ -79,6 +78,4 @@ public class TagQueryBuilder extends AbstractQueryBuilder<Tag> implements QueryB
             }
         }
     }
-
-
 }

@@ -29,8 +29,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
         this.resolver = resolver;
     }
 
-
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
@@ -45,7 +43,5 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
         } catch (GiftApplicationException ex) {
             resolver.resolveException(request, response, null, ex);
         }
-
-
     }
 }

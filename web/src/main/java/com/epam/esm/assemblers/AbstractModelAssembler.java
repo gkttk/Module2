@@ -69,6 +69,4 @@ public abstract class AbstractModelAssembler<T> implements ModelAssembler<T> {
     protected abstract void addLastPage(CollectionModel<T> collectionModel, UriBuilderResult uriBuilderResult, long count, String[] urlParts);
 
     protected abstract void addModelLinks(T dto);
-
-
 }

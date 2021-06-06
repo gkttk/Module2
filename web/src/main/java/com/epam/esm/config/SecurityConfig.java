@@ -55,7 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers(WebLayerConstants.ALL_AUTH_URL_REGEX_PATTERN);
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -80,7 +79,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(new JwtTokenAuthenticationFilter(tokenProvider, resolver), BasicAuthenticationFilter.class)
                 .addFilterAfter(new UserIdFilter(),  BasicAuthenticationFilter.class);
-        ;
     }
 
     @Bean
@@ -92,6 +90,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return new UnauthorizedEntryPoint();
     }
-
-
 }

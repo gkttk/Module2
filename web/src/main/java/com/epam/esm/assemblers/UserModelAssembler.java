@@ -56,5 +56,4 @@ public class UserModelAssembler extends AbstractModelAssembler<UserDto> {
         dto.add(linkTo(methodOn(UserController.class).getById(id)).withSelfRel());
         dto.add(linkTo(methodOn(UserController.class).createOrder(id, null)).withRel(WebLayerConstants.MAKE_ORDER));
     }
-
 }

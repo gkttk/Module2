@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(path = "/auth", produces = {"application/json; charset=UTF-8"})
 public class AuthenticateController {
@@ -31,7 +33,7 @@ public class AuthenticateController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<JwtTokenDto> authenticate(@RequestBody LoginPasswordDto loginPasswordDto) {
+    public ResponseEntity<JwtTokenDto> authenticate(@RequestBody @Valid LoginPasswordDto loginPasswordDto) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginPasswordDto.getLogin(),
                 loginPasswordDto.getPassword()));
         JwtTokenDto token = tokenProvider.createToken(authenticate);
@@ -52,6 +54,4 @@ public class AuthenticateController {
         }
         throw new JwtAuthenticationException("Missing access token in request.", WebLayerConstants.ACCESS_TOKEN_NOT_FOUND);
     }
-
-
 }

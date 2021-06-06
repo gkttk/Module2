@@ -53,7 +53,6 @@ public interface UserService {
      */
     UserDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
 
-
     /**
      * Save GiftCertificate.
      *
@@ -62,5 +61,4 @@ public interface UserService {
      * @since 2.0
      */
     UserDto save(UserDto user);
-
 }

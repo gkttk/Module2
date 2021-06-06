@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Primary;
 @ComponentScan(basePackages = {"com.epam.esm"})
 public class ServiceConfig {
 
-
     @Bean
     public ModelMapper getModelMapper() {
         return new ModelMapper();
@@ -25,7 +24,6 @@ public class ServiceConfig {
         modelMapper.typeMap(UserDto.class, User.class)
                 .addMappings(mapper -> mapper.using(userRoleConverter).map(UserDto::getRole, User::setRole));*/
     }
-
 
     @Bean
     @Primary
@@ -42,5 +40,4 @@ public class ServiceConfig {
                 .setFilterProvider(filters)
                 .registerModule(module);
     }
-
 }

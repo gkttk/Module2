@@ -52,7 +52,6 @@ public class OrderModelAssembler extends AbstractModelAssembler<OrderDto> {
                 .getAllOrdersForUser(null, userId, limit, (int) count - limit))
                 .slash(uriBuilderResult.getParamString())
                 .withRel(WebLayerConstants.LAST_PAGE));
-
     }
 
     @Override
@@ -61,6 +60,4 @@ public class OrderModelAssembler extends AbstractModelAssembler<OrderDto> {
         dto.add(linkTo(methodOn(OrderController.class).getById(id)).withSelfRel());
         dto.add(linkTo(methodOn(OrderController.class).deleteById(id)).withRel(WebLayerConstants.DELETE));
     }
-
-
 }

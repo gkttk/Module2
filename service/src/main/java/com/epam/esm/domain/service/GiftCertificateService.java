@@ -68,6 +68,4 @@ public interface GiftCertificateService {
      * @since 1.0
      */
     GiftCertificateDtoBundle findAllForQuery(Map<String, String[]> reqParams, int limit, int offset);
-
-
 }

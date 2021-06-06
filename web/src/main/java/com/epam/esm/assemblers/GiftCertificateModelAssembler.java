@@ -58,5 +58,4 @@ public class GiftCertificateModelAssembler extends AbstractModelAssembler<GiftCe
         dto.add(linkTo(methodOn(GiftCertificateController.class).patchCertificate(null, modelId)).withRel(WebLayerConstants.PARTIAL_UPDATE));
         dto.add(linkTo(methodOn(GiftCertificateController.class).deleteById(modelId)).withRel(WebLayerConstants.DELETE));
     }
-
 }

@@ -27,6 +27,4 @@ public class JwtUserMapper implements JwtObjectMapper<UserDto> {
     public Set<GrantedAuthority> getGrantedAuthorities(UserDto user) {
         return Collections.singleton(new SimpleGrantedAuthority(user.getRole()));
     }
-
-
 }

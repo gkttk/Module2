@@ -178,6 +178,4 @@ public class OrderServiceImpl implements OrderService {
         return certificateOpt.orElseThrow(() -> new GiftCertificateException(String.format("GiftCertificate with id: %d doesn't exist in DB",
                 certificateId), ApplicationConstants.CERTIFICATE_NOT_FOUND_CODE, certificateId));
     }
-
-
 }

@@ -57,7 +57,6 @@ public class JwtTokenProvider {
 
     }
 
-
     /**
      * This method create a token pair(access+refresh) with information from Authentication instance.
      * Called on the first attempt to authenticate a user without a token.
@@ -130,7 +129,7 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException ex) {
             throw new JwtAuthenticationException("JWT access token is expired", ApplicationConstants.ACCESS_TOKEN_EXPIRED);
         } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("JWT token is invalid ", ApplicationConstants.ACCESS_TOKEN_INVALID);
+            throw new JwtAuthenticationException("JWT token is invalid ", ApplicationConstants.TOKEN_INVALID);
         }
     }
 
@@ -210,6 +209,4 @@ public class JwtTokenProvider {
 
         return new TokenDto(tokenStr, validity);
     }
-
-
 }

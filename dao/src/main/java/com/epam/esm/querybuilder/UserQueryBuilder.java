@@ -77,6 +77,4 @@ public class UserQueryBuilder extends AbstractQueryBuilder<User> implements Quer
             }
         }
     }
-
-
 }

@@ -106,6 +106,4 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
                 .filter(error -> error.getCode() == errorCode)
                 .findFirst().orElseThrow(() -> new ResponseErrorNotFoundException(String.format("Can't find ResponseError with code:%d", errorCode)));
     }
-
-
 }

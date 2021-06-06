@@ -11,6 +11,7 @@ import java.util.Optional;
 
 /**
  * This interface represents an api to interact with the Tag entity in database.
+ *
  * @since 4.0
  */
 public interface TagDao extends JpaRepository<Tag, Long> {
@@ -24,7 +25,6 @@ public interface TagDao extends JpaRepository<Tag, Long> {
      */
     Optional<Tag> findByName(String name);
 
-
     /**
      * Find Tag the most widely used tags of user with given id.
      *
@@ -33,5 +33,4 @@ public interface TagDao extends JpaRepository<Tag, Long> {
      */
     @Query(value = ApplicationConstants.FIND_MAX_WIDELY_USED_QUERY, nativeQuery = true)
     List<Tag> findMaxWidelyUsed(@Param("userId") long userId);
-
 }

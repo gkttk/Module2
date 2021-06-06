@@ -33,5 +33,4 @@ public abstract class AbstractCriteriaFindAllDao<T> implements CriteriaFindAllDa
                 .distinct()
                 .collect(Collectors.toList());
     }
-
 }

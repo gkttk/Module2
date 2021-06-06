@@ -83,6 +83,4 @@ public class GiftCertificateController {
         GiftCertificateDto certificate = giftCertificateService.patch(giftCertificateDto, id);
         return ResponseEntity.ok(assembler.toModel(certificate));
     }
-
-
 }

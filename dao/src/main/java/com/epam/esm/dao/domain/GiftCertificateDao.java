@@ -20,9 +20,4 @@ public interface GiftCertificateDao extends JpaRepository<GiftCertificate, Long>
      * @since 4.0
      */
     Optional<GiftCertificate> findByName(String name);
-
-
-
-
-
 }

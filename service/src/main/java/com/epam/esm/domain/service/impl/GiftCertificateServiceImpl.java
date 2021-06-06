@@ -255,7 +255,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (duration != null) {
             targetEntity.setDuration(duration);
         }
-
     }
 
 
@@ -331,6 +330,4 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             }
         });
     }
-
-
 }

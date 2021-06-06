@@ -62,10 +62,7 @@ public class JwtUserDetails implements UserDetails {
         return true;
     }
 
-
     public String getLogin() {
         return login;
     }
-
-
 }

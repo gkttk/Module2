@@ -129,4 +129,5 @@ public final class ApplicationConstants {
     //filters
     public static final String MAKE_ORDER_URI = "/users/*/orders";
     public static final String USER_ID_MAKE_ORDER_REGEX = "(?<=users/)\\d+(?=/orders)";
+    public static final String ACCESSIBLE_URLS_REGEX = "/certificates/?-?\\d*";
 }

@@ -39,7 +39,6 @@ public class JwtTokenProvider {
      * @return new pair access + refresh token.
      * @since 4.0
      */
-    @Transactional
     public JwtTokenDto refreshToken(String currentRefreshToken) {
         if (currentRefreshToken == null || !validateRefreshToken(currentRefreshToken)) {
             throw new JwtAuthenticationException("Refresh token is expired", ApplicationConstants.REFRESH_TOKEN_EXPIRED);
@@ -54,7 +53,6 @@ public class JwtTokenProvider {
         TokenDto newAccessToken = generateToken(user, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
         TokenDto newRefreshToken = generateToken(user, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
         return new JwtTokenDto(newAccessToken.getToken(), newRefreshToken.getToken(), newAccessToken.getExpiredTime());
-
     }
 
     /**
@@ -65,7 +63,6 @@ public class JwtTokenProvider {
      * @return new pair access + refresh token.
      * @since 4.0
      */
-    @Transactional
     public JwtTokenDto createToken(Authentication authenticate) {
         JwtUserDetails user = (JwtUserDetails) authenticate.getPrincipal();
 

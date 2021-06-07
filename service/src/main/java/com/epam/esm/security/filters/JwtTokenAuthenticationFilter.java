@@ -1,5 +1,6 @@
 package com.epam.esm.security.filters;
 
+import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.domain.exceptions.GiftApplicationException;
 import com.epam.esm.security.JwtTokenProvider;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This filter gets an access token from a request and validate it.
@@ -41,6 +44,11 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (GiftApplicationException ex) {
+            String uri = request.getRequestURI();
+            if (uri.matches(ApplicationConstants.ACCESSIBLE_URLS_REGEX) && request.getMethod().matches("GET")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             resolver.resolveException(request, response, null, ex);
         }
     }

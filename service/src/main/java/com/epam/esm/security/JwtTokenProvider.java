@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -50,8 +49,13 @@ public class JwtTokenProvider {
 
         JwtUserDetails user = new JwtUserDetails(userId, userName, null, authorities);
 
-        TokenDto newAccessToken = generateToken(user, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
-        TokenDto newRefreshToken = generateToken(user, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
+
+
+        TokenDto newAccessToken = generateToken(user, ApplicationConstants.ACCESS_TOKEN_SECRET, new Date(new Date().getTime() + ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS));
+
+        Date oldRefreshTokenExpirationTime = getExpirationFromToken(currentRefreshToken, ApplicationConstants.REFRESH_TOKEN_SECRET);
+
+        TokenDto newRefreshToken = generateToken(user, ApplicationConstants.REFRESH_TOKEN_SECRET, oldRefreshTokenExpirationTime);
         return new JwtTokenDto(newAccessToken.getToken(), newRefreshToken.getToken(), newAccessToken.getExpiredTime());
     }
 
@@ -66,8 +70,8 @@ public class JwtTokenProvider {
     public JwtTokenDto createToken(Authentication authenticate) {
         JwtUserDetails user = (JwtUserDetails) authenticate.getPrincipal();
 
-        TokenDto accessToken = generateToken(user, ApplicationConstants.ACCESS_TOKEN_SECRET, ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
-        TokenDto refreshToken = generateToken(user, ApplicationConstants.REFRESH_TOKEN_SECRET, ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS);
+        TokenDto accessToken = generateToken(user, ApplicationConstants.ACCESS_TOKEN_SECRET, new Date(new Date().getTime() + ApplicationConstants.ACCESS_TOKEN_EXPIRED_TIME_IN_MILLISECONDS));
+        TokenDto refreshToken = generateToken(user, ApplicationConstants.REFRESH_TOKEN_SECRET, new Date(new Date().getTime() + ApplicationConstants.REFRESH_TOKEN_EXPIRED_TIME_IN_MILLISECONDS));
 
         return new JwtTokenDto(accessToken.getToken(), refreshToken.getToken(), accessToken.getExpiredTime());
     }
@@ -150,6 +154,10 @@ public class JwtTokenProvider {
     }
 
 
+    private Date getExpirationFromToken(String token, String currentSecret){
+        return Jwts.parser().setSigningKey(currentSecret).parseClaimsJws(token).getBody().getExpiration();
+    }
+
     private String getUserNameFromToken(String token, String currentSecret) {
         return Jwts.parser().setSigningKey(currentSecret).parseClaimsJws(token).getBody().getSubject();
     }
@@ -177,7 +185,7 @@ public class JwtTokenProvider {
     }
 
 
-    private TokenDto generateToken(JwtUserDetails user, String currentSecret, long expiredTime) {
+    private TokenDto generateToken(JwtUserDetails user, String currentSecret, Date expiredTime) {
 
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
         String roles = authorities.stream()
@@ -186,15 +194,14 @@ public class JwtTokenProvider {
 
         Long userId = user.getId();
         String userName = user.getLogin();
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + expiredTime);
+
         Claims claims = Jwts.claims()
                 .setSubject(userName)
                 .setId(userId.toString())
                 .setAudience(ApplicationConstants.APPLICATION_NAME)
                 .setIssuer(ApplicationConstants.APPLICATION_NAME)
-                .setIssuedAt(now)
-                .setExpiration(validity);
+                .setIssuedAt(new Date())
+                .setExpiration(expiredTime);
 
         claims.put("roles", roles);
 
@@ -204,6 +211,6 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, currentSecret)
                 .compact();
 
-        return new TokenDto(tokenStr, validity);
+        return new TokenDto(tokenStr, expiredTime);
     }
 }

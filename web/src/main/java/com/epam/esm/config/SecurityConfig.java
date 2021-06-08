@@ -64,6 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, WebLayerConstants.ALL_CERTIFICATES_URL_REGEX_PATTERN).permitAll()
+                .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .regexMatchers(WebLayerConstants.MAKE_ORDER_URL_REGEX_PATTERN).hasAnyAuthority("USER", "ADMIN")
                 .antMatchers(HttpMethod.GET, WebLayerConstants.ALL_TAGS_URL_REGEX_PATTERN).hasAnyAuthority("ADMIN", "USER")
                 .antMatchers(HttpMethod.GET, WebLayerConstants.ALL_URL_REGEX_PATTERN).hasAnyAuthority("ADMIN")

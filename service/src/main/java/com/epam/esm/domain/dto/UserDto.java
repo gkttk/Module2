@@ -41,7 +41,6 @@ public class UserDto extends RepresentationModel<UserDto> {
     @Pattern(regexp = "^[A-Za-z\\d.-]{5,30}$", message = "{user_dto_password_violation_message}", groups = SaveGroup.class)
     private String password;
 
-    @Pattern(regexp = "(?i)(USER)|(ADMIN)", message = "{user_dto_role_violation_message}", groups = SaveGroup.class)
-    @NotBlank(message = "{user_dto_role_violation_message}", groups = SaveGroup.class)
+    @Null(message = "{user_dto_role_violation_message}", groups = SaveGroup.class)
     private String role;
 }

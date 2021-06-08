@@ -12,6 +12,7 @@ import com.epam.esm.entity.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,12 +32,15 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final CriteriaFindAllDao<User> findAllDao;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, @Qualifier("userCriteriaFindAllDao") CriteriaFindAllDao<User> findAllDao, ModelMapper modelMapper) {
+    public UserServiceImpl(UserDao userDao, @Qualifier("userCriteriaFindAllDao") CriteriaFindAllDao<User> findAllDao,
+                           ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
         this.findAllDao = findAllDao;
         this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -115,8 +119,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto save(UserDto user) {
-        user.setRole(user.getRole().toUpperCase());
         checkIfEntityWithGivenNameExist(user.getLogin());
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        user.setRole("USER");
         User userEntity = modelMapper.map(user, User.class);
         User savedUser = userDao.save(userEntity);
         return modelMapper.map(savedUser, UserDto.class);

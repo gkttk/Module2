@@ -33,7 +33,7 @@ public class UserDto extends RepresentationModel<UserDto> {
     private Long id;
 
     @NotNull(message = "{user_dto_login_violation_message}", groups = SaveGroup.class)
-    @Pattern(regexp = "^(?=.*[A-Za-z0-9]$)[A-Za-z][A-Za-z\\d.-]{5,80}$",
+    @Pattern(regexp = "^(?=.*[A-Za-z0-9]$)[A-Za-z][A-Za-z\\d.-]{3,80}$",
             message = "{user_dto_login_violation_message}", groups = SaveGroup.class)
     private String login;
 

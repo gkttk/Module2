@@ -1,6 +1,7 @@
 package com.epam.esm.dao.domain;
 
 import com.epam.esm.entity.Order;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -9,4 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since 4.0
  */
 public interface OrderDao extends JpaRepository<Order, Long> {
+
+
 }

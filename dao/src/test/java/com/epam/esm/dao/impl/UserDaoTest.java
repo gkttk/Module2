@@ -3,10 +3,13 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
 import com.epam.esm.dao.config.DaoTestConfig;
+import com.epam.esm.dao.domain.CriteriaFindAllDao;
+import com.epam.esm.dao.domain.UserDao;
 import com.epam.esm.entity.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
@@ -28,8 +31,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Transactional
 public class UserDaoTest {
 
+
+    private final UserDao userDao;
+    private final CriteriaFindAllDao<User> criteriaFindAllDao;
+
     @Autowired
-    private UserDao userDao;
+    public UserDaoTest(UserDao userDao,
+                       @Qualifier("userCriteriaFindAllDao") CriteriaFindAllDao<User> criteriaFindAllDao) {
+        this.userDao = userDao;
+        this.criteriaFindAllDao = criteriaFindAllDao;
+    }
 
     private static User user3;
     private static User savingUser;
@@ -88,7 +99,7 @@ public class UserDaoTest {
         Map<String, String[]> reqParams = new HashMap<>();
         int expectedListSize = 3;
         //when
-        List<User> results = userDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        List<User> results = criteriaFindAllDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertFalse(results.isEmpty());
         assertEquals(results.size(), expectedListSize);
@@ -101,7 +112,7 @@ public class UserDaoTest {
         reqParams.put(ApplicationConstants.ROLE_KEY, new String[]{"NewRole"});
 
         //when
-        List<User> results = userDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        List<User> results = criteriaFindAllDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertTrue(results.isEmpty());
     }
@@ -113,7 +124,7 @@ public class UserDaoTest {
         reqParams.put(ApplicationConstants.ROLE_KEY, new String[]{"USER"});
         int expectedListSize = 2;
         //when
-        List<User> results = userDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        List<User> results = criteriaFindAllDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertFalse(results.isEmpty());
         assertEquals(results.size(), expectedListSize);

@@ -1,7 +1,8 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.dao.relation.UsersOrdersDao;
 import com.epam.esm.dao.config.DaoTestConfig;
+import com.epam.esm.dao.domain.UserDao;
+import com.epam.esm.dao.relation.UsersOrdersDao;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import org.junit.jupiter.api.Test;
@@ -21,11 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Transactional
 public class UsersOrdersDaoTest {
 
-    @Autowired
-    private UsersOrdersDao usersOrdersDao;
+    private final UsersOrdersDao usersOrdersDao;
+    private final UserDao userDao;
 
     @Autowired
-    private UserDao userDao;
+    public UsersOrdersDaoTest(UsersOrdersDao usersOrdersDao, UserDao userDao) {
+        this.usersOrdersDao = usersOrdersDao;
+        this.userDao = userDao;
+    }
 
     @Test
     @Rollback
@@ -42,5 +46,4 @@ public class UsersOrdersDaoTest {
             assertTrue(orders.stream().anyMatch(order -> order.getId().equals(orderId)));
         });
     }
-
 }

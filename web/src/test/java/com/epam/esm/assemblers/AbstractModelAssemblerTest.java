@@ -39,7 +39,7 @@ public abstract class AbstractModelAssemblerTest<T extends RepresentationModel<T
         //given
         ModelAssembler<T> modelAssembler = getModelAssembler();
         //when
-        CollectionModel<T> result = modelAssembler.toCollectionModel(Arrays.asList(getDto(), getDto()), WebLayerConstants.DEFAULT_OFFSET, TEST_COUNT, Collections.emptyMap());
+        CollectionModel<T> result = modelAssembler.toCollectionModel(Arrays.asList(getDto(), getDto()), WebLayerConstants.DEFAULT_OFFSET, TEST_COUNT, Collections.emptyMap(), "1");
         //then
         assertFalse(result.getLinks().isEmpty());
     }

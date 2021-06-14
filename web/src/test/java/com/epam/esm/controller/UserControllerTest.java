@@ -29,7 +29,10 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -111,13 +114,14 @@ public class UserControllerTest {
         List<OrderDto> listDto = Arrays.asList(orderDto, orderDto);
 
         when(orderServiceMock.findAllForQuery(eq(userId), anyMap(), eq(TEST_LIMIT), eq(TEST_OFFSET))).thenReturn(new OrderDtoBundle(listDto, TEST_COUNT));
+        when(assemblerMock.toCollectionModel(anyCollection(), eq(TEST_OFFSET), anyLong(), anyMap(), anyString()))
+                .thenReturn(CollectionModel.of(listDto));
+
         //when
         ResponseEntity<CollectionModel<OrderDto>> result = userController.getAllOrdersForUser(webRequestMock, userId, TEST_LIMIT, TEST_OFFSET);
         //then
-        result.getBody().getContent().forEach(order -> {
-            assertAll(() -> assertEquals(order.getId(), orderDto.getId()),
-                    () -> assertEquals(order.getCost(), orderDto.getCost()));
-        });
+        result.getBody().getContent().forEach(order -> assertAll(() -> assertEquals(order.getId(), orderDto.getId()),
+                () -> assertEquals(order.getCost(), orderDto.getCost())));
         verify(orderServiceMock).findAllForQuery(eq(userId), anyMap(), eq(TEST_LIMIT), eq(TEST_OFFSET));
     }
 

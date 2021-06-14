@@ -15,6 +15,4 @@ public interface OrderDao extends JpaRepository<Order, Long> {
 
     @Query(ApplicationConstants.COUNT_ORDER_BY_USER_ID_QUERY)
     long countByUserId(@Param("userId") long userId);
-
-
 }

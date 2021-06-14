@@ -1,11 +1,12 @@
 package com.epam.esm.config;
 
 import com.epam.esm.constants.WebLayerConstants;
-import com.epam.esm.security.JwtTokenProvider;
+import com.epam.esm.security.token.JwtTokenProvider;
 import com.epam.esm.security.accessdeniedhandler.GiftApplicationAccessDeniedHandler;
 import com.epam.esm.security.authentrypoint.UnauthorizedEntryPoint;
 import com.epam.esm.security.filters.JwtTokenAuthenticationFilter;
 import com.epam.esm.security.filters.UserIdFilter;
+import com.epam.esm.security.token.validator.TokenValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -29,12 +30,14 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider tokenProvider;
+    private final TokenValidator tokenValidator;
     private final HandlerExceptionResolver resolver;
 
     @Autowired
     public SecurityConfig(JwtTokenProvider tokenProvider,
-                          @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+                          TokenValidator tokenValidator, @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
         this.tokenProvider = tokenProvider;
+        this.tokenValidator = tokenValidator;
         this.resolver = resolver;
     }
 
@@ -77,7 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(accessDeniedHandler())
                 .authenticationEntryPoint(authenticationEntryPoint())
                 .and()
-                .addFilterBefore(new JwtTokenAuthenticationFilter(tokenProvider, resolver), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenAuthenticationFilter(tokenProvider, resolver, tokenValidator), BasicAuthenticationFilter.class)
                 .addFilterAfter(new UserIdFilter(), BasicAuthenticationFilter.class);
     }
 

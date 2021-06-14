@@ -15,4 +15,8 @@ spring:
       path: /
   profiles:
     active: dev
+token:
+  secret:
+    access: $2a$04$dt10Yo.GcZ3SrqBzYIPrr.j1TvSkbjSFd.P.vR8D0H2BxE51.SOL6
+    refresh: $2a$04$a3SxC0GgQv0srAfaOeDdO..qM6QD0CAfApBhbhhBz5dSMXP0gElHG
 

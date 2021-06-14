@@ -1,5 +1,9 @@
 package com.epam.esm.domain.service.impl;
 
+import com.epam.esm.dao.domain.CriteriaFindAllDao;
+import com.epam.esm.dao.domain.GiftCertificateDao;
+import com.epam.esm.dao.domain.OrderDao;
+import com.epam.esm.dao.domain.UserDao;
 import com.epam.esm.domain.dto.GiftCertificateDto;
 import com.epam.esm.domain.dto.OrderDto;
 import com.epam.esm.domain.dto.SaveOrderDto;
@@ -28,6 +32,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,6 +40,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
+
+    @Mock
+    private CriteriaFindAllDao<Order> criteriaFindAllDao;
 
     @Mock
     private OrderDao orderDao;
@@ -115,18 +123,18 @@ public class OrderServiceTest {
         long userId = 1;
         Map<String, String[]> reqParams = new HashMap<>();
         when(userDao.findById(userId)).thenReturn(Optional.of(user));
-        when(orderDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Arrays.asList(order, order));
+        when(criteriaFindAllDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Arrays.asList(order, order));
         when(modelMapper.map(order, OrderDto.class)).thenReturn(orderDto);
         long expectedSize = 2;
-        when(orderDao.count(userId)).thenReturn(expectedSize);
+        when(orderDao.countByUserId(userId)).thenReturn(expectedSize);
         OrderDtoBundle expectedBundle = new OrderDtoBundle(Arrays.asList(orderDto, orderDto), expectedSize);
         //when
         OrderDtoBundle result = orderService.findAllForQuery(userId, reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
         assertEquals(result, expectedBundle);
-        verify(orderDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
+        verify(criteriaFindAllDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
         verify(modelMapper, times(2)).map(order, OrderDto.class);
-        verify(orderDao).count(userId);
+        verify(orderDao).countByUserId(userId);
     }
 
     @Test
@@ -135,18 +143,17 @@ public class OrderServiceTest {
         long userId = 1;
         Map<String, String[]> reqParams = new HashMap<>();
         when(userDao.findById(userId)).thenReturn(Optional.of(user));
-        when(orderDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Collections.emptyList());
+        when(criteriaFindAllDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Collections.emptyList());
         long expectedSize = 0L;
-        when(orderDao.count(userId)).thenReturn(expectedSize);
+        when(orderDao.countByUserId(userId)).thenReturn(expectedSize);
         OrderDtoBundle expectedBundle = new OrderDtoBundle(Collections.emptyList(), expectedSize);
         //when
         OrderDtoBundle result = orderService.findAllForQuery(userId, reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
         assertEquals(result, expectedBundle);
-        verify(orderDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
-        verify(orderDao).count(userId);
+        verify(criteriaFindAllDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
+        verify(orderDao).countByUserId(userId);
     }
-
 
     @Test
     public void testSave_ReturnDto_WhenUserWithGivenIdExistsInDb() {
@@ -208,10 +215,12 @@ public class OrderServiceTest {
     public void testDelete_deleteEntity_EntityWasDeleted() {
         //given
         long orderId = order.getId();
-        when(orderDao.deleteById(orderId)).thenReturn(true);
+        when(orderDao.existsById(orderId)).thenReturn(true);
+        doNothing().when(orderDao).deleteById(orderId);
         //when
         orderService.delete(orderId);
         //then
+        verify(orderDao).existsById(orderId);
         verify(orderDao).deleteById(orderId);
     }
 
@@ -219,11 +228,11 @@ public class OrderServiceTest {
     public void testDelete_ThrowException_EntityWasNotDeleted() {
         //given
         long orderId = order.getId();
-        when(orderDao.deleteById(orderId)).thenReturn(false);
+        when(orderDao.existsById(orderId)).thenReturn(false);
         //when
         //then
         assertThrows(OrderException.class, () -> orderService.delete(orderId));
-        verify(orderDao).deleteById(orderId);
+        verify(orderDao).existsById(orderId);
     }
 
 

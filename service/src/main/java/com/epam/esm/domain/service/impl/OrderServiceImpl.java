@@ -147,7 +147,7 @@ public class OrderServiceImpl implements OrderService {
                 .map(entity -> modelMapper.map(entity, OrderDto.class))
                 .collect(Collectors.toList());
 
-        long count = orderDao.count(Example.of(new Order()));//todo
+        long count = orderDao.countByUserId(userId);//todo
 
         return new OrderDtoBundle(ordersDto, count);
     }

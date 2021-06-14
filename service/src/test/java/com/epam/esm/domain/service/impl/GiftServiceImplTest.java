@@ -1,13 +1,15 @@
-
 package com.epam.esm.domain.service.impl;
 
+import com.epam.esm.dao.domain.CriteriaFindAllDao;
+import com.epam.esm.dao.domain.GiftCertificateDao;
+import com.epam.esm.dao.domain.TagDao;
 import com.epam.esm.dao.relation.CertificateTagsDao;
 import com.epam.esm.domain.dto.GiftCertificateDto;
 import com.epam.esm.domain.dto.TagDto;
 import com.epam.esm.domain.dto.bundles.GiftCertificateDtoBundle;
+import com.epam.esm.domain.exceptions.GiftCertificateException;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.domain.exceptions.GiftCertificateException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,18 +25,18 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
 public class GiftServiceImplTest {
+
+    @Mock
+    private CriteriaFindAllDao<GiftCertificate> criteriaFindAllDao;
 
     @Mock
     private GiftCertificateDao certDao;
@@ -148,7 +150,7 @@ public class GiftServiceImplTest {
     public void testUpdate_UpdatedDto_EntityWithGivenNameDoesNotExistInDb() {
         //given
         long certificateId = testDto.getId();
-       when(certDao.findById(certificateId)).thenReturn(Optional.of(testEntity));
+        when(certDao.findById(certificateId)).thenReturn(Optional.of(testEntity));
 
         when(certDao.findByName(testDto.getName())).thenReturn(Optional.empty());
         doNothing().when(certificateTagsDao).deleteAllTagLinksForCertificateId(certificateId);
@@ -158,7 +160,7 @@ public class GiftServiceImplTest {
 
         when(modelMapper.map(testDto, GiftCertificate.class)).thenReturn(testEntity);
 
-        when(certDao.update(testEntity)).thenReturn(testEntity);
+        when(certDao.save(testEntity)).thenReturn(testEntity);
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
         //when
         GiftCertificateDto result = service.update(testDto, certificateId);
@@ -170,7 +172,7 @@ public class GiftServiceImplTest {
         verify(modelMapper).map(tagDto, Tag.class);
         verify(tagDao).findByName(tag.getName());
         verify(modelMapper).map(testDto, GiftCertificate.class);
-        verify(certDao).update(testEntity);
+        verify(certDao).save(testEntity);
         verify(modelMapper).map(testEntity, GiftCertificateDto.class);
     }
 
@@ -182,7 +184,7 @@ public class GiftServiceImplTest {
         when(certDao.findByName(testDto.getName())).thenReturn(Optional.empty());
         when(modelMapper.map(tagDto, Tag.class)).thenReturn(tag);
         when(tagDao.findByName(tag.getName())).thenReturn(Optional.empty());
-        when(certDao.update(testEntity)).thenReturn(testEntity);
+        when(certDao.save(testEntity)).thenReturn(testEntity);
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
         //when
         GiftCertificateDto result = service.patch(testDto, certificateId);
@@ -192,7 +194,7 @@ public class GiftServiceImplTest {
         verify(certDao).findByName(testDto.getName());
         verify(modelMapper).map(tagDto, Tag.class);
         verify(tagDao).findByName(tag.getName());
-        verify(certDao).update(testEntity);
+        verify(certDao).save(testEntity);
         verify(modelMapper).map(testEntity, GiftCertificateDto.class);
     }
 
@@ -200,22 +202,28 @@ public class GiftServiceImplTest {
     public void testDelete_ShouldDeleteEntity_EntityWithGivenIdDoesExistInDb() {
         //given
         long certificateId = testDto.getId();
-        when(certDao.delete(certificateId)).thenReturn(true);
+        doNothing().when(certificateTagsDao).deleteAllTagLinksForCertificateId(certificateId);
+        when(certDao.existsById(certificateId)).thenReturn(true);
+        doNothing().when(certDao).deleteById(certificateId);
         //when
         service.delete(certificateId);
         //then
-        verify(certDao).delete(certificateId);
+        verify(certificateTagsDao).deleteAllTagLinksForCertificateId(certificateId);
+        verify(certDao).existsById(certificateId);
+        verify(certDao).deleteById(certificateId);
     }
 
     @Test
     public void testDelete_ShouldThrowException_EntityWithGivenIdDoesNotExistInDb() {
         //given
         long certificateId = -1;
-        when(certDao.delete(certificateId)).thenReturn(false);
+        doNothing().when(certificateTagsDao).deleteAllTagLinksForCertificateId(certificateId);
+        when(certDao.existsById(certificateId)).thenReturn(false);
         //when
         //then
         assertThrows(GiftCertificateException.class, () -> service.delete(certificateId));
-        verify(certDao).delete(certificateId);
+        verify(certificateTagsDao).deleteAllTagLinksForCertificateId(certificateId);
+        verify(certDao).existsById(certificateId);
     }
 
     @Test
@@ -224,7 +232,7 @@ public class GiftServiceImplTest {
         int limit = 5;
         int offset = 0;
         Map<String, String[]> reqParams = Collections.emptyMap();
-        when(certDao.findBy(reqParams, limit, offset)).thenReturn(Arrays.asList(testEntity, testEntity));
+        when(criteriaFindAllDao.findBy(reqParams, limit, offset)).thenReturn(Arrays.asList(testEntity, testEntity));
         when(modelMapper.map(testEntity, GiftCertificateDto.class)).thenReturn(testDto);
         long expectedSize = 2;
         when(certDao.count()).thenReturn(expectedSize);
@@ -233,7 +241,7 @@ public class GiftServiceImplTest {
         GiftCertificateDtoBundle result = service.findAllForQuery(reqParams, limit, offset);
         //then
         assertEquals(result, expectedBundle);
-        verify(certDao).findBy(reqParams, limit, offset);
+        verify(criteriaFindAllDao).findBy(reqParams, limit, offset);
         verify(modelMapper, times(2)).map(testEntity, GiftCertificateDto.class);
         verify(certDao).count();
     }
@@ -244,7 +252,7 @@ public class GiftServiceImplTest {
         int limit = 5;
         int offset = 0;
         Map<String, String[]> reqParams = Collections.emptyMap();
-        when(certDao.findBy(reqParams, limit, offset)).thenReturn(Collections.emptyList());
+        when(criteriaFindAllDao.findBy(reqParams, limit, offset)).thenReturn(Collections.emptyList());
         long expectedSize = 0L;
         when(certDao.count()).thenReturn(expectedSize);
         GiftCertificateDtoBundle expectedBundle = new GiftCertificateDtoBundle(Collections.emptyList(), expectedSize);
@@ -252,7 +260,7 @@ public class GiftServiceImplTest {
         GiftCertificateDtoBundle result = service.findAllForQuery(reqParams, limit, offset);
         //then
         assertEquals(result, expectedBundle);
-        verify(certDao).findBy(reqParams, limit, offset);
+        verify(criteriaFindAllDao).findBy(reqParams, limit, offset);
         verify(certDao).count();
     }
 }

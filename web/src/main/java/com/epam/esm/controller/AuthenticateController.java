@@ -3,7 +3,7 @@ package com.epam.esm.controller;
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.domain.dto.token.JwtTokenDto;
 import com.epam.esm.domain.dto.token.LoginPasswordDto;
-import com.epam.esm.security.JwtTokenProvider;
+import com.epam.esm.security.token.JwtTokenProvider;
 import com.epam.esm.security.exceptions.JwtAuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

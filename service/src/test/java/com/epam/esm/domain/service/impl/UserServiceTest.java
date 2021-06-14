@@ -1,9 +1,11 @@
 package com.epam.esm.domain.service.impl;
 
+import com.epam.esm.dao.domain.CriteriaFindAllDao;
+import com.epam.esm.dao.domain.UserDao;
 import com.epam.esm.domain.dto.UserDto;
 import com.epam.esm.domain.dto.bundles.UserDtoBundle;
-import com.epam.esm.entity.User;
 import com.epam.esm.domain.exceptions.UserException;
+import com.epam.esm.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,13 +23,19 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private CriteriaFindAllDao<User> criteriaFindAllDao;
 
     @Mock
     private UserDao userDao;
@@ -85,7 +94,7 @@ public class UserServiceTest {
     public void testFindAllForQuery_BundleOfDto_ThereAreEntitiesInDb() {
         //given
         Map<String, String[]> reqParams = Collections.emptyMap();
-        when(userDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Arrays.asList(user, user));
+        when(criteriaFindAllDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Arrays.asList(user, user));
         when(modelMapper.map(user, UserDto.class)).thenReturn(userDto);
 
         List<UserDto> expectedResult = Arrays.asList(userDto, userDto);
@@ -96,7 +105,7 @@ public class UserServiceTest {
         UserDtoBundle result = userService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
         assertEquals(result, expectedBundle);
-        verify(userDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
+        verify(criteriaFindAllDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
         verify(modelMapper, times(2)).map(user, UserDto.class);
         verify(userDao).count();
     }
@@ -105,7 +114,7 @@ public class UserServiceTest {
     public void testFindAllForQuery_BundleWithoutDto_ThereAreNoEntitiesInDb() {
         //given
         Map<String, String[]> reqParams = Collections.emptyMap();
-        when(userDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Collections.emptyList());
+        when(criteriaFindAllDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(Collections.emptyList());
 
         List<UserDto> expectedResult = Collections.emptyList();
         long expectedSize = 0L;
@@ -115,7 +124,7 @@ public class UserServiceTest {
         UserDtoBundle result = userService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
         assertEquals(result, expectedBundle);
-        verify(userDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
+        verify(criteriaFindAllDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
         verify(userDao).count();
     }
 
@@ -124,6 +133,7 @@ public class UserServiceTest {
         //given
         String login = userDto.getLogin();
         when(userDao.findByLogin(login)).thenReturn(Optional.empty());
+        when(passwordEncoder.encode(anyString())).thenReturn("123");
         when(modelMapper.map(userDto, User.class)).thenReturn(user);
         when(userDao.save(user)).thenReturn(user);
         when(modelMapper.map(user, UserDto.class)).thenReturn(userDto);
@@ -132,6 +142,7 @@ public class UserServiceTest {
         //then
         assertEquals(result, userDto);
         verify(userDao).findByLogin(login);
+        verify(passwordEncoder).encode(anyString());
         verify(modelMapper).map(userDto, User.class);
         verify(userDao).save(user);
         verify(modelMapper).map(user, UserDto.class);
@@ -144,7 +155,7 @@ public class UserServiceTest {
         when(userDao.findByLogin(login)).thenReturn(Optional.of(user));
         //when
         //then
-        assertThrows(UserException.class, ()-> userService.save(userDto));
+        assertThrows(UserException.class, () -> userService.save(userDto));
         verify(userDao).findByLogin(login);
     }
 

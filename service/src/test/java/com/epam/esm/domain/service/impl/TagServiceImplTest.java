@@ -1,12 +1,15 @@
 package com.epam.esm.domain.service.impl;
 
+import com.epam.esm.dao.domain.CriteriaFindAllDao;
+import com.epam.esm.dao.domain.TagDao;
+import com.epam.esm.dao.domain.UserDao;
 import com.epam.esm.dao.relation.CertificateTagsDao;
 import com.epam.esm.domain.dto.TagDto;
 import com.epam.esm.domain.dto.bundles.TagDtoBundle;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
 import com.epam.esm.domain.exceptions.TagException;
 import com.epam.esm.domain.exceptions.UserException;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,9 +31,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
 public class TagServiceImplTest {
+
+    @Mock
+    private CriteriaFindAllDao<Tag> criteriaFindAllDao;
 
     @Mock
     private TagDao tagDao;
@@ -40,7 +45,6 @@ public class TagServiceImplTest {
 
     @Mock
     private CertificateTagsDao certificateTagsDao;
-
 
     @Mock
     private ModelMapper modelMapper;
@@ -98,7 +102,7 @@ public class TagServiceImplTest {
         List<Tag> expectedEntitiesList = Arrays.asList(testEntity, testEntity, testEntity);
         List<TagDto> expectedResult = Arrays.asList(testDto, testDto, testDto);
 
-        when(tagDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(expectedEntitiesList);
+        when(criteriaFindAllDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(expectedEntitiesList);
         when(modelMapper.map(testEntity, TagDto.class)).thenReturn(testDto);
         long expectedSize = 3;
         when(tagDao.count()).thenReturn(expectedSize);
@@ -108,7 +112,7 @@ public class TagServiceImplTest {
         TagDtoBundle result = tagService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
         assertEquals(result, expectedBundle);
-        verify(tagDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
+        verify(criteriaFindAllDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
         verify(modelMapper, times(expectedEntitiesList.size())).map(testEntity, TagDto.class);
         verify(tagDao).count();
     }
@@ -119,7 +123,7 @@ public class TagServiceImplTest {
         Map<String, String[]> reqParams = Collections.emptyMap();
 
         List<Tag> expectedEntitiesList = Collections.emptyList();
-        when(tagDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(expectedEntitiesList);
+        when(criteriaFindAllDao.findBy(reqParams, TEST_LIMIT, TEST_OFFSET)).thenReturn(expectedEntitiesList);
         List<TagDto> expectedResult = Collections.emptyList();
         long expectedSize = 0L;
         when(tagDao.count()).thenReturn(expectedSize);
@@ -129,7 +133,7 @@ public class TagServiceImplTest {
         TagDtoBundle result = tagService.findAllForQuery(reqParams, TEST_LIMIT, TEST_OFFSET);
         //then
         assertEquals(result, expectedBundle);
-        verify(tagDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
+        verify(criteriaFindAllDao).findBy(reqParams, TEST_LIMIT, TEST_OFFSET);
         verify(tagDao).count();
     }
 
@@ -165,10 +169,13 @@ public class TagServiceImplTest {
         //given
         long tagId = testDto.getId();
         doNothing().when(certificateTagsDao).deleteAllCertificateLinksForTagId(tagId);
-        when(tagDao.deleteById(tagId)).thenReturn(true);
+        when(tagDao.existsById(tagId)).thenReturn(true);
+        doNothing().when(tagDao).deleteById(tagId);
         //when
         tagService.delete(tagId);
         //then
+        verify(certificateTagsDao).deleteAllCertificateLinksForTagId(tagId);
+        verify(tagDao).existsById(tagId);
         verify(tagDao).deleteById(tagId);
     }
 
@@ -177,11 +184,12 @@ public class TagServiceImplTest {
         //given
         long tagId = testDto.getId();
         doNothing().when(certificateTagsDao).deleteAllCertificateLinksForTagId(tagId);
-        when(tagDao.deleteById(tagId)).thenReturn(false);
+        when(tagDao.existsById(tagId)).thenReturn(false);
         //when
         //then
         assertThrows(TagException.class, () -> tagService.delete(tagId));
-        verify(tagDao).deleteById(tagId);
+        verify(certificateTagsDao).deleteAllCertificateLinksForTagId(tagId);
+        verify(tagDao).existsById(tagId);
     }
 
     @Test

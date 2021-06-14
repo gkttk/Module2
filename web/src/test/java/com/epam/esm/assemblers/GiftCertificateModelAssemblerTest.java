@@ -1,7 +1,7 @@
 package com.epam.esm.assemblers;
 
 
-import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.domain.dto.GiftCertificateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;

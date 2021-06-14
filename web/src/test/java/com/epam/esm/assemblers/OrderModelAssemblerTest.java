@@ -1,6 +1,6 @@
 package com.epam.esm.assemblers;
 
-import com.epam.esm.dto.OrderDto;
+import com.epam.esm.domain.dto.OrderDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;

@@ -1,8 +1,8 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.assemblers.ModelAssembler;
-import com.epam.esm.dto.OrderDto;
-import com.epam.esm.service.OrderService;
+import com.epam.esm.domain.dto.OrderDto;
+import com.epam.esm.domain.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,6 +35,4 @@ public class OrderController {
         orderService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }

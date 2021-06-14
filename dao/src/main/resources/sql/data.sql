@@ -22,16 +22,18 @@ create table gifts.orders_certificates
 (
     order_id       bigint not null,
     certificate_id bigint not null,
-    constraint FKnnq2g7p5kaghab94fgo150nii
-        foreign key (order_id) references gifts.orders (id)
-            on delete cascade,
     constraint certificate_order_fk
         foreign key (certificate_id) references gifts.gift_certificate (id)
-            on delete cascade
+            on delete cascade,
+    constraint order_certificate_fk
+        foreign key (order_id) references gifts.orders (id)
 );
 
 create index certificate_order_fk_idx
     on gifts.orders_certificates (certificate_id);
+
+create index order_certificate_fk_idx
+    on gifts.orders_certificates (order_id);
 
 create table gifts.revinfo
 (
@@ -104,12 +106,21 @@ create table gifts.tag_aud
         foreign key (rev) references gifts.revinfo (rev)
 );
 
+create table gifts.token_pair
+(
+    id                         bigint auto_increment
+        primary key,
+    access_token               varchar(255) not null,
+    refresh_token              varchar(255) not null,
+    refresh_token_expired_time timestamp    not null
+);
+
 create table gifts.user
 (
     id       bigint auto_increment
         primary key,
     login    varchar(150)               not null,
-    password varchar(150)               not null,
+    password varchar(255)               not null,
     role     varchar(50) default 'USER' not null,
     constraint user_name_uindex
         unique (login)

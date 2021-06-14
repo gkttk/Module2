@@ -1,25 +1,25 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.config.DaoTestConfig;
+import com.epam.esm.dao.domain.CriteriaFindAllDao;
+import com.epam.esm.dao.domain.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,8 +32,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Transactional
 public class GiftCertificateDaoTest {
 
-    @Autowired
     private GiftCertificateDao giftCertificateDao;
+    private CriteriaFindAllDao<GiftCertificate> criteriaFindAllDao;
+
+    @Autowired
+    public GiftCertificateDaoTest(GiftCertificateDao giftCertificateDao,
+                                  @Qualifier("giftCertificateCriteriaFindAllDao") CriteriaFindAllDao<GiftCertificate> criteriaFindAllDao) {
+        this.giftCertificateDao = giftCertificateDao;
+        this.criteriaFindAllDao = criteriaFindAllDao;
+    }
 
     private static GiftCertificate certificate1;
 
@@ -48,7 +55,7 @@ public class GiftCertificateDaoTest {
     }
 
     @Test
-    public void testCount_ShouldReturnNumberOfEntity_WhenThereAreEntitiesInDb(){
+    public void testCount_ShouldReturnNumberOfEntity_WhenThereAreEntitiesInDb() {
         //given
         long expectedResult = 6L;
         //when
@@ -65,12 +72,10 @@ public class GiftCertificateDaoTest {
         Optional<GiftCertificate> resultOpt = giftCertificateDao.findById(testId);
         //then
         assertTrue(resultOpt.isPresent());
-        resultOpt.ifPresent(result -> {
-            assertAll(() -> assertEquals(result.getName(), certificate1.getName()),
-                    () -> assertEquals(result.getDescription(), certificate1.getDescription()),
-                    () -> assertEquals(result.getPrice(), certificate1.getPrice()),
-                    () -> assertEquals(result.getDuration(), certificate1.getDuration()));
-        });
+        resultOpt.ifPresent(result -> assertAll(() -> assertEquals(result.getName(), certificate1.getName()),
+                () -> assertEquals(result.getDescription(), certificate1.getDescription()),
+                () -> assertEquals(result.getPrice(), certificate1.getPrice()),
+                () -> assertEquals(result.getDuration(), certificate1.getDuration())));
     }
 
     @Test
@@ -91,12 +96,10 @@ public class GiftCertificateDaoTest {
         Optional<GiftCertificate> resultOpt = giftCertificateDao.findByName(testName);
         //then
         assertTrue(resultOpt.isPresent());
-        resultOpt.ifPresent(result -> {
-            assertAll(() -> assertEquals(result.getName(), certificate1.getName()),
-                    () -> assertEquals(result.getDescription(), certificate1.getDescription()),
-                    () -> assertEquals(result.getPrice(), certificate1.getPrice()),
-                    () -> assertEquals(result.getDuration(), certificate1.getDuration()));
-        });
+        resultOpt.ifPresent(result -> assertAll(() -> assertEquals(result.getName(), certificate1.getName()),
+                () -> assertEquals(result.getDescription(), certificate1.getDescription()),
+                () -> assertEquals(result.getPrice(), certificate1.getPrice()),
+                () -> assertEquals(result.getDuration(), certificate1.getDuration())));
     }
 
     @Test
@@ -139,7 +142,7 @@ public class GiftCertificateDaoTest {
         testCertificate.setPrice(new BigDecimal("130"));
         testCertificate.setDuration(20);
         //when
-        GiftCertificate resultCertificate = giftCertificateDao.update(testCertificate);
+        GiftCertificate resultCertificate = giftCertificateDao.save(testCertificate);
         //then
         assertAll(() -> assertEquals(resultCertificate.getId(), certificate1.getId()),
                 () -> assertEquals(resultCertificate.getName(), testCertificate.getName()),
@@ -154,7 +157,7 @@ public class GiftCertificateDaoTest {
         Map<String, String[]> reqParams = new HashMap<>();
         int expectedSize = 6;
         //when
-        List<GiftCertificate> results = giftCertificateDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        List<GiftCertificate> results = criteriaFindAllDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertFalse(results.isEmpty());
         assertEquals(results.size(), expectedSize);
@@ -166,7 +169,7 @@ public class GiftCertificateDaoTest {
         Map<String, String[]> reqParams = Collections.singletonMap(ApplicationConstants.NAMES_PART_KEY, new String[]{"1n", "2n"});
         int expectedSize = 2;
         //when
-        List<GiftCertificate> results = giftCertificateDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        List<GiftCertificate> results = criteriaFindAllDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertFalse(results.isEmpty());
         assertEquals(results.size(), expectedSize);
@@ -178,7 +181,7 @@ public class GiftCertificateDaoTest {
         Map<String, String[]> reqParams = Collections.singletonMap(ApplicationConstants.DESCRIPTION_PART_KEY, new String[]{"1d", "2d"});
         int expectedSize = 2;
         //when
-        List<GiftCertificate> results = giftCertificateDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        List<GiftCertificate> results = criteriaFindAllDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertFalse(results.isEmpty());
         assertEquals(results.size(), expectedSize);
@@ -190,7 +193,7 @@ public class GiftCertificateDaoTest {
         Map<String, String[]> reqParams = Collections.singletonMap(ApplicationConstants.TAG_NAMES_KEY, new String[]{"tag2"});
         int expectedSize = 2;
         //when
-        List<GiftCertificate> results = giftCertificateDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        List<GiftCertificate> results = criteriaFindAllDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertFalse(results.isEmpty());
         assertEquals(results.size(), expectedSize);
@@ -202,7 +205,7 @@ public class GiftCertificateDaoTest {
         Map<String, String[]> reqParams = Collections.singletonMap(ApplicationConstants.TAG_NAMES_KEY, new String[]{"or:tag1,tag2"});
         int expectedSize = 4;
         //when
-        List<GiftCertificate> results = giftCertificateDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        List<GiftCertificate> results = criteriaFindAllDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertFalse(results.isEmpty());
         assertEquals(results.size(), expectedSize);

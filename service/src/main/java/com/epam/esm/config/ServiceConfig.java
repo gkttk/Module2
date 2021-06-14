@@ -25,7 +25,6 @@ public class ServiceConfig {
                 .addMappings(mapper -> mapper.using(userRoleConverter).map(UserDto::getRole, User::setRole));*/
     }
 
-
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
@@ -41,5 +40,4 @@ public class ServiceConfig {
                 .setFilterProvider(filters)
                 .registerModule(module);
     }
-
 }

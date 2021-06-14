@@ -22,6 +22,4 @@ public class DaoConfig {
     public DataSource dataSource() {
         return getDatasourceProperties().initializeDataSourceBuilder().build();
     }
-
-
 }

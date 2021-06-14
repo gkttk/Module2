@@ -38,7 +38,7 @@ public class User {
 
     @Column(nullable = false, unique = true, columnDefinition = "varchar(150)")
     private String login;
-    @Column(nullable = false, columnDefinition = "varchar(150)")
+    @Column(nullable = false, columnDefinition = "varchar(255)")
     private String password;
 
     @Column(nullable = false, columnDefinition = "varchar(50) default 'USER'")

@@ -47,10 +47,6 @@ public class DefaultUriBuilder implements UriBuilder{
             result.setParamString(stringJoiner.toString());
         }
 
-
         return result;
-
     }
-
-
 }

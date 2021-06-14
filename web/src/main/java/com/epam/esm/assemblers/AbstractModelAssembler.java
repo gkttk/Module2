@@ -33,41 +33,40 @@ public abstract class AbstractModelAssembler<T> implements ModelAssembler<T> {
     }
 
     /**
-     * {@link com.epam.esm.assemblers.ModelAssembler#toCollectionModel(Iterable, Integer, long, Map)}
+     * {@link com.epam.esm.assemblers.ModelAssembler#toCollectionModel(Iterable, Integer, long, Map, String...)}
      *
      * @param entities  DTOs for links.
      * @param offset    offset for pagination.
      * @param reqParams parameters of current request.
+     * @param urlParts parts of current url which were @PathVariable values.
      * @return list of DTOs with links.
      */
     public CollectionModel<T> toCollectionModel(Iterable<T> entities,
-                                                Integer offset, long count, Map<String, String[]> reqParams) {
+                                                Integer offset, long count, Map<String, String[]> reqParams, String...urlParts) {
         CollectionModel<T> collectionModel = CollectionModel.of(entities);
         int size = collectionModel.getContent().size();
         if (size == 0) {
             return collectionModel;
         }
         UriBuilderResult uriBuilderResult = uriBuilder.buildRequestParams(reqParams);
-        addFirstPage(collectionModel, uriBuilderResult);
+        addFirstPage(collectionModel, uriBuilderResult, urlParts);
 
         int delta = (int) count - offset;
         int limit = uriBuilderResult.getLimit();
         if (limit < delta) {
-            addNextPage(collectionModel, uriBuilderResult);
+            addNextPage(collectionModel, uriBuilderResult, urlParts);
         }
 
-        addLastPage(collectionModel, uriBuilderResult, count);
+        addLastPage(collectionModel, uriBuilderResult, count, urlParts);
 
         return collectionModel;
     }
 
-    protected abstract void addFirstPage(CollectionModel<T> collectionModel, UriBuilderResult uriBuilderResult);
+    protected abstract void addFirstPage(CollectionModel<T> collectionModel, UriBuilderResult uriBuilderResult, String[] urlParts);
 
-    protected abstract void addNextPage(CollectionModel<T> collectionModel, UriBuilderResult uriBuilderResult);
+    protected abstract void addNextPage(CollectionModel<T> collectionModel, UriBuilderResult uriBuilderResult, String[] urlParts);
 
-    protected abstract void addLastPage(CollectionModel<T> collectionModel, UriBuilderResult uriBuilderResult, long count);
+    protected abstract void addLastPage(CollectionModel<T> collectionModel, UriBuilderResult uriBuilderResult, long count, String[] urlParts);
 
     protected abstract void addModelLinks(T dto);
-
-
 }

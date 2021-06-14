@@ -1,10 +1,9 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.assemblers.TagModelAssembler;
-import com.epam.esm.constants.WebLayerConstants;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.bundles.TagDtoBundle;
-import com.epam.esm.service.TagService;
+import com.epam.esm.domain.dto.TagDto;
+import com.epam.esm.domain.dto.bundles.TagDtoBundle;
+import com.epam.esm.domain.service.TagService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

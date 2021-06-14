@@ -1,14 +1,17 @@
 package com.epam.esm.exceptionhandling;
 
 import com.epam.esm.constants.WebLayerConstants;
+import com.epam.esm.domain.exceptions.GiftApplicationException;
+import com.epam.esm.domain.exceptions.GiftCertificateException;
+import com.epam.esm.domain.exceptions.OrderException;
+import com.epam.esm.domain.exceptions.ResponseErrorNotFoundException;
+import com.epam.esm.domain.exceptions.TagException;
+import com.epam.esm.domain.exceptions.UserException;
 import com.epam.esm.exceptionhandling.error.ErrorResult;
 import com.epam.esm.exceptionhandling.error.enums.ResponseErrorEnum;
-import com.epam.esm.exceptions.GiftApplicationException;
-import com.epam.esm.exceptions.GiftCertificateException;
-import com.epam.esm.exceptions.OrderException;
-import com.epam.esm.exceptions.ResponseErrorNotFoundException;
-import com.epam.esm.exceptions.TagException;
-import com.epam.esm.exceptions.UserException;
+import com.epam.esm.security.exceptions.GiftApplicationAccessDeniedException;
+import com.epam.esm.security.exceptions.GiftApplicationAuthorizationException;
+import com.epam.esm.security.exceptions.JwtAuthenticationException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -16,6 +19,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -49,9 +53,16 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorResult(errorCode, Collections.singletonList(String.format(message, params))), error.getStatus());
     }
 
-    @ExceptionHandler(value = {GiftCertificateException.class, TagException.class, OrderException.class, UserException.class})
+    @ExceptionHandler(value = {GiftCertificateException.class, TagException.class, OrderException.class, UserException.class,
+            JwtAuthenticationException.class, GiftApplicationAccessDeniedException.class, GiftApplicationAuthorizationException.class})
     public ResponseEntity<ErrorResult> handleGiftCertificateException(GiftApplicationException exception, Locale locale) {
         return getResponseEntity(exception.getErrorCode(), exception.getParams(), locale);
+    }
+
+
+    @ExceptionHandler(BadCredentialsException.class)
+        public ResponseEntity<ErrorResult> handleBadCredentialsException(BadCredentialsException exception, Locale locale){
+        return getResponseEntity(WebLayerConstants.INVALID_CREDENTIALS_ERROR_CODE, null, locale);
     }
 
 
@@ -95,6 +106,4 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
                 .filter(error -> error.getCode() == errorCode)
                 .findFirst().orElseThrow(() -> new ResponseErrorNotFoundException(String.format("Can't find ResponseError with code:%d", errorCode)));
     }
-
-
 }

@@ -1,13 +1,16 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.constants.ApplicationConstants;
-import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.config.DaoTestConfig;
+import com.epam.esm.dao.domain.CriteriaFindAllDao;
+import com.epam.esm.dao.domain.TagDao;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,18 +22,27 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = DaoTestConfig.class)
 @ActiveProfiles("test")
 @Transactional
 public class TagDaoTest {
 
+
+    private final TagDao tagDao;
+    private final CriteriaFindAllDao<Tag> criteriaFindAllDao;
+
     @Autowired
-    private TagDao tagDao;
+    public TagDaoTest(TagDao tagDao,
+                      @Qualifier("tagCriteriaFindAllDao") CriteriaFindAllDao<Tag> criteriaFindAllDao) {
+        this.tagDao = tagDao;
+        this.criteriaFindAllDao = criteriaFindAllDao;
+    }
 
     private static Tag tag;
 
@@ -43,7 +55,7 @@ public class TagDaoTest {
 
 
     @Test
-    public void testCount_ShouldReturnNumberOfEntity_WhenThereAreEntitiesInDb(){
+    public void testCount_ShouldReturnNumberOfEntity_WhenThereAreEntitiesInDb() {
         //given
         long expectedResult = 6L;
         //when
@@ -88,7 +100,6 @@ public class TagDaoTest {
     public void testFindByName_EmptyOptional_EntityWithGivenNameIsNotPresentInDb() {
         //given
         String testName = "testName";
-        Optional<Tag> expected = Optional.empty();
         //when
         Optional<Tag> result = tagDao.findByName(testName);
         //then
@@ -110,13 +121,22 @@ public class TagDaoTest {
 
     @Test
     @Rollback
-    public void testDeleteById_True_WhenEntityWasDeleted() {
+    public void testDeleteById_NotThrowExceptions_WhenEntityWasDeleted() {
         //given
         long testId = tag.getId();
         //when
-        boolean result = tagDao.deleteById(testId);
         //then
-        assertTrue(result);
+        assertDoesNotThrow(() -> tagDao.deleteById(testId));
+    }
+
+    @Test
+    @Rollback
+    public void testDeleteById_ThrowExceptions_WhenEntityWithGivenIdWasNotFound() {
+        //given
+        long testId = -1;
+        //when
+        //then
+        assertThrows(EmptyResultDataAccessException.class, () -> tagDao.deleteById(testId));
     }
 
     @Test
@@ -126,7 +146,7 @@ public class TagDaoTest {
         reqParams.put(ApplicationConstants.CERTIFICATE_ID_KEY, new String[]{"1"});
         int expectedSize = 2;
         //when
-        List<Tag> results = tagDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        List<Tag> results = criteriaFindAllDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertFalse(results.isEmpty());
         assertEquals(results.size(), expectedSize);
@@ -138,14 +158,14 @@ public class TagDaoTest {
         Map<String, String[]> reqParams = new HashMap<>();
         int expectedSize = 6;
         //when
-        List<Tag> results = tagDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
+        List<Tag> results = criteriaFindAllDao.findBy(reqParams, ApplicationConstants.MAX_LIMIT, ApplicationConstants.DEFAULT_OFFSET);
         //then
         assertFalse(results.isEmpty());
         assertEquals(results.size(), expectedSize);
     }
 
     @Test
-    public void testFindMaxWidelyUsed_ListOfEntities_WhenEntityArePresentInDb(){
+    public void testFindMaxWidelyUsed_ListOfEntities_WhenEntityArePresentInDb() {
         //given
         long userId = 1;
         Tag expectedTag = new Tag();

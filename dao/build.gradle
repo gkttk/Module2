@@ -27,15 +27,11 @@ jar {
 def isTest = false
 test.onlyIf { isTest }
 
-
-
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:Edgware.SR4"
     }
 }
-
-
 
 tasks.withType(JavaCompile) {
     sourceCompatibility = "1.8"

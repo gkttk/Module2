@@ -1,6 +1,6 @@
 package com.epam.esm.assemblers;
 
-import com.epam.esm.dto.UserDto;
+import com.epam.esm.domain.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class UserModelAssemblerTest extends AbstractModelAssemblerTest<UserDto> {

@@ -2,16 +2,16 @@ package com.epam.esm.controller;
 
 import com.epam.esm.assemblers.ModelAssembler;
 import com.epam.esm.constants.WebLayerConstants;
-import com.epam.esm.dto.OrderDto;
-import com.epam.esm.dto.SaveOrderDto;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.UserDto;
-import com.epam.esm.dto.bundles.OrderDtoBundle;
-import com.epam.esm.dto.bundles.UserDtoBundle;
-import com.epam.esm.dto.groups.SaveGroup;
-import com.epam.esm.service.OrderService;
-import com.epam.esm.service.TagService;
-import com.epam.esm.service.UserService;
+import com.epam.esm.domain.dto.OrderDto;
+import com.epam.esm.domain.dto.SaveOrderDto;
+import com.epam.esm.domain.dto.TagDto;
+import com.epam.esm.domain.dto.UserDto;
+import com.epam.esm.domain.dto.bundles.OrderDtoBundle;
+import com.epam.esm.domain.dto.bundles.UserDtoBundle;
+import com.epam.esm.domain.dto.groups.SaveGroup;
+import com.epam.esm.domain.service.OrderService;
+import com.epam.esm.domain.service.TagService;
+import com.epam.esm.domain.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(path = "/users", produces = "application/hal+json")
@@ -69,9 +66,7 @@ public class UserController {
                                                                    @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
         UserDtoBundle bundle = userService.findAllForQuery(reqParams, limit, offset);
-        List<UserDto> users = bundle.getUsers();
-        long count = bundle.getCount();
-        return ResponseEntity.ok(userAssembler.toCollectionModel(users, offset, count, reqParams));
+        return ResponseEntity.ok(userAssembler.toCollectionModel(bundle.getUsers(), offset, bundle.getCount(), reqParams));
     }
 
 
@@ -81,29 +76,8 @@ public class UserController {
                                                                          @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParamMap = new HashMap<>(webRequest.getParameterMap());
         OrderDtoBundle bundle = orderService.findAllForQuery(userId, reqParamMap, limit, offset);
-        List<OrderDto> orders = bundle.getOrders();
-        long count = bundle.getCount();
-
-        CollectionModel<OrderDto> order = CollectionModel.of(orders);
-        int resultSize = orders.size();
-        if (resultSize == 0) {
-            return ResponseEntity.ok(order);
-        }
-        order.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, userId, limit, WebLayerConstants.DEFAULT_OFFSET))
-                .withRel(WebLayerConstants.FIRST_PAGE));
-
-       int delta = (int)count-offset;
-       if (limit < delta){
-           order.add(linkTo(methodOn(UserController.class)
-                   .getAllOrdersForUser(null, userId, limit, offset + limit))
-                   .withRel(WebLayerConstants.NEXT_PAGE));
-       }
-
-        order.add(linkTo(methodOn(UserController.class)
-                .getAllOrdersForUser(null, userId, limit, (int)count - limit))
-                .withRel(WebLayerConstants.LAST_PAGE));
-        return ResponseEntity.ok(order);
+        return ResponseEntity.ok(orderAssembler.toCollectionModel(bundle.getOrders(), offset, bundle.getCount(),
+                reqParamMap, String.valueOf(userId)));
     }
 
     @PostMapping(path = "/{userId}/orders")
@@ -127,6 +101,4 @@ public class UserController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(tagsWithLinks);
     }
-
-
 }

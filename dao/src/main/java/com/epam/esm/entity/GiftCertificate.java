@@ -9,7 +9,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -72,6 +71,4 @@ public class GiftCertificate {
             joinColumns = @JoinColumn(name = "certificate_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags;
-
-
 }

@@ -2,7 +2,7 @@ package com.epam.esm.assemblers;
 
 import com.epam.esm.constants.WebLayerConstants;
 import com.epam.esm.controller.GiftCertificateController;
-import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.domain.dto.GiftCertificateDto;
 import com.epam.esm.uri_builder.UriBuilder;
 import com.epam.esm.uri_builder.result.UriBuilderResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class GiftCertificateModelAssembler extends AbstractModelAssembler<GiftCe
     }
 
     @Override
-    protected void addFirstPage(CollectionModel<GiftCertificateDto> collectionModel, UriBuilderResult uriBuilderResult) {
+    protected void addFirstPage(CollectionModel<GiftCertificateDto> collectionModel, UriBuilderResult uriBuilderResult, String[] urlParts) {
         collectionModel.add(linkTo(methodOn(GiftCertificateController.class)
                 .getAllForQuery(null, uriBuilderResult.getLimit(), WebLayerConstants.DEFAULT_OFFSET))
                 .slash(uriBuilderResult.getParamString())
@@ -32,7 +32,7 @@ public class GiftCertificateModelAssembler extends AbstractModelAssembler<GiftCe
     }
 
     @Override
-    protected void addNextPage(CollectionModel<GiftCertificateDto> collectionModel, UriBuilderResult uriBuilderResult) {
+    protected void addNextPage(CollectionModel<GiftCertificateDto> collectionModel, UriBuilderResult uriBuilderResult, String[] urlParts) {
         int limit = uriBuilderResult.getLimit();
         int offset = uriBuilderResult.getOffset();
         collectionModel.add(linkTo(methodOn(GiftCertificateController.class)
@@ -42,7 +42,7 @@ public class GiftCertificateModelAssembler extends AbstractModelAssembler<GiftCe
     }
 
     @Override
-    protected void addLastPage(CollectionModel<GiftCertificateDto> collectionModel, UriBuilderResult uriBuilderResult, long count) {
+    protected void addLastPage(CollectionModel<GiftCertificateDto> collectionModel, UriBuilderResult uriBuilderResult, long count, String[] urlParts) {
         int limit = uriBuilderResult.getLimit();
         collectionModel.add(linkTo(methodOn(GiftCertificateController.class)
                 .getAllForQuery(null, limit, (int)count - limit))
@@ -58,5 +58,4 @@ public class GiftCertificateModelAssembler extends AbstractModelAssembler<GiftCe
         dto.add(linkTo(methodOn(GiftCertificateController.class).patchCertificate(null, modelId)).withRel(WebLayerConstants.PARTIAL_UPDATE));
         dto.add(linkTo(methodOn(GiftCertificateController.class).deleteById(modelId)).withRel(WebLayerConstants.DELETE));
     }
-
 }

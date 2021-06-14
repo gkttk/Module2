@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @since 2.0
  */
-@Component
+@Component("orderQueryBuilder")
 public class OrderQueryBuilder extends AbstractQueryBuilder<Order> implements QueryBuilder<Order> {
 
     @Autowired
@@ -87,6 +87,4 @@ public class OrderQueryBuilder extends AbstractQueryBuilder<Order> implements Qu
             }
         }
     }
-
-
 }

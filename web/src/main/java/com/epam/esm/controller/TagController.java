@@ -2,11 +2,11 @@ package com.epam.esm.controller;
 
 import com.epam.esm.assemblers.ModelAssembler;
 import com.epam.esm.constants.WebLayerConstants;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.bundles.TagDtoBundle;
-import com.epam.esm.dto.groups.PatchGroup;
-import com.epam.esm.dto.groups.UpdateGroup;
-import com.epam.esm.service.TagService;
+import com.epam.esm.domain.dto.TagDto;
+import com.epam.esm.domain.dto.bundles.TagDtoBundle;
+import com.epam.esm.domain.dto.groups.PatchGroup;
+import com.epam.esm.domain.dto.groups.UpdateGroup;
+import com.epam.esm.domain.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -52,10 +51,7 @@ public class TagController {
                                                                   @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> reqParams = request.getParameterMap();
         TagDtoBundle bundle = tagService.findAllForQuery(reqParams, limit, offset);
-        List<TagDto> tags = bundle.getTags();
-        long count = bundle.getCount();
-
-        return ResponseEntity.ok(assembler.toCollectionModel(tags, offset, count, reqParams));
+        return ResponseEntity.ok(assembler.toCollectionModel(bundle.getTags(), offset, bundle.getCount(), reqParams));
     }
 
     @GetMapping("/{id}")
@@ -75,5 +71,4 @@ public class TagController {
         tagService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }

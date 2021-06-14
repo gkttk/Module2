@@ -21,12 +21,11 @@ import java.util.Map;
  *
  * @since 2.0
  */
-@Component
+@Component("tagQueryBuilder")
 public class TagQueryBuilder extends AbstractQueryBuilder<Tag> implements QueryBuilder<Tag> {
     @Autowired
     public TagQueryBuilder(EntityManager entityManager, ParameterParser parser) {
         super(entityManager, parser);
-
     }
 
     /**
@@ -79,6 +78,4 @@ public class TagQueryBuilder extends AbstractQueryBuilder<Tag> implements QueryB
             }
         }
     }
-
-
 }

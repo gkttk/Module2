@@ -21,9 +21,8 @@ import java.util.Map;
  *
  * @since 2.0
  */
-@Component
+@Component("giftCertificateQueryBuilder")
 public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertificate> implements QueryBuilder<GiftCertificate> {
-
 
     @Autowired
     public GiftCertificateQueryBuilder(EntityManager entityManager, ParameterParser parser) {
@@ -64,7 +63,6 @@ public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertif
 
         return predicates;
     }
-
 
     /**
      * {@link AbstractQueryBuilder#setOrder(String, String, CriteriaQuery, Root, CriteriaBuilder)} ()}
@@ -132,6 +130,4 @@ public class GiftCertificateQueryBuilder extends AbstractQueryBuilder<GiftCertif
             }
         }
     }
-
-
 }

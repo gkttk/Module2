@@ -43,7 +43,6 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-
 dependencies {
     implementation project(':dao')
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.9'
@@ -54,5 +53,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor('org.hibernate:hibernate-jpamodelgen:5.4.31.Final')
+
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
 }
 

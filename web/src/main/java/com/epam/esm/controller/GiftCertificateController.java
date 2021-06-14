@@ -3,11 +3,11 @@ package com.epam.esm.controller;
 import com.epam.esm.assemblers.GiftCertificateModelAssembler;
 import com.epam.esm.assemblers.ModelAssembler;
 import com.epam.esm.constants.WebLayerConstants;
-import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.bundles.GiftCertificateDtoBundle;
-import com.epam.esm.dto.groups.PatchGroup;
-import com.epam.esm.dto.groups.UpdateGroup;
-import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.domain.dto.GiftCertificateDto;
+import com.epam.esm.domain.dto.bundles.GiftCertificateDtoBundle;
+import com.epam.esm.domain.dto.groups.PatchGroup;
+import com.epam.esm.domain.dto.groups.UpdateGroup;
+import com.epam.esm.domain.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
@@ -49,9 +49,7 @@ public class GiftCertificateController {
                                                                               @RequestParam(required = false, defaultValue = WebLayerConstants.DEFAULT_OFFSET + "") @Min(value = 0, message = "Offset parameter must be greater or equal 0") Integer offset) {
         Map<String, String[]> parameterMap = webRequest.getParameterMap();
         GiftCertificateDtoBundle bundle = giftCertificateService.findAllForQuery(parameterMap, limit, offset);
-        List<GiftCertificateDto> certificates = bundle.getGiftCertificates();
-        long count = bundle.getCount();
-        return ResponseEntity.ok(assembler.toCollectionModel(certificates, offset, count, parameterMap));
+        return ResponseEntity.ok(assembler.toCollectionModel(bundle.getGiftCertificates(), offset, bundle.getCount(), parameterMap));
     }
 
     @GetMapping("/{id}")
@@ -85,6 +83,4 @@ public class GiftCertificateController {
         GiftCertificateDto certificate = giftCertificateService.patch(giftCertificateDto, id);
         return ResponseEntity.ok(assembler.toModel(certificate));
     }
-
-
 }

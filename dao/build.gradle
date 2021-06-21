@@ -24,7 +24,7 @@ jar {
     enabled = true
 }
 
-def isTest = true
+def isTest = false
 test.onlyIf { isTest }
 
 dependencyManagement {

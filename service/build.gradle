@@ -28,7 +28,7 @@ repositories {
     mavenCentral()
 }
 
-def isTest = false
+def isTest = true
 test.onlyIf { isTest }
 
 dependencyManagement {

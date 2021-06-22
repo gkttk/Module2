@@ -22,4 +22,6 @@ public class UserModelAssemblerTest extends AbstractModelAssemblerTest<UserDto> 
                 .role("ADMIN")
                 .build();
     }
+
+    //jenkins
 }

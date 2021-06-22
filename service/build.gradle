@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.4.4'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'jacoco'
 }
 
 apply plugin: 'java'
@@ -10,6 +11,11 @@ apply plugin: 'io.spring.dependency-management'
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
 }
 
 
@@ -57,4 +63,6 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
 }
+
+
 

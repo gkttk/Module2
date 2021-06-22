@@ -2,12 +2,12 @@ plugins{
     id 'org.springframework.boot' version '2.4.4'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'jacoco'
 }
 
 apply plugin: 'java'
 apply plugin: 'java-library'
 apply plugin: 'io.spring.dependency-management'
-
 
 group 'com.epam.esm'
 version '2.0-SNAPSHOT'
@@ -24,7 +24,7 @@ jar {
     enabled = true
 }
 
-def isTest = true
+def isTest = false
 test.onlyIf { isTest }
 
 dependencyManagement {
@@ -41,6 +41,11 @@ tasks.withType(JavaCompile) {
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
 }
 
 dependencies {
